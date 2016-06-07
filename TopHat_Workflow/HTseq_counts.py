@@ -2,10 +2,31 @@ import sys
 import re
 import os
 
-root = "/path/to/output"
-alignmentFolder = "/path/to/folder/"
-gtf_file = "/path/to/file"
-lncRNAgtf = "/path/to/file"
+parameterFile = "parameters.txt"
+
+alignmentFolder = ""
+gtf_file = ""
+lncRNAgtf = ""
+
+inHandle = open(parameterFile)
+lines = inHandle.readlines()
+			
+for line in lines:
+	line = re.sub("\n","",line)
+	line = re.sub("\r","",line)
+	
+	lineInfo = line.split("\t")
+	param = lineInfo[0]
+	value = lineInfo[1]
+	
+	if param == "Alignment_Folder_MAC":
+		alignmentFolder = value
+		
+	if param == "txGTF_MAC":
+		gtf_file = value
+
+	if param == "lncRNA_GTF_MAC":
+		lncRNAgtf = value		
 
 fileResults = os.listdir(alignmentFolder)
 
@@ -25,13 +46,11 @@ for file in fileResults:
 			command = "/opt/samtools-1.3/samtools sort -n -o " + nameSortedBam + " " + fullPath
 			os.system(command)
 		
-			countsFile = root + sample + "_gene_counts.txt"
-			countsFile = os.path.join(root,countsFile)
+			countsFile = sample + "_gene_counts.txt"
 			command = "htseq-count -f bam -s no " + nameSortedBam + " " + gtf_file + " > " + countsFile
 			os.system(command)
 			
-			countsFile = root + sample + "_lncRNA_counts.txt"
-			countsFile = os.path.join(root,countsFile)
+			countsFile = sample + "_lncRNA_counts.txt"
 			command = "htseq-count -f bam -s no -i gene_name " + nameSortedBam + " " + lncRNAgtf + " > " + countsFile
 			os.system(command)
 	
