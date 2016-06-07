@@ -1,0 +1,1 @@
+sampleID	seqID	userID	Group	HTseq.file
