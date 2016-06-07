@@ -25,6 +25,7 @@ edgeR: https://bioconductor.org/packages/release/bioc/html/edgeR.html
 *Visualization*
 
 gplots: https://cran.r-project.org/web/packages/gplots/index.html
+heatmap.3: https://github.com/obigriffith/biostar-tutorials/blob/master/Heatmaps/heatmap.3.R
 
 *Gene Set Enrichment*
 
