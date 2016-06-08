@@ -431,8 +431,8 @@ deg.genes = genes[status != "No Change"]
 
 if(length(plot.groups) > 1){
 	source("heatmap.3.R")
-	grp1 = as.character(sample.description.table[,deg.groups[1]])
-	grp2 = as.character(sample.description.table[,deg.groups[2]])
+	grp1 = as.character(sample.description.table[,plot.groups[1]])
+	grp2 = as.character(sample.description.table[,plot.groups[2]])
 	group.levels = c(levels(as.factor(grp1)),levels(as.factor(grp2)))
 
 	color.palette <- fixed.color.palatte[1:length(group.levels)]
@@ -455,7 +455,7 @@ if(length(plot.groups) > 1){
 
 	row_annotation <- data.frame(label1 = labelColors1, label2 = labelColors2)
 	row_annotation = as.matrix(t(row_annotation))
-	rownames(row_annotation) <- c(deg.groups)
+	rownames(row_annotation) <- c(plot.groups)
 
 	heatmap.file <- paste(trt.group,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
 	heatmap.file = gsub(":",".",heatmap.file)
@@ -485,7 +485,7 @@ if(length(plot.groups) > 1){
 	}#end if(interaction.flag != "none")
 	
 } else {
-	group.levels = levels(as.factor(sample.description.table[,deg.groups]))
+	group.levels = levels(as.factor(sample.description.table[,plot.groups]))
 
 	color.palette <- fixed.color.palatte[1:length(group.levels)]
 	labelColors = rep("black",times=length(sample.label))
