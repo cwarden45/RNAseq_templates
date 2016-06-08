@@ -13,6 +13,7 @@
 *Alignment*
 
 TopHat: https://ccb.jhu.edu/software/tophat/tutorial.shtml
+GenomicAlignments: https://bioconductor.org/packages/release/bioc/html/GenomicAlignments.html
 
 *Read Counting*
 
