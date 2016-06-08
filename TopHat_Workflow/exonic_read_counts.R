@@ -1,29 +1,30 @@
-library(Rsamtools)
 library(GenomicAlignments)
-library(GenomicRanges)
 
-setwd("R:\\path\\to\folder")
+param.table = read.table("parameters.txt", header=T, sep="\t")
+output.folder = as.character(param.table$Value[param.table$Parameter == "Raw_Code_PC"])
+alignment.folder = as.character(param.table$Value[param.table$Parameter == "Alignment_Folder_PC"])
+genome=as.character(param.table$Value[param.table$Parameter == "genome"])
+htseq.anno.folder = as.character(param.table$Value[param.table$Parameter == "HTseq_input_folder"])
+total.reads.file = as.character(param.table$Value[param.table$Parameter == "total_counts_file"])
+aligned.stats.file = as.character(param.table$Value[param.table$Parameter == "aligned_stats_file"])
 
-alignment.folder = "R:\\path\\to\folder\\"
-genome="hg19"
-length.file = paste("R:\\path\\to\\",genome,"_chr_length.txt",sep="")
-full.annotation.file = paste("R:\\path\\to\\TxDb_",genome,"_exon_annotations.txt",sep="")
-ignore.strand = T
+setwd(output.folder)
+length.file = paste(htseq.anno.folder,"\\",genome,"_chr_length.txt",sep="")
+full.annotation.file = paste(htseq.anno.folder,"\\TxDb_",genome,"_exon_annotations.txt",sep="")
 
 length.table = read.table(length.file, header=T, sep="\t")
 chr_length = as.numeric(length.table$Length)
 names(chr_length) = as.character(length.table$Chr)
 
-total.reads.file = "total_read_counts.txt"
 total.reads.table = read.table(total.reads.file, header=T, sep="\t")
 sampleIDs = as.character(total.reads.table$Sample)
 
 exon.info = read.table(full.annotation.file, header=T, sep="\t")
     
 #remove non-canonical chromosomes
-bad <- grep("_", exon.info$chr)
- if (length(bad) > 0) {
-     exon.info = exon.info[-bad, ]
+nonCanonical <- grep("_", exon.info$chr)
+ if (length(nonCanonical) > 0) {
+     exon.info = exon.info[-nonCanonical, ]
 }
 chromosomes = as.character(levels(as.factor(as.character(exon.info$chr))))
 
@@ -48,8 +49,7 @@ for(i in 1:length(bam.files)){
         chr.gene.table <- exon.info[which(exon.info$chr == i), ]
        	chr.gene.table <- exon.info[order(exon.info$start, exon.info$end), ]
         exon_range <- GRanges(seqnames = exon.info$chr, ranges=IRanges(exon.info$start, exon.info$end), strand = Rle(strand(exon.info$strand)))
-        #findOverlaps will not distinguish between SE and PE reads
-        hits <- findOverlaps(as(data, "GRanges"), exon_range, ignore.strand=ignore.strand)
+        hits <- findOverlaps(as(data, "GRanges"), exon_range)
         exon_reads[[chr]] <- names(data[(unique(as.matrix(hits)[, 1]))])
 	}#end  for(chr in chromosomes)
 	
@@ -61,5 +61,5 @@ for(i in 1:length(bam.files)){
 
 percent.exonic = round(100 * exonic.reads / aligned.reads, digits = 1)
 stat.table = data.frame(Sample = sampleIDs, aligned.reads = aligned.reads, exonic.reads = exonic.reads, percent.exonic=percent.exonic)
-write.table(stat.table, "findOverlaps_exonic_stats.txt", row.names=F, sep="\t", quote=F)
+write.table(stat.table, aligned.stats.file, row.names=F, sep="\t", quote=F)
 print(warnings())
