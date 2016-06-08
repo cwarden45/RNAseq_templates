@@ -10,7 +10,9 @@
 
 5) HTseq_reformat.R
 
-6) DEG_goseq.R
+6) qc.R
+
+7) DEG_goseq.R
 
 ### Dependencies (some optional) ###
 
