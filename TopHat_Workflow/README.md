@@ -8,6 +8,10 @@
 
 4) HTseq_counts.py
 
+5) HTseq_reformat.R
+
+6) DEG_goseq.R
+
 ### Dependencies (some optional) ###
 
 *Alignment*
