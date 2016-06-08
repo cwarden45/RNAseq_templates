@@ -85,10 +85,13 @@ trt.group2 = as.character(param.table$Value[param.table$Parameter == "secondary_
 interaction.flag = as.character(param.table$Value[param.table$Parameter == "interaction"])
 pvalue.method = as.character(param.table$Value[param.table$Parameter == "pvalue_method"])
 goseq.flag = as.character(param.table$Value[param.table$Parameter == "run_goseq"])
+output.folder = as.character(param.table$Value[param.table$Parameter == "Raw_Code_PC"])
 user.folder = as.character(param.table$Value[param.table$Parameter == "Result_Folder"])
 sample.description.file = as.character(param.table$Value[param.table$Parameter == "sample_description_file"])
 counts.file = as.character(param.table$Value[param.table$Parameter == "counts_file"])
 aligned.stats.file = as.character(param.table$Value[param.table$Parameter == "aligned_stats_file"])
+
+setwd(output.folder)
 
 sample.description.table = read.table(sample.description.file, sep="\t", header=T)
 longID = sample.description.table$sampleID
