@@ -26,5 +26,5 @@ sec_fold_change_cutoff	1.2
 sec_pvalue_cutoff	0.05
 sec_fdr_cutoff	1.00
 min_length_kb	0.15
-interaction	filter-overlap
-secondary_trt	none
+interaction	none
+secondary_trt	NA
