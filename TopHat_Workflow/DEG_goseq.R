@@ -418,7 +418,7 @@ if(rep.check == 1){
 	deg.table = data.frame(symbol = genes, gene.length.kb=gene.length.kb,
 							average.rpkm, fc.table, status = status)	
 }#end else
-deg.file = paste(trt.group,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".txt",sep="")
+deg.file = paste(comp.name,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".txt",sep="")
 deg.file = gsub(":",".",deg.file)
 write.table(deg.table, file=deg.file, row.names=F, quote=F, sep="\t")
 
@@ -457,7 +457,7 @@ if(length(plot.groups) > 1){
 	row_annotation = as.matrix(t(row_annotation))
 	rownames(row_annotation) <- c(plot.groups)
 
-	heatmap.file <- paste(trt.group,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
+	heatmap.file <- paste(comp.name,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
 	heatmap.file = gsub(":",".",heatmap.file)
 	png(file = heatmap.file)
 	heatmap.3(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
@@ -476,7 +476,7 @@ if(length(plot.groups) > 1){
 		temp.fc.table[temp.fc.table < -10] = -10
 		temp.fc.table[temp.fc.table > 10] = 10
 	
-		heatmap.file <- paste("fold_change_",trt.group,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
+		heatmap.file <- paste("fold_change_",comp.name,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
 		heatmap.file = gsub(":",".",heatmap.file)
 		png(file = heatmap.file)
 		heatmap.2(temp.fc.table, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
@@ -498,7 +498,7 @@ if(length(plot.groups) > 1){
 	colnames(std.expr) = rep("", length(deg.genes))
 	rownames(std.expr) = sample.label
 	
-	heatmap.file <- paste(trt.group,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
+	heatmap.file <- paste(comp.name,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
 	heatmap.file = gsub(":",".",heatmap.file)
 	png(file = heatmap.file)
 	heatmap.2(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
