@@ -516,7 +516,7 @@ if (goseq.flag == "yes"){
 	gene.symbol = as.character(levels(as.factor(as.character(genes))))
 	names(deg)=gene.symbol
 	
-	bias.file = paste(trt.group,"_goseq_up_bias.png",sep="")
+	bias.file = paste(comp.name,"_goseq_up_bias.png",sep="")
 	png(bias.file)
 	pwf=nullp(deg,genome,"geneSymbol")
 	GO.wall=goseq(pwf,genome,"geneSymbol")
