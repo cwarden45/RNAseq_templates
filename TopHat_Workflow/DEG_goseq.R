@@ -366,7 +366,7 @@ write.table(deg.table, file=deg.file, row.names=F, quote=F, sep="\t")
 
 final.deg.file = paste(user.folder,"/DEG/",comp.name,"_DEG_stats.txt",sep="")
 write.table(deg.table, file=final.deg.file, row.names=F, quote=F, sep="\t")
-stop()
+
 temp.rpkm = RPKM
 temp.rpkm = temp.rpkm[status != "No Change", ]
 deg.genes = genes[status != "No Change"]
