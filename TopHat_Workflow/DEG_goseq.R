@@ -67,6 +67,7 @@ library(gplots)
 fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
 
 param.table = read.table("parameters.txt", header=T, sep="\t")
+comp.name=as.character(param.table$Value[param.table$Parameter == "comp_name"])
 genome=as.character(param.table$Value[param.table$Parameter == "genome"])
 min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "rpkm_expression_cutoff"]))
 min.fraction.expressed = as.numeric(as.character(param.table$Value[param.table$Parameter == "minimum_fraction_expressed"]))
@@ -363,6 +364,9 @@ deg.file = paste(trt.group,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cu
 deg.file = gsub(":",".",deg.file)
 write.table(deg.table, file=deg.file, row.names=F, quote=F, sep="\t")
 
+final.deg.file = paste(user.folder,"/DEG/",comp.name,"_DEG_stats.txt",sep="")
+write.table(deg.table, file=final.deg.file, row.names=F, quote=F, sep="\t")
+stop()
 temp.rpkm = RPKM
 temp.rpkm = temp.rpkm[status != "No Change", ]
 deg.genes = genes[status != "No Change"]
@@ -455,7 +459,6 @@ if (goseq.flag == "yes"){
 	names(deg)=gene.symbol
 	
 	bias.file = paste(trt.group,"_goseq_up_bias.png",sep="")
-	bias.file = gsub(":",".",bias.file)
 	png(bias.file)
 	pwf=nullp(deg,genome,"geneSymbol")
 	GO.wall=goseq(pwf,genome,"geneSymbol")
@@ -474,7 +477,7 @@ if (goseq.flag == "yes"){
 	}#end for( i in 1:length(go.genes))
 
 	go.table = data.frame(GO.wall, genes=go.genes)
-	go.file = paste(user.folder,"/GO/",trt.group,"_goseq_UP.txt",sep="")
+	go.file = paste(user.folder,"/GO/",comp.name,"_goseq_UP.txt",sep="")
 	write.table(go.table, file=go.file, row.names=F, quote=F, sep="\t")
 
 	deg = as.integer(status == paste(trt.group," Down",sep=""))
@@ -483,8 +486,7 @@ if (goseq.flag == "yes"){
 	gene.symbol = as.character(levels(as.factor(as.character(genes))))
 	names(deg)=gene.symbol
 
-	bias.file = paste(trt.group,"_goseq_down_bias.png",sep="")
-	bias.file = gsub(":",".",bias.file)
+	bias.file = paste(comp.name,"_goseq_down_bias.png",sep="")
 	png(bias.file)
 	pwf=nullp(deg,genome,"geneSymbol")
 	GO.wall=goseq(pwf,genome,"geneSymbol")
@@ -503,6 +505,6 @@ if (goseq.flag == "yes"){
 	}#end for( i in 1:length(go.genes))
 
 	go.table = data.frame(GO.wall, genes=go.genes)
-	go.file = paste(user.folder,"/GO/",trt.group,"_goseq_DOWN.txt",sep="")
+	go.file = paste(user.folder,"/GO/",comp.name,"_goseq_DOWN.txt",sep="")
 	write.table(go.table, file=go.file, row.names=F, quote=F, sep="\t")
 }#end if (goseq.flag == "yes")
