@@ -46,7 +46,6 @@ setwd(output.folder)
 
 sample.table = read.table(sample.file, header=T, sep="\t")
 sampleID = as.character(sample.table$sampleID)
-print(sampleID)
 sample.label = as.character(sample.table$userID)
 count.files = as.character(sample.table$HTseq.file)
 
@@ -63,7 +62,7 @@ temp.table = read.table(temp.file, sep="\t", header=F)
 genes = as.character(temp.table[[1]])
 
 count.mat = matrix(nrow=nrow(temp.table), ncol=length(sampleID))
-colnames(count.mat) = sampleID
+colnames(count.mat) = sample.label
 
 for (i in 1:length(sampleID)){
 	temp.file = count.files[[i]]
@@ -114,7 +113,7 @@ for (i in 1:ncol(count.mat)){
 	rpk[,i] = temp.rpk 
 }
 RPKM = log2(t(apply(rpk, 1, normalizeTotalExpression, totalReads = total.million.aligned.reads)) + min.expression)
-colnames(RPKM) = sample.table$userID
+colnames(RPKM) = sample.label
 
 trimmed.percent = apply(count.mat, 2, trimmed.counts, min.percent=0.3, max.percent=0.95)
 
