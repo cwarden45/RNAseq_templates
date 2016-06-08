@@ -19,7 +19,16 @@ trimmed.counts <- function(counts, min.percent, max.percent)
 	return(trimmed.percent)
 }#end def count.values
 
-param.table = read.table("parameters.txt", header=T, sep="\t")
+aligned.trimmed.counts <- function(counts, min.percent, max.percent)
+{
+	counts = counts[order(counts)]
+	min.index = min.percent * length(counts)
+	max.index = max.percent * length(counts)
+	counts = counts[min.index:max.index]
+	return(sum(counts))
+}#end def aligned.trimmed.counts
+
+param.table = read.table("parameters_lncRNA.txt", header=T, sep="\t")
 comp.name=as.character(param.table$Value[param.table$Parameter == "comp_name"])
 genome=as.character(param.table$Value[param.table$Parameter == "genome"])
 min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "rpkm_expression_cutoff"]))
@@ -31,14 +40,18 @@ total.reads.file = as.character(param.table$Value[param.table$Parameter == "tota
 exonic.stat.file = as.character(param.table$Value[param.table$Parameter == "aligned_stats_file"])
 counts.file = as.character(param.table$Value[param.table$Parameter == "counts_file"])
 rpkm.file = as.character(param.table$Value[param.table$Parameter == "rpkm_file"])
-full.annotation.file = paste(htseq.anno.folder,"\\TxDb_",genome,"_exon_annotations.txt",sep="")
+full.annotation.file = paste(htseq.anno.folder,"\\GENCODE\\",genome,"\\",genome,"_gene_info.txt",sep="")
 
 setwd(output.folder)
 
 sample.table = read.table(sample.file, header=T, sep="\t")
 sampleID = as.character(sample.table$sampleID)
+print(sampleID)
 sample.label = as.character(sample.table$userID)
 count.files = as.character(sample.table$HTseq.file)
+
+count.files = as.character(sample.table$HTseq.file)
+print(count.files)
 
 total.reads.table = read.table(total.reads.file, header=T, sep="\t")
 totalID = as.character(total.reads.table$Sample)
@@ -50,7 +63,7 @@ temp.table = read.table(temp.file, sep="\t", header=F)
 genes = as.character(temp.table[[1]])
 
 count.mat = matrix(nrow=nrow(temp.table), ncol=length(sampleID))
-colnames(count.mat) = sample.label
+colnames(count.mat) = sampleID
 
 for (i in 1:length(sampleID)){
 	temp.file = count.files[[i]]
@@ -60,36 +73,26 @@ for (i in 1:length(sampleID)){
 	}
 
 	count.mat[,i] = temp.table[[2]]
-}#end for (i in 1:length(sampleID))
+}#end for (i in 1:length(sampleIDs))
+
+total.aligned.reads = apply(count.mat, 2, sum)
 
 irrelevant.counts = c("__no_feature", "__ambiguous", "__too_low_aQual","__not_aligned","__alignment_not_unique")
 count.mat = count.mat[-match(irrelevant.counts, genes),]
 genes = genes[-match(irrelevant.counts, genes)]
 rownames(count.mat) = genes
 
-exon.info = read.table(full.annotation.file, header=T, sep="\t")
-print(dim(exon.info))
-exon.length = exon.info$width
+gene.info  = read.table(full.annotation.file, header=T, sep="\t")
+print(dim(gene.info))
+gene.info = gene.info[match(genes, gene.info$symbol),]
+print(dim(gene.info))
 
-gene.symbol = as.character(levels(as.factor(as.character(exon.info$symbol))))
-gene.chr = exon.info$chr[match(gene.symbol,exon.info$symbol)]
-gene.strand= exon.info$strand[match(gene.symbol,exon.info$symbol)]
-gene.description = exon.info$description[match(gene.symbol,exon.info$symbol)]
-gene.start= tapply(as.numeric(exon.info$start), as.character(exon.info$symbol), min)
-gene.end = tapply(as.numeric(exon.info$end), as.character(exon.info$symbol), max)
-gene.length.kb = tapply(exon.length, as.character(exon.info$symbol), sum) / 1000
-
-gene.info = data.frame(symbol = gene.symbol, chr = gene.chr, start = gene.start, stop = gene.end, length.kb = gene.length.kb,
-						strand = gene.strand, description=gene.description)
-common.genes = gene.info$symbol[match(rownames(count.mat), gene.info$symbol,nomatch=0)]
-gene.info = gene.info[match(common.genes, gene.info$symbol, nomatch=0),]
-count.mat = count.mat[match(common.genes, rownames(count.mat), nomatch=0),]
-gene.length.kb = gene.info$length.kb
+gene.length.kb = gene.info$tx.max.length / 1000
 
 annotated.rpkm = data.frame(gene.info, count.mat)
 write.table(annotated.rpkm, file = counts.file, sep="\t", row.names=F, quote=T)
 
-result.file = paste(user.folder,counts.file,sep="/")
+result.file = paste(user.folder,"lncRNA",counts.file,sep="/")
 write.table(annotated.rpkm, file=result.file, row.names=F, quote=F, sep="\t")
 
 exonic.stat.table = read.table(exonic.stat.file, header=T, sep="\t")
@@ -111,21 +114,20 @@ for (i in 1:ncol(count.mat)){
 	rpk[,i] = temp.rpk 
 }
 RPKM = log2(t(apply(rpk, 1, normalizeTotalExpression, totalReads = total.million.aligned.reads)) + min.expression)
-colnames(RPKM) = sample.label
+colnames(RPKM) = sample.table$userID
 
 trimmed.percent = apply(count.mat, 2, trimmed.counts, min.percent=0.3, max.percent=0.95)
 
 expressed.gene.counts = apply(RPKM, 2, count.defined.values, expr.cutoff = log2(min.expression))
 percent.expressed.genes = round( 100 * expressed.gene.counts / nrow(RPKM), digits=1)
-coverage.table = data.frame(Sample = sample.label, total.reads = total.reads,
+coverage.table = data.frame(Sample = sample.table$userID, total.reads = total.reads,
 							aligned.reads=aligned.reads, percent.aligned.reads =percent.aligned.reads,
-							exonic.reads =exonic.reads, percent.exonic.reads = percent.exonic.reads,
 							Expressed.Genes = expressed.gene.counts, Percent.Expressed.Genes = percent.expressed.genes,
 							trimmed.percent=trimmed.percent)
-write.table(coverage.table, file="gene_coverage_stats.txt", quote=F, row.names=F, sep="\t")
+write.table(coverage.table, file="gene_coverage_stats_lncRNA.txt", quote=F, row.names=F, sep="\t")
 
 annotated.rpkm = data.frame(gene.info, RPKM)
 write.table(annotated.rpkm, file = rpkm.file, sep="\t", row.names=F, quote=T)
 
-result.file = paste(user.folder, rpkm.file, sep="/")
+result.file = paste(user.folder, "lncRNA",rpkm.file, sep="/")
 write.table(annotated.rpkm, file=result.file, row.names=F, quote=F, sep="\t")
