@@ -1,4 +1,4 @@
-genome = "hg19"
+genome = "mm9"
 annotation.table = paste("TxDb_",genome,"_exon_annotations.txt",sep="")
 
 if(genome == "hg38"){
@@ -51,9 +51,6 @@ txtable = data.frame(txtable, LENGTH=gene.length)
 gene.symbols = keys(orgdb, keytype="SYMBOL")
 genecols = c("SYMBOL", "ENTREZID","GENENAME")
 genetable = select(orgdb, keys=gene.symbols, columns=genecols, keytype="SYMBOL")
-print(dim(genetable))
-	
-genetable = genetable[-match(rRNA.symbols, genetable$SYMBOL),]
 print(dim(genetable))
 
 temp.annotation = merge(txtable, genetable, by.x = "GENEID", by.y = "ENTREZID")
