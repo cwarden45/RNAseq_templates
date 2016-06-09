@@ -28,4 +28,5 @@ http://www.gencodegenes.org/mouse_releases/reference_releases.html
 
 Human:
 http://www.mitranscriptome.org/
-[use Table Browser in Genome Browser to download cancer-specific genes for reference build of interest]
+
+*use Table Browser in Genome Browser to download cancer-specific genes for reference build of interest
