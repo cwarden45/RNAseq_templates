@@ -9,7 +9,6 @@ http://bioconductor.org/packages/release/data/annotation/html/TxDb.Hsapiens.UCSC
 
 https://bioconductor.org/packages/release/data/annotation/html/TxDb.Hsapiens.UCSC.hg19.knownGene.html
 
-
 Mouse:
 http://bioconductor.org/packages/release/data/annotation/html/org.Mm.eg.db.html
 
