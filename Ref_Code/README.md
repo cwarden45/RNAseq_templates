@@ -16,11 +16,14 @@ http://bioconductor.org/packages/release/data/annotation/html/TxDb.Mmusculus.UCS
 http://bioconductor.org/packages/release/data/annotation/html/TxDb.Mmusculus.UCSC.mm9.knownGene.html
 
 *GENCODE*
+
 Human:
 http://www.gencodegenes.org/releases/reference_releases.html
+
 Mouse:
 http://www.gencodegenes.org/mouse_releases/reference_releases.html
 
 *MiTranscriptome*
-Human
+
+Human:
 http://www.mitranscriptome.org/
