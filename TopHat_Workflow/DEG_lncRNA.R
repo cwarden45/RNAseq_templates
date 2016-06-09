@@ -447,7 +447,7 @@ if(length(deg.genes) > 1){
 		}#end for (i in 1:length(group.levels))
 		
 		std.expr = apply(temp.rpkm, 1, standardize.arr)
-		if(length(deg.genes) < 10){
+		if(length(deg.genes) < 25){
 			colnames(std.expr) = deg.genes
 		} else {
 			colnames(std.expr) = rep("", length(deg.genes))
@@ -474,7 +474,7 @@ if(length(deg.genes) > 1){
 		if(interaction.flag != "none"){
 			temp.fc.table = as.matrix(fc.table[,-ncol(fc.table)])
 			temp.fc.table = temp.fc.table[status != "No Change", ]
-			if(length(deg.genes) < 10){
+			if(length(deg.genes) < 25){
 				rownames(temp.fc.table) = deg.genes
 			} else {
 				rownames(temp.fc.table) = rep("", length(deg.genes))
@@ -502,7 +502,7 @@ if(length(deg.genes) > 1){
 		}#end for (i in 1:length(group.levels))
 
 		std.expr = apply(temp.rpkm, 1, standardize.arr)
-		if(length(deg.genes) < 10){
+		if(length(deg.genes) < 25){
 			colnames(std.expr) = deg.genes
 			heatmap.margins = c(15,15)
 		} else {
