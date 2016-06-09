@@ -446,8 +446,11 @@ if(length(plot.groups) > 1){
 	}#end for (i in 1:length(group.levels))
 	
 	std.expr = apply(temp.rpkm, 1, standardize.arr)
-	#colnames(std.expr) = deg.genes
-	colnames(std.expr) = rep("", length(deg.genes))
+	if(length(deg.genes) < 25){
+		colnames(std.expr) = deg.genes
+	} else {
+		colnames(std.expr) = rep("", length(deg.genes))
+	}
 	rownames(std.expr) = sample.label
 
 	column_annotation <- as.matrix(deg.genes)
@@ -470,7 +473,11 @@ if(length(plot.groups) > 1){
 	if(interaction.flag != "none"){
 		temp.fc.table = as.matrix(fc.table[,-ncol(fc.table)])
 		temp.fc.table = temp.fc.table[status != "No Change", ]
-		rownames(temp.fc.table) = rep("",times=length(deg.genes))
+		if(length(deg.genes) < 25){
+			rownames(temp.fc.table) = deg.genes
+		} else {
+			rownames(temp.fc.table) = rep("",times=length(deg.genes))
+		}
 		colnames(temp.fc.table) = gsub(".:.",":",gsub("fold.change.","",colnames(temp.fc.table)))
 	
 		temp.fc.table[temp.fc.table < -10] = -10
@@ -494,8 +501,11 @@ if(length(plot.groups) > 1){
 	}#end for (i in 1:length(group.levels))
 
 	std.expr = apply(temp.rpkm, 1, standardize.arr)
-	#colnames(std.expr) = deg.genes
-	colnames(std.expr) = rep("", length(deg.genes))
+	if(length(deg.genes) < 25){
+		colnames(std.expr) = deg.genes
+	} else {
+		colnames(std.expr) = rep("", length(deg.genes))
+	}
 	rownames(std.expr) = sample.label
 	
 	heatmap.file <- paste(comp.name,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
