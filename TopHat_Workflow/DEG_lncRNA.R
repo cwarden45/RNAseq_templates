@@ -418,7 +418,7 @@ if(rep.check == 1){
 	deg.table = data.frame(symbol = genes, gene.length.kb=gene.length.kb,
 							average.rpkm, fc.table, status = status)	
 }#end else
-deg.file = paste(comp.name,"_",pvalue.method,"_lncRNA_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".txt",sep="")
+deg.file = paste(comp.name,"_lncRNA_",pvalue.method,"_lncRNA_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".txt",sep="")
 deg.file = gsub(":",".",deg.file)
 write.table(deg.table, file=deg.file, row.names=F, quote=F, sep="\t")
 
@@ -429,7 +429,7 @@ temp.rpkm = RPKM
 temp.rpkm = temp.rpkm[status != "No Change", ]
 deg.genes = genes[status != "No Change"]
 
-if(length(deg.genes) > 0){
+if(length(deg.genes) > 1){
 	if(length(plot.groups) > 1){
 		source("heatmap.3.R")
 		grp1 = as.character(sample.description.table[,plot.groups[1]])
@@ -447,8 +447,11 @@ if(length(deg.genes) > 0){
 		}#end for (i in 1:length(group.levels))
 		
 		std.expr = apply(temp.rpkm, 1, standardize.arr)
-		#colnames(std.expr) = deg.genes
-		colnames(std.expr) = rep("", length(deg.genes))
+		if(length(deg.genes) < 10){
+			colnames(std.expr) = deg.genes
+		} else {
+			colnames(std.expr) = rep("", length(deg.genes))
+		}
 		rownames(std.expr) = sample.label
 
 		column_annotation <- as.matrix(deg.genes)
@@ -471,7 +474,11 @@ if(length(deg.genes) > 0){
 		if(interaction.flag != "none"){
 			temp.fc.table = as.matrix(fc.table[,-ncol(fc.table)])
 			temp.fc.table = temp.fc.table[status != "No Change", ]
-			rownames(temp.fc.table) = rep("",times=length(deg.genes))
+			if(length(deg.genes) < 10){
+				rownames(temp.fc.table) = deg.genes
+			} else {
+				rownames(temp.fc.table) = rep("", length(deg.genes))
+			}
 			colnames(temp.fc.table) = gsub(".:.",":",gsub("fold.change.","",colnames(temp.fc.table)))
 		
 			temp.fc.table[temp.fc.table < -10] = -10
@@ -495,15 +502,20 @@ if(length(deg.genes) > 0){
 		}#end for (i in 1:length(group.levels))
 
 		std.expr = apply(temp.rpkm, 1, standardize.arr)
-		#colnames(std.expr) = deg.genes
-		colnames(std.expr) = rep("", length(deg.genes))
+		if(length(deg.genes) < 10){
+			colnames(std.expr) = deg.genes
+			heatmap.margins = c(15,15)
+		} else {
+			colnames(std.expr) = rep("", length(deg.genes))
+			heatmap.margins = c(5,15)
+		}
 		rownames(std.expr) = sample.label
 		
 		heatmap.file <- paste(comp.name,"_lncRNA_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
 		heatmap.file = gsub(":",".",heatmap.file)
 		png(file = heatmap.file)
 		heatmap.2(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
-					 RowSideColors=labelColors, trace="none", margins = c(5,15))
+					 RowSideColors=labelColors, trace="none", margin=heatmap.margins, cexCol=1.5)
 		dev.off()
 	}#end else
 }#end if(length(deg.genes) > 0
