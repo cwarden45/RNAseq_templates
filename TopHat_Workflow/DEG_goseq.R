@@ -66,7 +66,8 @@ gene.aov <- function(arr, var1, var2=c(), var3=c())
 		result = summary(fit)
 		aov.pvalue = result[[1]][['Pr(>F)']][3]
 	}
-}#end def gene.lm
+	return(pvalue)
+}#end def gene.aov
 
 library(gplots)
 fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
