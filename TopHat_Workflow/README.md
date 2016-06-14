@@ -1,6 +1,6 @@
 ### Order to Run Scripts ###
 
-1) se_alignment.pl
+1) se_alignment.py
 
 2) extract_total_reads.py
 
