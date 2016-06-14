@@ -19,6 +19,7 @@ count.defined.values <- function(arr)
 param.table = read.table("parameters.txt", header=T, sep="\t")
 sample.description.file = as.character(param.table$Value[param.table$Parameter == "sample_description_file"])
 rpkm.file = as.character(param.table$Value[param.table$Parameter == "rpkm_file"])
+cluster.distance = as.character(param.table$Value[param.table$Parameter == "cluster_distance"])
 min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "rpkm_expression_cutoff"]))
 plot.groups = unlist(strsplit(as.character(param.table$Value[param.table$Parameter == "plot_groups"]), split=","))
 
@@ -68,7 +69,15 @@ for (group in plot.groups){
 	dev.off()
 
 	cluster.file = paste("cluster_by_",group,".png",sep="")
-	dist1 <- dist(as.matrix(t(normalized.mat)))
+	if(cluster.distance == "Euclidean"){
+		dist1 <- dist(as.matrix(t(normalized.mat)))
+	}else if (cluster.distance == "Pearson_Dissimilarity"){
+		cor.mat = cor(as.matrix(normalized.mat))
+		dis.mat = 1 - cor.mat
+		dist1 <- as.dist(dis.mat)
+	}else{
+		stop("cluster_distance must be 'Euclidean' or 'Pearson_Dissimilarity'")
+	}
 	clusMember <- groups
 	hc <- hclust(dist1)
 	dend1 <- as.dendrogram(hc)
