@@ -35,7 +35,7 @@ bam.files <- list.files(alignment.folder, pattern=".bam$")
 sampleIDs = sub(".bam$","",bam.files)
 
 for(i in 1:length(bam.files)){
-	inputfile = paste(alignment.folder, bam.files[i], sep="")
+	inputfile = paste(alignment.folder, bam.files[i], sep="/")
 	print(inputfile)
 	exon_reads <- list()
     total_reads <- list()
