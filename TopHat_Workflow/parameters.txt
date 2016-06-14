@@ -29,6 +29,7 @@ fdr_cutoff	0.05
 sec_fold_change_cutoff	1.2
 sec_pvalue_cutoff	0.05
 sec_fdr_cutoff	1.00
+read_correction aligned
 min_length_kb	0.15
 interaction	no
 secondary_trt	NA
