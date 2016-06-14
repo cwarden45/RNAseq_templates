@@ -61,6 +61,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |sample_description_file|Name of Sample Description File|
 |total_counts_file|Name of File to Contain Total Read Counts|
 |aligned_stats_file|Name of File to Contain Aligned and Exonic Read Counts|
+|cluster_distance| Distance metric for dendrogram.  Can be *Euclidean* or *Pearson_Dissimilarity*|
 |rpkm_file|Name of File to Contain log2(RPKM + *rpkm_expression_cutoff*) Expression Values|
 |counts_file|Name of File to Contain Read Counts Per Gene|
 |rpkm_expression_cutoff|Rounding Value for RPKM (minimum reliable expression level)|
