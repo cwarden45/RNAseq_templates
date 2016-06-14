@@ -72,7 +72,6 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |sec_pvalue_cutoff|If comparing two gene lists, p-value threshold for list you want to filter out|
 |sec_fdr_cutoff|If comparing two gene lists, FDR threshold for list you want to filter out|
 |min_length_kb|Minimum length of gene to consider for differential expression anlysis (in kilobases)|
-|read_correction|How to correct for library size.  Can be *aligned* or *exonic* reads|
 |run_goseq| Run goseq?  It is useful to leave this as 'no' initially, and then switch to 'yes' after optimizing differential expression parameters|
 |interaction| Method for comparing an interaction of two variables.  Can be *model*, *filter-overlap*, or *no*|
 |secondary_trt| If comparing two gene lists, this is treatment group for the list that you want to filter out|
