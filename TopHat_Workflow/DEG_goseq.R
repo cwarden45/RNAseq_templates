@@ -368,6 +368,7 @@ if (interaction.flag == "no"){
 	status = rep("No Change", times=length(fdr))
 	status[(fc >= fc.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = paste(trt.group," Up",sep="")
 	status[(fc <= -fc.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = paste(trt.group," Down",sep="")
+	pvalue.table = data.frame(p.value = test.pvalue, FDR = fdr)
 } else{
 	trt.group = prim.trt
 	if(interaction.flag == "model"){
