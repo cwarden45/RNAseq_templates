@@ -35,10 +35,10 @@ for subfolder in fileResults:
 	result = re.search("^\d",subfolder)
 
 	if result:		
-		readInfoFile = alignmentFolder + subfolder + "/prep_reads.info"
+		readInfoFile = alignmentFolder + "/" + subfolder + "/prep_reads.info"
 		
 		if os.path.isfile(readInfoFile):
-			sample = re.sub("_\w{6}_L999$","",subfolder)
+			sample = subfolder
 			print sample
 			
 			inHandle = open(readInfoFile)
