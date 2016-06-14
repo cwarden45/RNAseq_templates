@@ -16,6 +16,7 @@ pvalue_method	edgeR
 sample_description_file	sample_description.txt
 total_counts_file	total_read_counts.txt
 aligned_stats_file	findOverlaps_exonic_stats.txt
+Threads 4
 rpkm_file	log2_rpkm.txt
 counts_file	read_counts.txt
 rpkm_expression_cutoff	0.1
