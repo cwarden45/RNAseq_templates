@@ -25,9 +25,11 @@ counts_file	read_counts.txt
 rpkm_expression_cutoff	0.1
 minimum_fraction_expressed	0.5
 fold_change_cutoff	1.5
+cor_cutoff  0.2
 pvalue_cutoff	0.05
 fdr_cutoff	0.05
 sec_fold_change_cutoff	1.2
+sec_cor_cutoff  0.1
 sec_pvalue_cutoff	0.05
 sec_fdr_cutoff	1.00
 read_correction aligned
