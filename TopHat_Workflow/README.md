@@ -67,9 +67,11 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |rpkm_expression_cutoff|Rounding Value for RPKM (minimum reliable expression level)|
 |minimum_fraction_expressed|Minimum fraction of samples with expression above *rpkm_expression_cutoff*. Filter for differential expression anaylsis.|
 |fold_change_cutoff|Minimum fold-change difference to consider a gene differentially expressed|
+|cor_cutoff|If using a continuous variable, minimum absolute correlation to consider a gene differentially expressed|
 |pvalue_cutoff|Maximum p-value to consider a gene differenitally expressed|
 |fdr_cutoff|Maximum FDR to consider a gene differentially expressed|
 |sec_fold_change_cutoff|If comparing two gene lists, fold-change threshold for list you want to filter out|
+|sec_cor_cutoff|If comparing two gene lists and using a continuous variable, minimum absolute correlation to consider a gene differentially expressed|
 |sec_pvalue_cutoff|If comparing two gene lists, p-value threshold for list you want to filter out|
 |sec_fdr_cutoff|If comparing two gene lists, FDR threshold for list you want to filter out|
 |min_length_kb|Minimum length of gene to consider for differential expression anlysis (in kilobases)|
