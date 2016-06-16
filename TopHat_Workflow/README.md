@@ -29,6 +29,7 @@ HTseq: http://www-huber.embl.de/HTSeq/doc/install.html#install
 *Differential Expression*
 
 edgeR: https://bioconductor.org/packages/release/bioc/html/edgeR.html
+limma-voom: https://bioconductor.org/packages/release/bioc/html/limma.html
 
 *Visualization*
 
