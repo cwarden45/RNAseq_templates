@@ -32,6 +32,8 @@ edgeR: https://bioconductor.org/packages/release/bioc/html/edgeR.html
 
 limma-voom: https://bioconductor.org/packages/release/bioc/html/limma.html
 
+DESeq2: https://bioconductor.org/packages/release/bioc/html/DESeq2.html
+
 *Visualization*
 
 gplots: https://cran.r-project.org/web/packages/gplots/index.html
