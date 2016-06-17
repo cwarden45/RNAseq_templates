@@ -53,7 +53,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |Result_Folder|Path to output folder for selected, final results|
 |Alignment_Folder_MAC|Path to TopHat Alignments|
 |Reads_Folder_MAC|Path to Reads for TopHat Alignment|
-|pvalue_method|Method to Calculate P-value.  Can be *edgeR*, *lm* (linear regression), or *aov* (ANOVA)|
+|pvalue_method|Method to Calculate P-value.  Can be *edgeR*,*limma-voom*, *lm* (linear regression), or *aov* (ANOVA)|
 |genome|Name of genome build|
 |Bowtie2_Ref| Path to Bowtie2 ref|
 |Threads|Number of Threads for TopHat Alignment|
