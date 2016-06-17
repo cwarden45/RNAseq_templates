@@ -370,6 +370,99 @@ if(rep.check == 1){
 				test.pvalue = lrt$table$PValue
 			}
 		}#end else
+	} else if (pvalue.method == "limma-voom"){
+		library(edgeR)
+		library(limma)
+		
+		if ((length(deg.groups) == 2)&(interaction.flag == "filter-overlap")){
+			print("limma-voom, Two-Step Analysis")
+			prim.counts = counts[,sample.description.table[,deg.groups[2]]==sec.groups[sec.groups==trt.group2]]
+			prim.edgeR.grp = sample.description.table[,deg.groups[1]][sample.description.table[,deg.groups[2]]==sec.groups[sec.groups==trt.group2]]
+			
+			if (trt.group == "continuous"){
+				prim.edgeR.grp = as.numeric(prim.edgeR.grp)
+			}
+			
+			y <- DGEList(counts=prim.counts, genes=genes)
+			png(paste(comp.name,"prim_voom_plot.png",sep="_"))
+			v <- voom(y,design,plot=TRUE)
+			dev.off()
+			fit <- lmFit(v,design)
+			fit <- eBayes(fit)
+			pvalue.mat = data.frame(fit$p.value)
+			prim.pvalue = pvalue.mat[,2]
+			
+			sec.counts = counts[,sample.description.table[,deg.groups[2]]==sec.groups[sec.groups!=trt.group2]]
+			sec.edgeR.grp = sample.description.table[,deg.groups[1]][sample.description.table[,deg.groups[2]]!=sec.groups[sec.groups==trt.group2]]
+
+			if (trt.group2 == "continuous"){
+				sec.edgeR.grp = as.numeric(prim.edgeR.grp)
+			}
+			
+			y <- DGEList(counts=sec.counts, genes=genes)
+			png(paste(comp.name,"prim_voom_plot.png",sep="_"))
+			v <- voom(y,design,plot=TRUE)
+			dev.off()
+			fit <- lmFit(v,design)
+			fit <- eBayes(fit)
+			pvalue.mat = data.frame(fit$p.value)
+			sec.pvalue = pvalue.mat[,2]
+			
+		} else {
+			y <- DGEList(counts=counts, genes=genes)
+			y = estimateCommonDisp(y)
+			if (length(deg.groups) == 1){
+				print("limma-voom with 1 variable")
+				var1 = sample.description.table[,deg.groups]
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+				design <- model.matrix(~var1)
+				png(paste(comp.name,"voom_plot.png",sep="_"))
+				v <- voom(y,design,plot=TRUE)
+				dev.off()
+				fit <- lmFit(v,design)
+				fit <- eBayes(fit)
+				pvalue.mat = data.frame(fit$p.value)
+				test.pvalue = pvalue.mat[,2]
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "no")){
+				print("limma-voom with 2 variables")
+				var1 = sample.description.table[,deg.groups[1]]
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+				var2 = sample.description.table[,deg.groups[2]]
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				}
+				design <- model.matrix(~var1 + var2)
+				png(paste(comp.name,"voom_plot.png",sep="_"))
+				v <- voom(y,design,plot=TRUE)
+				dev.off()
+				fit <- lmFit(v,design)
+				fit <- eBayes(fit)
+				pvalue.mat = data.frame(fit$p.value)
+				test.pvalue = pvalue.mat[,3]
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "model")){
+				print("limma-voom with 2 variables plus interaction")
+				var1 = sample.description.table[,deg.groups[1]]
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+				var2 = sample.description.table[,deg.groups[2]]
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				}
+				design <- model.matrix(~var1*var2 + var1 + var2)
+				png(paste(comp.name,"voom_plot.png",sep="_"))
+				v <- voom(y,design,plot=TRUE)
+				dev.off()
+				fit <- lmFit(v,design)
+				fit <- eBayes(fit)
+				pvalue.mat = data.frame(fit$p.value)
+				test.pvalue = pvalue.mat[,4]
+			}
+		}#end else
 	} else if (pvalue.method == "lm"){
 		if ((length(deg.groups) == 2)&(interaction.flag == "filter-overlap")){
 			print("RPKM linear regression, Two-Step Analysis")
@@ -477,7 +570,7 @@ if(rep.check == 1){
 			}
 		}#end else
 	} else{
-		stop("pvalue_method must be \"edgeR\", \"lm\", or \"ANOVA\"")
+		stop("pvalue_method must be \"edgeR\", \"limma-voom\", \"lm\", or \"ANOVA\"")
 	}
 } else{
 	test.pvalue = rep(1,times=length(genes))
