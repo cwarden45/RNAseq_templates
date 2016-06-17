@@ -38,6 +38,8 @@ gplots: https://cran.r-project.org/web/packages/gplots/index.html
 
 heatmap.3: https://github.com/obigriffith/biostar-tutorials/blob/master/Heatmaps/heatmap.3.R
 
+heatmap.3 example: https://www.biostars.org/p/18211/
+
 *Gene Set Enrichment*
 
 goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
