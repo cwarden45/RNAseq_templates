@@ -60,7 +60,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |Alignment_Folder_MAC|Path to TopHat Alignments|
 |Reads_Folder_MAC|Path to Reads for TopHat Alignment|
 |pvalue_method|Method to Calculate P-value.  Can be *edgeR*, *limma-voom*, *DESeq2*, *lm* (linear regression), or *aov* (ANOVA)|
-|fdr_method|Method to Calculate FDR.  Can be *BH* (Benjamini and Hochberg) or *q-value*|
+|fdr_method|Method to Calculate FDR.  Can be *BH* (Benjamini and Hochberg),*q-value*, or *q-lfdr*|
 |genome|Name of genome build|
 |Bowtie2_Ref| Path to Bowtie2 ref|
 |Threads|Number of Threads for TopHat Alignment|
