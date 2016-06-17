@@ -103,6 +103,7 @@ trt.group = as.character(param.table$Value[param.table$Parameter == "treatment_g
 trt.group2 = as.character(param.table$Value[param.table$Parameter == "secondary_trt"])
 interaction.flag = as.character(param.table$Value[param.table$Parameter == "interaction"])
 pvalue.method = as.character(param.table$Value[param.table$Parameter == "pvalue_method"])
+fdr.method = as.character(param.table$Value[param.table$Parameter == "fdr_method"])
 goseq.flag = as.character(param.table$Value[param.table$Parameter == "run_goseq"])
 output.folder = as.character(param.table$Value[param.table$Parameter == "Raw_Code_PC"])
 user.folder = as.character(param.table$Value[param.table$Parameter == "Result_Folder"])
@@ -370,6 +371,104 @@ if(rep.check == 1){
 				test.pvalue = lrt$table$PValue
 			}
 		}#end else
+	} else if (pvalue.method == "DESeq2"){
+		library(DESeq2)
+		
+		if ((length(deg.groups) == 2)&(interaction.flag == "filter-overlap")){
+			print("DESeq2, Two-Step Analysis")
+			prim.counts = counts[,sample.description.table[,deg.groups[2]]==sec.groups[sec.groups==trt.group2]]
+			prim.edgeR.grp = sample.description.table[,deg.groups[1]][sample.description.table[,deg.groups[2]]==sec.groups[sec.groups==trt.group2]]
+			
+			if (trt.group == "continuous"){
+				prim.edgeR.grp = as.numeric(prim.edgeR.grp)
+			}
+			
+			colData = data.frame(var1=prim.edgeR.grp)
+			rownames(colData) = sample.label[sample.description.table[,deg.groups[2]]==sec.groups[sec.groups==trt.group2]]
+			dds <- DESeqDataSetFromMatrix(countData = prim.counts,
+											colData = colData,
+											design = ~ var1)
+			dds <- DESeq(dds)
+			res <- results(dds)
+			prim.pvalue = res$pvalue
+			
+			sec.counts = counts[,sample.description.table[,deg.groups[2]]==sec.groups[sec.groups!=trt.group2]]
+			sec.edgeR.grp = sample.description.table[,deg.groups[1]][sample.description.table[,deg.groups[2]]!=sec.groups[sec.groups==trt.group2]]
+
+			if (trt.group2 == "continuous"){
+				sec.edgeR.grp = as.numeric(prim.edgeR.grp)
+			}
+			
+			colData = data.frame(var1=sec.edgeR.grp)
+			rownames(colData) = sample.label[sample.description.table[,deg.groups[2]]!=sec.groups[sec.groups==trt.group2]]
+			dds <- DESeqDataSetFromMatrix(countData = sec.counts,
+											colData = colData,
+											design = ~ var1)
+			dds <- DESeq(dds)
+			res <- results(dds)
+			sec.pvalue = res$pvalue
+			
+		} else {
+			if (length(deg.groups) == 1){
+				print("DESeq2 with 1 variable")
+				var1 = sample.description.table[,deg.groups]
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+				colnames(counts) = sample.label
+				rownames(counts) = genes
+				colData = data.frame(var1=var1)
+				rownames(colData) = sample.label
+				dds <- DESeqDataSetFromMatrix(countData = counts,
+												colData = colData,
+												design = ~ var1)
+				dds <- DESeq(dds)
+				res <- results(dds)
+				test.pvalue = res$pvalue
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "no")){
+				print("DESeq2 with 2 variables")
+				var1 = sample.description.table[,deg.groups[1]]
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+				var2 = sample.description.table[,deg.groups[2]]
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				}
+				colnames(counts) = sample.label
+				rownames(counts) = genes
+				colData = data.frame(var1=var1, var2=var2)
+				rownames(colData) = sample.label
+				dds <- DESeqDataSetFromMatrix(countData = counts,
+												colData = colData,
+												design = ~ var1 + var2)
+				dds <- DESeq(dds)
+				res <- results(dds)
+				stop("Need to check code for multivariate DESeq2 analysis...")
+				test.pvalue = NA
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "model")){
+				print("DESeq2 with 2 variables plus interaction")
+				var1 = sample.description.table[,deg.groups[1]]
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+				var2 = sample.description.table[,deg.groups[2]]
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				}
+				colnames(counts) = sample.label
+				rownames(counts) = genes
+				colData = data.frame(var1=var1, var2=var2)
+				rownames(colData) = sample.label
+				dds <- DESeqDataSetFromMatrix(countData = counts,
+												colData = colData,
+												design = ~ var1*var2 + var1 + var2)
+				dds <- DESeq(dds)
+				res <- results(dds)
+				stop("Need to check code for multivariate DESeq2 analysis...")
+				test.pvalue = NA
+			}
+		}#end else
 	} else if (pvalue.method == "limma-voom"){
 		library(edgeR)
 		library(limma)
@@ -410,7 +509,6 @@ if(rep.check == 1){
 			
 		} else {
 			y <- DGEList(counts=counts, genes=genes)
-			y = estimateCommonDisp(y)
 			if (length(deg.groups) == 1){
 				print("limma-voom with 1 variable")
 				var1 = sample.description.table[,deg.groups]
@@ -570,7 +668,7 @@ if(rep.check == 1){
 			}
 		}#end else
 	} else{
-		stop("pvalue_method must be \"edgeR\", \"limma-voom\", \"lm\", or \"ANOVA\"")
+		stop("pvalue_method must be \"edgeR\", \"limma-voom\", \"DESeq2\", \"lm\", or \"ANOVA\"")
 	}
 } else{
 	test.pvalue = rep(1,times=length(genes))
@@ -588,7 +686,27 @@ if (trt.group == "continuous"){
 
 
 if (interaction.flag == "no"){
-	fdr = p.adjust(test.pvalue, "fdr")
+	if (fdr.method == "BH"){
+		fdr = p.adjust(test.pvalue, "fdr")
+	} else if (fdr.method == "q-value"){
+		library(qvalue)
+		qobj <- qvalue(p = test.pvalue)
+		fdr = qobj$qvalue
+		png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+		qHist = hist(qobj)
+		print(qHist)
+		dev.off()
+	} else if (fdr.method == "q-lfdr"){
+		library(qvalue)
+		qobj <- qvalue(p = test.pvalue)
+		fdr = qobj$lfdr
+		png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+		qHist = hist(qobj)
+		print(qHist)
+		dev.off()
+	} else {
+		stop("fdr_method must be \"BH\", \"q-value\", or \"q-lfdr\"")
+	}
 	status = rep("No Change", times=length(fdr))
 	if (trt.group == "continuous"){
 		status[(gene.cor >= cor.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = upID
@@ -602,7 +720,27 @@ if (interaction.flag == "no"){
 } else{
 	trt.group = prim.trt
 	if(interaction.flag == "model"){
-		fdr = p.adjust(test.pvalue, "fdr")
+		if (fdr.method == "BH"){
+			fdr = p.adjust(test.pvalue, "fdr")
+		} else if (fdr.method == "q-value"){
+			library(qvalue)
+			qobj <- qvalue(p = test.pvalue)
+			fdr = qobj$qvalue
+			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			qHist = hist(qobj)
+			print(qHist)
+			dev.off()
+		} else if (fdr.method == "q-lfdr"){
+			library(qvalue)
+			qobj <- qvalue(p = test.pvalue)
+			fdr = qobj$lfdr
+			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			qHist = hist(qobj)
+			print(qHist)
+			dev.off()
+		} else {
+			stop("fdr_method must be \"BH\", \"q-value\", or \"q-lfdr\"")
+		}
 		status = rep("No Change", times=length(fdr))
 		if (trt.group == "continuous"){
 			status[(gene.cor >= cor.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = upID
@@ -614,7 +752,27 @@ if (interaction.flag == "no"){
 			pvalue.table = data.frame(p.value = test.pvalue, FDR = fdr)
 		}#end else
 	} else if (interaction.flag == "filter-overlap"){
-		fdr = p.adjust(prim.pvalue, "fdr")
+		if (fdr.method == "BH"){
+			fdr = p.adjust(prim.pvalue, "fdr")
+		} else if (fdr.method == "q-value"){
+			library(qvalue)
+			qobj <- qvalue(p = prim.pvalue)
+			fdr = qobj$qvalue
+			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			qHist = hist(qobj)
+			print(qHist)
+			dev.off()
+		} else if (fdr.method == "q-lfdr"){
+			library(qvalue)
+			qobj <- qvalue(p = prim.pvalue)
+			fdr = qobj$lfdr
+			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			qHist = hist(qobj)
+			print(qHist)
+			dev.off()
+		} else {
+			stop("fdr_method must be \"BH\", \"q-value\", or \"q-lfdr\"")
+		}
 		pass1.status = rep("No Change", times=length(fdr))
 		if (trt.group == "continuous"){
 			pass1.status[(gene.cor >= cor.cutoff) & (prim.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = paste(trt.group," Up",sep="")
@@ -626,8 +784,29 @@ if (interaction.flag == "no"){
 
 		print(paste("Primary Up-Regulated: ",length(pass1.status[pass1.status == paste(trt.group," Up",sep="")]),sep=""))
 		print(paste("Primary Down-Regulated: ",length(pass1.status[pass1.status == paste(trt.group," Down",sep="")]),sep=""))
-			
-		sec.fdr = p.adjust(sec.pvalue, "fdr")
+
+		if (fdr.method == "BH"){
+			sec.fdr = p.adjust(sec.pvalue, "fdr")
+		} else if (fdr.method == "q-value"){
+			library(qvalue)
+			qobj <- qvalue(p = sec.pvalue)
+			sec.fdr = qobj$qvalue
+			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			qHist = hist(qobj)
+			print(qHist)
+			dev.off()
+		} else if (fdr.method == "q-lfdr"){
+			library(qvalue)
+			qobj <- qvalue(p = sec.pvalue)
+			sec.fdr = qobj$lfdr
+			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			qHist = hist(qobj)
+			print(qHist)
+			dev.off()
+		} else {
+			stop("fdr_method must be \"BH\", \"q-value\", or \"q-lfdr\"")
+		}		
+
 		pass2.status = rep("No Change", times=length(fdr))
 		if (trt.group2 == "continuous"){
 			pass2.status[(gene.cor2 >= cor.cutoff2) & (sec.pvalue <= pvalue.cutoff2) & (sec.fdr <= fdr.cutoff2)] = paste(trt.group," Up",sep="")
