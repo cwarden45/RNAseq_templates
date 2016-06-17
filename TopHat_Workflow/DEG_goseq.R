@@ -678,92 +678,94 @@ temp.rpkm = RPKM
 temp.rpkm = temp.rpkm[status != "No Change", ]
 deg.genes = genes[status != "No Change"]
 
-if(length(plot.groups) > 1){
-	source("heatmap.3.R")
-	grp1 = as.character(sample.description.table[,plot.groups[1]])
-	grp2 = as.character(sample.description.table[,plot.groups[2]])
-	group.levels = c(levels(as.factor(grp1)),levels(as.factor(grp2)))
+if(length(deg.genes) > 1){
+	if(length(plot.groups) > 1){
+		source("heatmap.3.R")
+		grp1 = as.character(sample.description.table[,plot.groups[1]])
+		grp2 = as.character(sample.description.table[,plot.groups[2]])
+		group.levels = c(levels(as.factor(grp1)),levels(as.factor(grp2)))
 
-	color.palette <- fixed.color.palatte[1:length(group.levels)]
-	labelColors1 = rep("black",times=length(sample.label))
-	for (i in 1:length(group.levels)){
-		labelColors1[grp1 == as.character(group.levels[i])] = color.palette[i]
-	}#end for (i in 1:length(group.levels))
-	labelColors2 = rep("black",times=length(sample.label))
-	for (i in 1:length(group.levels)){
-		labelColors2[grp2 == as.character(group.levels[i])] = color.palette[i]
-	}#end for (i in 1:length(group.levels))
-	
-	std.expr = apply(temp.rpkm, 1, standardize.arr)
-	if(length(deg.genes) < 25){
-		colnames(std.expr) = deg.genes
-	} else {
-		colnames(std.expr) = rep("", length(deg.genes))
-	}
-	rownames(std.expr) = sample.label
-
-	column_annotation <- as.matrix(deg.genes)
-	colnames(column_annotation) <- c("")
-
-	row_annotation <- data.frame(label1 = labelColors1, label2 = labelColors2)
-	row_annotation = as.matrix(t(row_annotation))
-	rownames(row_annotation) <- c(plot.groups)
-
-	heatmap.file <- paste(comp.name,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
-	heatmap.file = gsub(":",".",heatmap.file)
-	png(file = heatmap.file)
-	heatmap.3(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
-				RowSideColors=row_annotation, trace="none", margins = c(8,13),RowSideColorsSize=4, dendrogram="both")
-	legend("topright", legend=group.levels,
-						col=color.palette,
-						pch=15, cex=0.7)
-	dev.off()
-	
-	if(interaction.flag != "none"){
-		temp.fc.table = as.matrix(fc.table[,-ncol(fc.table)])
-		temp.fc.table = temp.fc.table[status != "No Change", ]
+		color.palette <- fixed.color.palatte[1:length(group.levels)]
+		labelColors1 = rep("black",times=length(sample.label))
+		for (i in 1:length(group.levels)){
+			labelColors1[grp1 == as.character(group.levels[i])] = color.palette[i]
+		}#end for (i in 1:length(group.levels))
+		labelColors2 = rep("black",times=length(sample.label))
+		for (i in 1:length(group.levels)){
+			labelColors2[grp2 == as.character(group.levels[i])] = color.palette[i]
+		}#end for (i in 1:length(group.levels))
+		
+		std.expr = apply(temp.rpkm, 1, standardize.arr)
 		if(length(deg.genes) < 25){
-			rownames(temp.fc.table) = deg.genes
+			colnames(std.expr) = deg.genes
 		} else {
-			rownames(temp.fc.table) = rep("",times=length(deg.genes))
+			colnames(std.expr) = rep("", length(deg.genes))
 		}
-		colnames(temp.fc.table) = gsub(".:.",":",gsub("fold.change.","",colnames(temp.fc.table)))
-	
-		temp.fc.table[temp.fc.table < -10] = -10
-		temp.fc.table[temp.fc.table > 10] = 10
-	
-		heatmap.file <- paste("fold_change_",comp.name,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
+		rownames(std.expr) = sample.label
+
+		column_annotation <- as.matrix(deg.genes)
+		colnames(column_annotation) <- c("")
+
+		row_annotation <- data.frame(label1 = labelColors1, label2 = labelColors2)
+		row_annotation = as.matrix(t(row_annotation))
+		rownames(row_annotation) <- c(plot.groups)
+
+		heatmap.file <- paste(comp.name,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
 		heatmap.file = gsub(":",".",heatmap.file)
 		png(file = heatmap.file)
-		heatmap.2(temp.fc.table, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
-					trace="none", margins = c(20,5), cexCol=1.5)
+		heatmap.3(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
+					RowSideColors=row_annotation, trace="none", margins = c(8,13),RowSideColorsSize=4, dendrogram="both")
+		legend("topright", legend=group.levels,
+							col=color.palette,
+							pch=15, cex=0.7)
 		dev.off()
-	}#end if(interaction.flag != "none")
-	
-} else {
-	group.levels = levels(as.factor(sample.description.table[,plot.groups]))
-
-	color.palette <- fixed.color.palatte[1:length(group.levels)]
-	labelColors = rep("black",times=length(sample.label))
-	for (i in 1:length(group.levels)){
-		labelColors[grp == as.character(group.levels[i])] = color.palette[i]
-	}#end for (i in 1:length(group.levels))
-
-	std.expr = apply(temp.rpkm, 1, standardize.arr)
-	if(length(deg.genes) < 25){
-		colnames(std.expr) = deg.genes
+		
+		if(interaction.flag != "none"){
+			temp.fc.table = as.matrix(fc.table[,-ncol(fc.table)])
+			temp.fc.table = temp.fc.table[status != "No Change", ]
+			if(length(deg.genes) < 25){
+				rownames(temp.fc.table) = deg.genes
+			} else {
+				rownames(temp.fc.table) = rep("",times=length(deg.genes))
+			}
+			colnames(temp.fc.table) = gsub(".:.",":",gsub("fold.change.","",colnames(temp.fc.table)))
+		
+			temp.fc.table[temp.fc.table < -10] = -10
+			temp.fc.table[temp.fc.table > 10] = 10
+		
+			heatmap.file <- paste("fold_change_",comp.name,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
+			heatmap.file = gsub(":",".",heatmap.file)
+			png(file = heatmap.file)
+			heatmap.2(temp.fc.table, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
+						trace="none", margins = c(20,5), cexCol=1.5)
+			dev.off()
+		}#end if(interaction.flag != "none")
+		
 	} else {
-		colnames(std.expr) = rep("", length(deg.genes))
-	}
-	rownames(std.expr) = sample.label
-	
-	heatmap.file <- paste(comp.name,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
-	heatmap.file = gsub(":",".",heatmap.file)
-	png(file = heatmap.file)
-	heatmap.2(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
-				 RowSideColors=labelColors, trace="none", margins = c(5,15))
-	dev.off()
-}#end else
+		group.levels = levels(as.factor(sample.description.table[,plot.groups]))
+
+		color.palette <- fixed.color.palatte[1:length(group.levels)]
+		labelColors = rep("black",times=length(sample.label))
+		for (i in 1:length(group.levels)){
+			labelColors[grp == as.character(group.levels[i])] = color.palette[i]
+		}#end for (i in 1:length(group.levels))
+
+		std.expr = apply(temp.rpkm, 1, standardize.arr)
+		if(length(deg.genes) < 25){
+			colnames(std.expr) = deg.genes
+		} else {
+			colnames(std.expr) = rep("", length(deg.genes))
+		}
+		rownames(std.expr) = sample.label
+		
+		heatmap.file <- paste(comp.name,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
+		heatmap.file = gsub(":",".",heatmap.file)
+		png(file = heatmap.file)
+		heatmap.2(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
+					 RowSideColors=labelColors, trace="none", margins = c(5,15))
+		dev.off()
+	}#end else
+}#end if(length(deg.genes) > 1)
 
 #goseq
 if (goseq.flag == "yes"){
