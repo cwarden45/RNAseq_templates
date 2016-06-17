@@ -34,6 +34,10 @@ normalized.mat[normalized.mat < log2(min.expression)] = NA
 expr.max <- ceiling(max(normalized.mat, na.rm = T))
 expr.min <- ceiling(min(normalized.mat, na.rm = T))
 
+quantiles = round(apply(normalized.mat, 2, quantile, probs=c(0.01,0.05,0.25,0.5,0.75,0.95,0.99)), digits=2)
+quantiles = data.frame(Percentage = rownames(quantiles), quantiles)
+write.table(quantiles, "log2_rpkm_quantiles.txt",sep="\t", quote=F, row.names=F)
+
 pca.values <- prcomp(na.omit(data.matrix(normalized.mat)))
 print(dim(pca.values))
 pc.values <- data.frame(pca.values$rotation)
