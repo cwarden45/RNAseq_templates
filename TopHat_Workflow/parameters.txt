@@ -15,6 +15,7 @@ lncRNA_GTF_MAC	[required]
 HTseq_input_folder	[required]
 run_goseq	yes
 pvalue_method	edgeR
+fdr_method  BH
 sample_description_file	sample_description.txt
 total_counts_file	total_read_counts.txt
 aligned_stats_file	findOverlaps_exonic_stats.txt
