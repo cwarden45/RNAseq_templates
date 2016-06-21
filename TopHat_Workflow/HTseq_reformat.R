@@ -52,15 +52,44 @@ genes = as.character(temp.table[[1]])
 count.mat = matrix(nrow=nrow(temp.table), ncol=length(sampleID))
 colnames(count.mat) = sample.label
 
+matched.genes = c()
+
 for (i in 1:length(sampleID)){
 	temp.file = count.files[[i]]
 	temp.table = read.table(temp.file, sep="\t", header=F)
-	if(!identical(as.character(temp.table[[1]]), genes)){
-		stop("Need to revise code! Genes not in same order.")
-	}
-
-	count.mat[,i] = temp.table[[2]]
+	temp.genes = as.character(temp.table[[1]])
+	
+	if(length(matched.genes) != 0){
+		matched.genes = temp.genes[match(matched.genes, temp.genes, nomatch=0)]
+	} else if(!identical(temp.genes, genes)){
+		print("Genes not in same order - most likely, different quantification method was used for different samples")
+		userAns = readline(prompt="Do you wish to proceed with a subset of matched gene symbols? (y/n): ")
+		userAns = tolower(substr(userAns, 1, 1))
+		if (userAns != "y"){
+			stop("Please re-run htseq-count with all of your samples")
+		} else {
+			matched.genes = temp.genes[match(genes, temp.genes, nomatch=0)]
+		}#end else
+	} else {
+		count.mat[,i] = temp.table[[2]]
+	}#end else
 }#end for (i in 1:length(sampleID))
+
+if (length(matched.genes) != 0){
+	count.mat = matrix(nrow=length(matched.genes), ncol=length(sampleID))
+	colnames(count.mat) = sample.label
+	
+	for (i in 1:length(sampleID)){
+	temp.file = count.files[[i]]
+	temp.table = read.table(temp.file, sep="\t", header=F)
+	temp.genes = as.character(temp.table[[1]])
+	temp.counts = temp.table[[2]]
+	
+	count.mat[,i] = temp.counts[match(matched.genes, temp.genes, nomatch=0)]
+	}#end for (i in 1:length(sampleID))
+	
+	genes = matched.genes
+}#end if (length(matched.genes) != 0)
 
 irrelevant.counts = c("__no_feature", "__ambiguous", "__too_low_aQual","__not_aligned","__alignment_not_unique")
 count.mat = count.mat[-match(irrelevant.counts, genes),]
