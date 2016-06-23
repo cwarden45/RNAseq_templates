@@ -45,21 +45,12 @@ for(i in 1:length(bam.files)){
         data <- readGAlignments(file = inputfile, use.names = TRUE, 
             					param = ScanBamParam(which = GRanges(chr, IRanges(1, chr_length[chr]))))
 		total_reads[[chr]] <- names(data)
-
-        chr.gene.table <- exon.info[which(exon.info$chr == i), ]
-       	chr.gene.table <- exon.info[order(exon.info$start, exon.info$end), ]
-        exon_range <- GRanges(seqnames = exon.info$chr, ranges=IRanges(exon.info$start, exon.info$end), strand = Rle(strand(exon.info$strand)))
-        hits <- findOverlaps(as(data, "GRanges"), exon_range)
-        exon_reads[[chr]] <- names(data[(unique(as.matrix(hits)[, 1]))])
 	}#end  for(chr in chromosomes)
 	
-	exonic.reads[i] = length(unique(unlist(exon_reads)))
 	aligned.reads[i] = length(unique(unlist(total_reads))) 
-	print(exonic.reads)
 	print(aligned.reads)
 }#end for(i in 1:length(bam.files))
 
-percent.exonic = round(100 * exonic.reads / aligned.reads, digits = 1)
-stat.table = data.frame(Sample = sampleIDs, aligned.reads = aligned.reads, exonic.reads = exonic.reads, percent.exonic=percent.exonic)
+stat.table = data.frame(Sample = sampleIDs, aligned.reads = aligned.reads)
 write.table(stat.table, aligned.stats.file, row.names=F, sep="\t", quote=F)
 print(warnings())
