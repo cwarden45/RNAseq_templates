@@ -38,6 +38,19 @@ setwd(output.folder)
 sample.table = read.table(sample.file, header=T, sep="\t")
 sampleID = as.character(sample.table$sampleID)
 sample.label = as.character(sample.table$userID)
+dash.flag = grep("-",sample.label)
+if(length(dash.flag) > 0){
+	print(paste(paste(sample.label[dash.flag],collapse=",")," samples labels have dashes in their labels",sep=""))
+}
+num.flag = grep("^[0-9]",sample.label)
+if(length(dash.flag) > 0){
+	print(paste(paste(sample.label[num.flag],collapse=",")," samples labels start with numbers",sep=""))
+}
+
+if((length(dash.flag) > 0)|(length(num.flag) > 0)){
+	stop("Please make sure sample labels do not have dashes and do not start with numbers")
+}
+
 count.files = as.character(sample.table$HTseq.file)
 
 total.reads.table = read.table(total.reads.file, header=T, sep="\t")
@@ -92,6 +105,7 @@ if (length(matched.genes) != 0){
 }#end if (length(matched.genes) != 0)
 
 irrelevant.counts = c("__no_feature", "__ambiguous", "__too_low_aQual","__not_aligned","__alignment_not_unique")
+extra.stats = count.mat[match(irrelevant.counts, genes),]
 count.mat = count.mat[-match(irrelevant.counts, genes),]
 genes = genes[-match(irrelevant.counts, genes)]
 rownames(count.mat) = genes
@@ -127,8 +141,11 @@ exonic.stat.table = exonic.stat.table[match(sampleID, exonicID),]
 total.reads = as.numeric(total.reads.table$Total.Reads)
 aligned.reads = as.numeric(exonic.stat.table$aligned.reads)
 percent.aligned.reads = round(100 * aligned.reads / total.reads, digits=1)
-exonic.reads = as.numeric(exonic.stat.table$exonic.reads)
-percent.exonic.reads = round(100 * exonic.reads / aligned.reads, digits=1)
+
+intergenic.reads = extra.stats[irrelevant.counts == "__no_feature", ]
+exonic.reads = apply(count.mat, 2, sum)
+unique.reads = exonic.reads + intergenic.reads
+percent.exonic.reads = round(100 * exonic.reads / unique.reads, digits=1)
 
 total.million.aligned.reads = aligned.reads / 1000000
 print(total.million.aligned.reads)
@@ -148,7 +165,7 @@ expressed.gene.counts = apply(RPKM, 2, count.defined.values, expr.cutoff = log2(
 percent.expressed.genes = round( 100 * expressed.gene.counts / nrow(RPKM), digits=1)
 coverage.table = data.frame(Sample = sample.label, total.reads = total.reads,
 							aligned.reads=aligned.reads, percent.aligned.reads =percent.aligned.reads,
-							exonic.reads =exonic.reads, percent.exonic.reads = percent.exonic.reads,
+							htseq.nofeature.reads =intergenic.reads, percent.unique.exonic.reads = percent.exonic.reads,
 							Expressed.Genes = expressed.gene.counts, Percent.Expressed.Genes = percent.expressed.genes,
 							trimmed.percent=trimmed.percent)
 write.table(coverage.table, file="gene_coverage_stats.txt", quote=F, row.names=F, sep="\t")
