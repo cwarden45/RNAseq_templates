@@ -195,15 +195,51 @@ if(length(groupIDs) == 1){
 }
 colnames(average.rpkm) = paste("avg.log2.rpkm", sub("-",".",groupIDs), sep=".")
 
+#removed undefined group IDs (so, you can visualize samples that aren't in your comparison)
+if(length(deg.groups) == 1){
+	var1 = sample.description.table[,deg.groups]
+	deg.counts = counts[,!is.na(var1)]
+	deg.RPKM = RPKM[,!is.na(var1)]
+	var1 = var1[!is.na(var1)]
+} else if (length(deg.groups) == 2){
+	if(interaction.flag == "filter-overlap"){
+		var1 = sample.description.table[,deg.groups[1]]
+		var2 = sample.description.table[,deg.groups[2]]
+		deg.samples = !is.na(var1)&!is.na(var2)
+		deg.counts = counts[,deg.samples]
+		var1 = var1[deg.samples]
+		var2 = var2[deg.samples]
+			
+		prim.deg.grp = var1[var2 == trt.group2]
+		prim.counts = counts[,var2 == trt.group2]
+		prim.RPKM = RPKM[,var2 == trt.group2]
+
+		sec.deg.grp = var1[var2 != trt.group2]
+		sec.counts = counts[,var2 != trt.group2]
+		sec.RPKM = RPKM[,var2 != trt.group2]
+
+	} else{
+		var1 = sample.description.table[,deg.groups[1]]
+		var2 = sample.description.table[,deg.groups[2]]
+		deg.samples = !is.na(var1)&!is.na(var2)
+		deg.counts = counts[,deg.samples]
+		deg.RPKM = RPKM[,deg.samples]
+		var1 = var1[deg.samples]
+		var2 = var2[deg.samples]
+	}
+} else {
+	stop("Code currently doesn't support more than 2 group model for DEG (with or without interaction)")
+}
+
 if(length(deg.groups) == 1){
 	print("Averaging Expression for One Variable (for deg.groups)")
-	contrast.grp = sample.description.table[,deg.groups]
+	contrast.grp = var1
 } else if ((length(deg.groups) == 2)&(interaction.flag == "no")){
 	print("Averaging Expression for First Variable (for deg.groups)")
-	contrast.grp = sample.description.table[,deg.groups[1]]
+	contrast.grp = var1
 } else if (length(deg.groups) == 2){
 	print("Averaging Expression for Interaction Variable (for deg.groups)")
-	contrast.grp = paste(sample.description.table[,deg.groups[1]],sample.description.table[,deg.groups[2]],sep=":")
+	contrast.grp = paste(var1,var2,sep=":")
 } else {
 	stop("Code only compatible with 2 variables (with or without a 3rd interaction variable")
 }
@@ -211,12 +247,12 @@ if(length(deg.groups) == 1){
 if (trt.group == "continuous"){
 	contrast.grp = as.numeric(contrast.grp)
 	
-	gene.cor = apply(RPKM, 1, calc.gene.cor, indep.var=contrast.grp)
+	gene.cor = apply(deg.RPKM, 1, calc.gene.cor, indep.var=contrast.grp)
 	
 	fc.table = data.frame(cor=gene.cor)
 } else {
 	groupIDs = as.character(levels(as.factor(contrast.grp)))
-	contrast.rpkm = data.frame(t(apply(RPKM, 1, avgGroupExpression, groups = contrast.grp)))
+	contrast.rpkm = data.frame(t(apply(deg.RPKM, 1, avgGroupExpression, groups = contrast.grp)))
 	colnames(contrast.rpkm) = paste("avg.log2.rpkm", sub("-",".",groupIDs), sep=".")
 }#end else
 
@@ -229,9 +265,9 @@ if((interaction.flag == "no") & (trt.group != "continuous")){
 	fc.table = data.frame(log2ratio=log2ratio, fold.change=fc)
 } else if ((interaction.flag == "model")|(interaction.flag == "filter-overlap")){
 	if ((trt.group == "continuous")&(trt.group2 == "continuous")){
-		sec.contrast.grp = as.numeric(sample.description.table[,deg.groups[2]])
+		sec.contrast.grp = as.numeric(var2)
 		
-		gene.cor2 = apply(RPKM, 1, calc.gene.cor, indep.var=sec.contrast.grp)
+		gene.cor2 = apply(deg.RPKM, 1, calc.gene.cor, indep.var=sec.contrast.grp)
 		
 		fc.table = data.frame(prim.cor=gene.cor, sec.cor = gene.cor2)
 	} else if (trt.group == "continuous"){
@@ -239,9 +275,9 @@ if((interaction.flag == "no") & (trt.group != "continuous")){
 		print("NOTE: 'Up-Regulated' R output refers to genes that vary with FDR and p-value cutoffs")
 		print("However, fold-change / correlation values for each separate variable are still provided")
 
-		sec.groupIDs = sample.description.table[,deg.groups[2]]
+		sec.groupIDs = var2
 		sec.groups = as.character(levels(as.factor(sec.groupIDs)))
-		sec.contrast.rpkm = data.frame(t(apply(RPKM, 1, avgGroupExpression, groups = sec.groupIDs)))
+		sec.contrast.rpkm = data.frame(t(apply(deg.RPKM, 1, avgGroupExpression, groups = sec.groupIDs)))
 		colnames(sec.contrast.rpkm) = paste("avg.log2.rpkm", sub("-",".",groupIDs), sep=".")
 		sec.trt.expr = sec.contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",trt.group2), sep=".")]
 		sec.cntl.expr = sec.contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",sec.groups[sec.groups != trt.group2]), sep=".")]
@@ -255,9 +291,9 @@ if((interaction.flag == "no") & (trt.group != "continuous")){
 		print("NOTE: 'Up-Regulated' R output refers to genes that vary with FDR and p-value cutoffs")
 		print("However, fold-change / correlation values for each separate variable are still provided")
 
-		prim.groupIDs = sample.description.table[,deg.groups[1]]
+		prim.groupIDs = var1
 		prim.groups = as.character(levels(as.factor(prim.groupIDs)))
-		prim.contrast.rpkm = data.frame(t(apply(RPKM, 1, avgGroupExpression, groups = prim.groupIDs)))
+		prim.contrast.rpkm = data.frame(t(apply(deg.RPKM, 1, avgGroupExpression, groups = prim.groupIDs)))
 		colnames(prim.contrast.rpkm) = paste("avg.log2.rpkm", sub("-",".",prim.groups), sep=".")
 		prim.trt = trt.group
 		prim.cntl = prim.groups[prim.groups != trt.group]
@@ -267,12 +303,12 @@ if((interaction.flag == "no") & (trt.group != "continuous")){
 		prim.log2ratio = round(prim.trt.expr - prim.cntl.expr, digits = 2)
 		prim.fc = round(sapply(prim.log2ratio, ratio2fc), digits = 2)
 		
-		sec.contrast.grp = as.numeric(sample.description.table[,deg.groups[2]])
-		gene.cor2 = apply(RPKM, 1, calc.gene.cor, indep.var=sec.contrast.grp)
+		sec.contrast.grp = as.numeric(var2)
+		gene.cor2 = apply(deg.RPKM, 1, calc.gene.cor, indep.var=sec.contrast.grp)
 		
 		fc.table = data.frame(prim.fc=prim.fc, sec.cor = gene.cor2)
 	} else {
-		prim.groups = as.character(levels(as.factor(sample.description.table[,deg.groups[1]])))
+		prim.groups = paste(var1,var2,sep=":")
 		prim.trt = paste(trt.group,trt.group2,sep=":")
 		prim.cntl = paste(prim.groups[prim.groups != trt.group],trt.group2,sep=":")
 		prim.trt.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",prim.trt), sep=".")]
@@ -330,43 +366,6 @@ for (i in 1:length(deg.groups)){
 }#end for (deg.group in deg.groups)
 
 if(rep.check == 1){
-	#removed undefined group IDs (so, you can visualize samples that aren't in your comparison)
-	if(length(deg.groups) == 1){
-		var1 = sample.description.table[,deg.groups]
-		deg.counts = counts[,!is.na(var1)]
-		deg.RPKM = RPKM[,!is.na(var1)]
-		var1 = var1[!is.na(var1)]
-	} else if (length(deg.groups) == 2){
-		if(interaction.flag == "filter-overlap"){
-			var1 = sample.description.table[,deg.groups[1]]
-			var2 = sample.description.table[,deg.groups[2]]
-			deg.samples = !is.na(var1)&!is.na(var2)
-			deg.counts = counts[,deg.samples]
-			var1 = var1[deg.samples]
-			var2 = var2[deg.samples]
-			
-			prim.deg.grp = var1[var2 == trt.group2]
-			prim.counts = counts[,var2 == trt.group2]
-			prim.RPKM = RPKM[,var2 == trt.group2]
-
-			sec.deg.grp = var1[var2 != trt.group2]
-			sec.counts = counts[,var2 != trt.group2]
-			sec.RPKM = RPKM[,var2 != trt.group2]
-
-		} else{
-			var1 = sample.description.table[,deg.groups[1]]
-			var2 = sample.description.table[,deg.groups[2]]
-			deg.samples = !is.na(var1)&!is.na(var2)
-			deg.counts = counts[,deg.samples]
-			deg.RPKM = RPKM[,deg.samples]
-			var1 = var1[deg.samples]
-			var2 = var2[deg.samples]
-
-		}
-	} else {
-		stop("Code currently doesn't support more than 2 group model for DEG (with or without interaction)")
-	}
-
 	#start p-value calculation
 	if (pvalue.method == "edgeR"){
 		library(edgeR)
@@ -415,10 +414,14 @@ if(rep.check == 1){
 
 				if (trt.group == "continuous"){
 					var1 = as.numeric(var1)
+				} else{
+					var1 = as.factor(var1)
 				}
 
 				if (trt.group2 == "continuous"){
 					var2 = as.numeric(var2)
+				} else{
+					var2 = as.factor(var2)
 				}
 				design <- model.matrix(~var1 + var2)
 				fit <- glmFit(y, design)
@@ -493,9 +496,14 @@ if(rep.check == 1){
 
 				if (trt.group == "continuous"){
 					var1 = as.numeric(var1)
+				} else{
+					var1 = as.factor(var1)
 				}
+
 				if (trt.group2 == "continuous"){
 					var2 = as.numeric(var2)
+				} else{
+					var2 = as.factor(var2)
 				}
 
 				colData = data.frame(var1=var1, var2=var2)
@@ -555,6 +563,7 @@ if(rep.check == 1){
 			
 			y <- DGEList(counts=prim.counts, genes=genes)
 			png(paste(comp.name,"prim_voom_plot.png",sep="_"))
+			design <- model.matrix(~prim.deg.grp)
 			v <- voom(y,design,plot=TRUE)
 			dev.off()
 			fit <- lmFit(v,design)
@@ -564,11 +573,12 @@ if(rep.check == 1){
 			
 
 			if (trt.group2 == "continuous"){
-				sec.deg.grp = as.numeric(prim.deg.grp)
+				sec.deg.grp = as.numeric(sec.deg.grp)
 			}
 			
 			y <- DGEList(counts=sec.counts, genes=genes)
-			png(paste(comp.name,"prim_voom_plot.png",sep="_"))
+			design <- model.matrix(~sec.deg.grp)
+			png(paste(comp.name,"sec_voom_plot.png",sep="_"))
 			v <- voom(y,design,plot=TRUE)
 			dev.off()
 			fit <- lmFit(v,design)
@@ -597,10 +607,14 @@ if(rep.check == 1){
 
 				if (trt.group == "continuous"){
 					var1 = as.numeric(var1)
+				} else{
+					var1 = as.factor(var1)
 				}
 
 				if (trt.group2 == "continuous"){
 					var2 = as.numeric(var2)
+				} else{
+					var2 = as.factor(var2)
 				}
 				design <- model.matrix(~var1 + var2)
 				png(paste(comp.name,"voom_plot.png",sep="_"))
@@ -609,7 +623,7 @@ if(rep.check == 1){
 				fit <- lmFit(v,design)
 				fit <- eBayes(fit)
 				pvalue.mat = data.frame(fit$p.value)
-				test.pvalue = pvalue.mat[,3]
+				test.pvalue = pvalue.mat[,2]
 			} else if ((length(deg.groups) == 2)&(interaction.flag == "model")){
 				print("limma-voom with 2 variables plus interaction")
 
