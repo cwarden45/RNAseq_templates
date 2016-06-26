@@ -453,8 +453,8 @@ if(rep.check == 1){
 			colData = data.frame(var1=prim.deg.grp)
 			rownames(colData) = colnames(prim.counts)
 			dds <- DESeqDataSetFromMatrix(countData = prim.counts,
-											colData = colData,
-											design = ~ var1)
+							colData = colData,
+							design = ~ var1)
 			dds <- DESeq(dds)
 			res <- results(dds)
 			prim.pvalue = res$pvalue
@@ -467,8 +467,8 @@ if(rep.check == 1){
 			colData = data.frame(var1=sec.edgeR.grp)
 			rownames(colData) = colnames(sec.counts)
 			dds <- DESeqDataSetFromMatrix(countData = sec.counts,
-											colData = colData,
-											design = ~ var1)
+							colData = colData,
+							design = ~ var1)
 			dds <- DESeq(dds)
 			res <- results(dds)
 			sec.pvalue = res$pvalue
@@ -483,8 +483,8 @@ if(rep.check == 1){
 				colData = data.frame(var1=var1)
 				rownames(colData) = colnames(deg.counts)
 				dds <- DESeqDataSetFromMatrix(countData = deg.counts,
-												colData = colData,
-												design = ~ var1)
+								colData = colData,
+								design = ~ var1)
 				dds <- DESeq(dds)
 				res <- results(dds)
 				test.pvalue = res$pvalue
@@ -501,8 +501,8 @@ if(rep.check == 1){
 				colData = data.frame(var1=var1, var2=var2)
 				rownames(colData) = colnames(deg.counts)
 				dds <- DESeqDataSetFromMatrix(countData = deg.counts,
-												colData = colData,
-												design = ~ var1 + var2)
+								colData = colData,
+								design = ~ var1 + var2)
 				Wald.flag = TRUE
 				if (Wald.flag){
 					dds <- DESeq(dds)
@@ -510,7 +510,7 @@ if(rep.check == 1){
 					if(length(other.groups) > 1){
 						print("DESeq2 Wald-test will look at differences between two groups.")
 						print("You can manually switch code to use LRT instead of Wald test (set Wald.flag = FALSE).")
-						print("However, the paired sample design in the DESeq2 manual uses the Wald test.")
+						#The paired sample design in the DESeq2 manual uses the Wald test
 						stop("Or, please consider using an interaction model with LRT if your primary variable has more than two groups.")
 					}
 					res <- results(dds, contrast = c("var1", trt.group, other.groups))
@@ -535,8 +535,8 @@ if(rep.check == 1){
 				colData = data.frame(var1=var1, var2=var2)
 				rownames(colData) = colnames(deg.counts)
 				dds <- DESeqDataSetFromMatrix(countData = deg.counts,
-												colData = colData,
-												design = ~ var1*var2 + var1 + var2)
+								colData = colData,
+								design = ~ var1*var2 + var1 + var2)
 				dds <- DESeq(dds, test="LRT", reduced = ~ var1 + var2)
 				res <- results(dds)
 				test.pvalue = res$pvalue
