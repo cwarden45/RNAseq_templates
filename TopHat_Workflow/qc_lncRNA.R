@@ -29,7 +29,6 @@ userID = as.character(sample.table$userID)
 
 normalized.table = read.table(rpkm.file, sep="\t", header=T)
 normalized.mat = normalized.table[,match(userID, names(normalized.table))]
-normalized.mat[normalized.mat < log2(min.expression)] = NA
 expr.max <- ceiling(max(normalized.mat, na.rm = T))
 expr.min <- ceiling(min(normalized.mat, na.rm = T))
 

@@ -29,7 +29,7 @@ aligned.trimmed.counts <- function(counts, min.percent, max.percent)
 }#end def aligned.trimmed.counts
 
 param.table = read.table("parameters_lncRNA.txt", header=T, sep="\t")
-comp.name=as.character(param.table$Value[param.table$Parameter == "comp_name"])
+lncRNA.source=as.character(param.table$Value[param.table$Parameter == "lncRNA_ann_name"])
 genome=as.character(param.table$Value[param.table$Parameter == "genome"])
 min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "rpkm_expression_cutoff"]))
 output.folder = as.character(param.table$Value[param.table$Parameter == "Raw_Code_PC"])
@@ -40,7 +40,7 @@ total.reads.file = as.character(param.table$Value[param.table$Parameter == "tota
 exonic.stat.file = as.character(param.table$Value[param.table$Parameter == "aligned_stats_file"])
 counts.file = as.character(param.table$Value[param.table$Parameter == "counts_file"])
 rpkm.file = as.character(param.table$Value[param.table$Parameter == "rpkm_file"])
-full.annotation.file = paste(htseq.anno.folder,"\\GENCODE\\",genome,"\\",genome,"_gene_info.txt",sep="")
+full.annotation.file = paste(htseq.anno.folder,"\\",lncRNA.source,"\\",genome,"\\",genome,"_gene_info.txt",sep="")
 
 setwd(output.folder)
 
@@ -77,6 +77,7 @@ for (i in 1:length(sampleID)){
 total.aligned.reads = apply(count.mat, 2, sum)
 
 irrelevant.counts = c("__no_feature", "__ambiguous", "__too_low_aQual","__not_aligned","__alignment_not_unique")
+extra.stats = count.mat[match(irrelevant.counts, genes),]
 count.mat = count.mat[-match(irrelevant.counts, genes),]
 genes = genes[-match(irrelevant.counts, genes)]
 rownames(count.mat) = genes
@@ -100,8 +101,11 @@ exonic.stat.table = exonic.stat.table[match(sampleID, exonicID),]
 total.reads = as.numeric(total.reads.table$Total.Reads)
 aligned.reads = as.numeric(exonic.stat.table$aligned.reads)
 percent.aligned.reads = round(100 * aligned.reads / total.reads, digits=1)
-exonic.reads = as.numeric(exonic.stat.table$exonic.reads)
-percent.exonic.reads = round(100 * exonic.reads / aligned.reads, digits=1)
+
+intergenic.reads = extra.stats[irrelevant.counts == "__no_feature", ]
+exonic.reads = apply(count.mat, 2, sum)
+unique.reads = exonic.reads + intergenic.reads
+percent.exonic.reads = round(100 * exonic.reads / unique.reads, digits=1)
 
 total.million.aligned.reads = aligned.reads / 1000000
 print(total.million.aligned.reads)
@@ -119,8 +123,9 @@ trimmed.percent = apply(count.mat, 2, trimmed.counts, min.percent=0.3, max.perce
 
 expressed.gene.counts = apply(RPKM, 2, count.defined.values, expr.cutoff = log2(min.expression))
 percent.expressed.genes = round( 100 * expressed.gene.counts / nrow(RPKM), digits=1)
-coverage.table = data.frame(Sample = sample.table$userID, total.reads = total.reads,
+coverage.table = data.frame(Sample = sample.label, total.reads = total.reads,
 							aligned.reads=aligned.reads, percent.aligned.reads =percent.aligned.reads,
+							htseq.nofeature.reads =intergenic.reads, percent.unique.exonic.reads = percent.exonic.reads,
 							Expressed.Genes = expressed.gene.counts, Percent.Expressed.Genes = percent.expressed.genes,
 							trimmed.percent=trimmed.percent)
 write.table(coverage.table, file="gene_coverage_stats_lncRNA.txt", quote=F, row.names=F, sep="\t")
