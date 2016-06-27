@@ -128,6 +128,7 @@ if (length(deg.groups) == 1){
 
 counts.table = read.table(counts.file, head=T, sep="\t")
 counts= counts.table[,match(sample.label,names(counts.table))]
+counts.table$tx.max.length = as.numeric(counts.table$tx.max.length)/1000
 counts = matrix(as.numeric(unlist(counts)), ncol=length(sample.label))
 
 counts =counts[rowSums(!is.na(counts)) == length(sample.label),]
