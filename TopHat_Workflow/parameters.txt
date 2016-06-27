@@ -12,6 +12,7 @@ Alignment_Folder_MAC	[required]
 Reads_Folder_MAC  [required]
 txGTF_MAC	[required]
 lncRNA_GTF_MAC	[required]
+lncRNA_ann_name GENCODE
 HTseq_input_folder	[required]
 run_goseq	yes
 pvalue_method	edgeR
