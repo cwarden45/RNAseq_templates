@@ -67,7 +67,18 @@ gene.aov <- function(arr, var1, var2=c(), var3=c())
 		aov.pvalue = result[[1]][['Pr(>F)']][3]
 	}
 	return(aov.pvalue)
-}#end def gene.lm
+}#end def gene.aov
+
+calc.gene.cor = function(arr, indep.var)
+{	
+	na.count = length(arr[!is.na(arr)])
+	if((na.count >= 3) & (sd(arr) != 0)){
+		gene.cor.coef = cor(arr,indep.var)
+	} else {
+		gene.cor.coef = NA
+	}
+	return(gene.cor.coef)
+}#end def gene.aov
 
 library(gplots)
 fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
@@ -78,6 +89,8 @@ genome=as.character(param.table$Value[param.table$Parameter == "genome"])
 min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "rpkm_expression_cutoff"]))
 min.fraction.expressed = as.numeric(as.character(param.table$Value[param.table$Parameter == "minimum_fraction_expressed"]))
 fc.cutoff = as.numeric(as.character(param.table$Value[param.table$Parameter == "fold_change_cutoff"]))
+cor.cutoff = as.numeric(as.character(param.table$Value[param.table$Parameter == "cor_cutoff"]))
+cor.cutoff2 = as.numeric(as.character(param.table$Value[param.table$Parameter == "sec_cor_cutoff"]))
 pvalue.cutoff = as.numeric(as.character(param.table$Value[param.table$Parameter == "pvalue_cutoff"]))
 fdr.cutoff = as.numeric(as.character(param.table$Value[param.table$Parameter == "fdr_cutoff"]))
 fc.cutoff2 = as.numeric(as.character(param.table$Value[param.table$Parameter == "sec_fold_change_cutoff"]))
@@ -89,7 +102,10 @@ plot.groups = unlist(strsplit(as.character(param.table$Value[param.table$Paramet
 trt.group = as.character(param.table$Value[param.table$Parameter == "treatment_group"])
 trt.group2 = as.character(param.table$Value[param.table$Parameter == "secondary_trt"])
 interaction.flag = as.character(param.table$Value[param.table$Parameter == "interaction"])
+interaction.flag[interaction.flag == "none"]="no"
 pvalue.method = as.character(param.table$Value[param.table$Parameter == "pvalue_method"])
+fdr.method = as.character(param.table$Value[param.table$Parameter == "fdr_method"])
+goseq.flag = as.character(param.table$Value[param.table$Parameter == "run_goseq"])
 output.folder = as.character(param.table$Value[param.table$Parameter == "Raw_Code_PC"])
 user.folder = as.character(param.table$Value[param.table$Parameter == "Result_Folder"])
 sample.description.file = as.character(param.table$Value[param.table$Parameter == "sample_description_file"])
@@ -119,14 +135,14 @@ counts.table = counts.table[rowSums(!is.na(counts)) == length(sample.label),]
 print(dim(counts.table))
 print(dim(counts))
 
-gene.length.kb = as.numeric(counts.table$tx.max.length) / 1000
-counts =counts[gene.length.kb > gene.length.cutoff.kb,]
-counts.table = counts.table[gene.length.kb > gene.length.cutoff.kb,]
+counts =counts[as.numeric(counts.table$tx.max.length) > gene.length.cutoff.kb,]
+counts.table = counts.table[as.numeric(counts.table$tx.max.length) > gene.length.cutoff.kb,]
 print(dim(counts.table))
 print(dim(counts))
 
+
 genes = counts.table$symbol
-gene.length.kb = as.numeric(counts.table$tx.max.length) / 1000
+gene.length.kb = as.numeric(counts.table$tx.max.length)
 
 exonic.stat.table = read.table(aligned.stats.file, header=T, sep="\t")
 aligned.reads = as.numeric(exonic.stat.table$aligned.reads[match(longID, exonic.stat.table$Sample)])
@@ -153,7 +169,9 @@ RPKM = RPKM[expressed.sample.count > round(min.fraction.expressed * ncol(counts)
 print(dim(counts))
 
 genes = counts.table$symbol
-gene.length.kb = as.numeric(counts.table$tx.max.length) / 1000
+gene.length.kb = as.numeric(counts.table$tx.max.length)
+colnames(counts) = as.character(sample.label)
+rownames(counts) = as.character(genes)
 
 if(length(plot.groups) == 1){
 	print("Averaging Expression for One Variable (for plot.groups)")
@@ -170,94 +188,207 @@ if(length(plot.groups) == 1){
 
 groupIDs = as.character(levels(as.factor(grp)))
 average.rpkm = data.frame(t(apply(RPKM, 1, avgGroupExpression, groups = grp)))
-average.rpkm = average.rpkm
+if(length(groupIDs) == 1){
+	average.rpkm = t(average.rpkm)
+} else {
+	average.rpkm = average.rpkm
+}
 colnames(average.rpkm) = paste("avg.log2.rpkm", sub("-",".",groupIDs), sep=".")
+
+#removed undefined group IDs (so, you can visualize samples that aren't in your comparison)
+if(length(deg.groups) == 1){
+	var1 = sample.description.table[,deg.groups]
+	deg.counts = counts[,!is.na(var1)]
+	deg.RPKM = RPKM[,!is.na(var1)]
+	var1 = var1[!is.na(var1)]
+} else if (length(deg.groups) == 2){
+	if(interaction.flag == "filter-overlap"){
+		var1 = sample.description.table[,deg.groups[1]]
+		var2 = sample.description.table[,deg.groups[2]]
+		deg.samples = !is.na(var1)&!is.na(var2)
+		deg.counts = counts[,deg.samples]
+		var1 = var1[deg.samples]
+		var2 = var2[deg.samples]
+			
+		prim.deg.grp = var1[var2 == trt.group2]
+		prim.counts = counts[,var2 == trt.group2]
+		prim.RPKM = RPKM[,var2 == trt.group2]
+
+		sec.deg.grp = var1[var2 != trt.group2]
+		sec.counts = counts[,var2 != trt.group2]
+		sec.RPKM = RPKM[,var2 != trt.group2]
+
+	} else{
+		var1 = sample.description.table[,deg.groups[1]]
+		var2 = sample.description.table[,deg.groups[2]]
+		deg.samples = !is.na(var1)&!is.na(var2)
+		deg.counts = counts[,deg.samples]
+		deg.RPKM = RPKM[,deg.samples]
+		var1 = var1[deg.samples]
+		var2 = var2[deg.samples]
+	}
+} else {
+	stop("Code currently doesn't support more than 2 group model for DEG (with or without interaction)")
+}
 
 if(length(deg.groups) == 1){
 	print("Averaging Expression for One Variable (for deg.groups)")
-	contrast.grp = sample.description.table[,deg.groups]
+	contrast.grp = var1
 } else if ((length(deg.groups) == 2)&(interaction.flag == "no")){
 	print("Averaging Expression for First Variable (for deg.groups)")
-	contrast.grp = sample.description.table[,deg.groups[1]]
+	contrast.grp = var1
 } else if (length(deg.groups) == 2){
 	print("Averaging Expression for Interaction Variable (for deg.groups)")
-	contrast.grp = paste(sample.description.table[,deg.groups[1]],sample.description.table[,deg.groups[2]],sep=":")
+	contrast.grp = paste(var1,var2,sep=":")
 } else {
 	stop("Code only compatible with 2 variables (with or without a 3rd interaction variable")
 }
 
-groupIDs = as.character(levels(as.factor(contrast.grp)))
-contrast.rpkm = data.frame(t(apply(RPKM, 1, avgGroupExpression, groups = contrast.grp)))
-colnames(contrast.rpkm) = paste("avg.log2.rpkm", sub("-",".",groupIDs), sep=".")
+if (trt.group == "continuous"){
+	contrast.grp = as.numeric(contrast.grp)
+	
+	gene.cor = apply(deg.RPKM, 1, calc.gene.cor, indep.var=contrast.grp)
+	
+	fc.table = data.frame(cor=gene.cor)
+} else {
+	groupIDs = as.character(levels(as.factor(contrast.grp)))
+	contrast.rpkm = data.frame(t(apply(deg.RPKM, 1, avgGroupExpression, groups = contrast.grp)))
+	colnames(contrast.rpkm) = paste("avg.log2.rpkm", sub("-",".",groupIDs), sep=".")
+}#end else
 
-if(interaction.flag == "no"){
-trt.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",trt.group), sep=".")]
-cntl.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",groupIDs[groupIDs != trt.group]), sep=".")]
+if((interaction.flag == "no") & (trt.group != "continuous")){
+	trt.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",trt.group), sep=".")]
+	cntl.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",groupIDs[groupIDs != trt.group]), sep=".")]
 
-log2ratio = round(trt.expr - cntl.expr, digits = 2)
-fc = round(sapply(log2ratio, ratio2fc), digits = 2)
-fc.table = data.frame(log2ratio=log2ratio, fold.change=fc)
+	log2ratio = round(trt.expr - cntl.expr, digits = 2)
+	fc = round(sapply(log2ratio, ratio2fc), digits = 2)
+	fc.table = data.frame(log2ratio=log2ratio, fold.change=fc)
 } else if ((interaction.flag == "model")|(interaction.flag == "filter-overlap")){
-prim.groups = as.character(levels(as.factor(sample.description.table[,deg.groups[1]])))
-prim.trt = paste(trt.group,trt.group2,sep=":")
-prim.cntl = paste(prim.groups[prim.groups != trt.group],trt.group2,sep=":")
-prim.trt.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",prim.trt), sep=".")]
-prim.cntl.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",prim.cntl), sep=".")]
+	if ((trt.group == "continuous")&(trt.group2 == "continuous")){
+		sec.contrast.grp = as.numeric(var2)
+		
+		gene.cor2 = apply(deg.RPKM, 1, calc.gene.cor, indep.var=sec.contrast.grp)
+		
+		fc.table = data.frame(prim.cor=gene.cor, sec.cor = gene.cor2)
+	} else if (trt.group == "continuous"){
+		print("Fold-change / correlation cutoff not used for mixed variable analysis")
+		print("NOTE: 'Up-Regulated' R output refers to genes that vary with FDR and p-value cutoffs")
+		print("However, fold-change / correlation values for each separate variable are still provided")
 
-prim.log2ratio = round(prim.trt.expr - prim.cntl.expr, digits = 2)
-prim.fc = round(sapply(prim.log2ratio, ratio2fc), digits = 2)
+		sec.groupIDs = var2
+		sec.groups = as.character(levels(as.factor(sec.groupIDs)))
+		sec.contrast.rpkm = data.frame(t(apply(deg.RPKM, 1, avgGroupExpression, groups = sec.groupIDs)))
+		colnames(sec.contrast.rpkm) = paste("avg.log2.rpkm", sub("-",".",groupIDs), sep=".")
+		sec.trt.expr = sec.contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",trt.group2), sep=".")]
+		sec.cntl.expr = sec.contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",sec.groups[sec.groups != trt.group2]), sep=".")]
 
-sec.groups = as.character(levels(as.factor(sample.description.table[,deg.groups[2]])))
-sec.trt = paste(trt.group, sec.groups[sec.groups != trt.group2], sep=":")
-sec.cntl = paste(prim.groups[prim.groups != trt.group], sec.groups[sec.groups != trt.group2], sep=":")
-sec.trt.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",sec.trt), sep=".")]
-sec.cntl.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",sec.cntl), sep=".")]
+		sec.log2ratio = round(sec.trt.expr - sec.cntl.expr, digits = 2)
+		sec.fc = round(sapply(sec.log2ratio, ratio2fc), digits = 2)
+		
+		fc.table = data.frame(prim.cor=gene.cor, sec.fc = sec.fc)
+	} else if (trt.group2 == "continuous"){	
+		print("Fold-change / correlation cutoff not used for mixed variable analysis")
+		print("NOTE: 'Up-Regulated' R output refers to genes that vary with FDR and p-value cutoffs")
+		print("However, fold-change / correlation values for each separate variable are still provided")
 
-sec.log2ratio = round(sec.trt.expr - sec.cntl.expr, digits = 2)
-sec.fc = round(sapply(sec.log2ratio, ratio2fc), digits = 2)
+		prim.groupIDs = var1
+		prim.groups = as.character(levels(as.factor(prim.groupIDs)))
+		prim.contrast.rpkm = data.frame(t(apply(deg.RPKM, 1, avgGroupExpression, groups = prim.groupIDs)))
+		colnames(prim.contrast.rpkm) = paste("avg.log2.rpkm", sub("-",".",prim.groups), sep=".")
+		prim.trt = trt.group
+		prim.cntl = prim.groups[prim.groups != trt.group]
+		prim.trt.expr = prim.contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",prim.trt), sep=".")]
+		prim.cntl.expr = prim.contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",prim.cntl), sep=".")]
 
-overall.log2ratio = prim.log2ratio - sec.log2ratio
-overall.fc = round(sapply(overall.log2ratio, ratio2fc), digits = 2)
+		prim.log2ratio = round(prim.trt.expr - prim.cntl.expr, digits = 2)
+		prim.fc = round(sapply(prim.log2ratio, ratio2fc), digits = 2)
+		
+		sec.contrast.grp = as.numeric(var2)
+		gene.cor2 = apply(deg.RPKM, 1, calc.gene.cor, indep.var=sec.contrast.grp)
+		
+		fc.table = data.frame(prim.fc=prim.fc, sec.cor = gene.cor2)
+	} else {
+		prim.groups = paste(var1,var2,sep=":")
+		prim.trt = paste(trt.group,trt.group2,sep=":")
+		prim.cntl = paste(prim.groups[prim.groups != trt.group],trt.group2,sep=":")
+		prim.trt.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",prim.trt), sep=".")]
+		prim.cntl.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",prim.cntl), sep=".")]
 
-fc.table = data.frame(fc1 = prim.fc, fc2=sec.fc, fc3=overall.fc)
-colnames(fc.table) = c(paste("fold.change",trt.group,":",trt.group2,sep="."),
-						paste("fold.change",trt.group,":",sec.groups[sec.groups != trt.group2], sep="."),
-						"overall.fold.change")
+		prim.log2ratio = round(prim.trt.expr - prim.cntl.expr, digits = 2)
+		prim.fc = round(sapply(prim.log2ratio, ratio2fc), digits = 2)
+
+		sec.groups = as.character(levels(as.factor(sample.description.table[,deg.groups[2]])))
+		sec.trt = paste(trt.group, sec.groups[sec.groups != trt.group2], sep=":")
+		sec.cntl = paste(prim.groups[prim.groups != trt.group], sec.groups[sec.groups != trt.group2], sep=":")
+		sec.trt.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",sec.trt), sep=".")]
+		sec.cntl.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",sec.cntl), sep=".")]
+
+		sec.log2ratio = round(sec.trt.expr - sec.cntl.expr, digits = 2)
+		sec.fc = round(sapply(sec.log2ratio, ratio2fc), digits = 2)
+
+		overall.log2ratio = prim.log2ratio - sec.log2ratio
+		overall.fc = round(sapply(overall.log2ratio, ratio2fc), digits = 2)
+
+		fc.table = data.frame(fc1 = prim.fc, fc2=sec.fc, fc3=overall.fc)
+		colnames(fc.table) = c(paste("fold.change",trt.group,":",trt.group2,sep="."),
+								paste("fold.change",trt.group,":",sec.groups[sec.groups != trt.group2], sep="."),
+								"overall.fold.change")
+	}#end else
+}else if(trt.group == "continuous"){
+	print("Skipping fold-change calculation for continuous variable")
 }else{
 		stop("interaction must be \"no\", \"model\", or \"filter-overlap\"")
 }#end else
 
 rep.check = 1
-for (deg.group in deg.groups){
-	deg.group.values = deg.meta[,deg.group]
-	min.reps = min(table(deg.group.values))
-	if (min.reps < 2){
-		rep.check=0
-		print("There are not at least 2 samples per-group.  P-value will not be calculated.")
-		print("In the future, please make sure you at least have duplicate samples.")
-	}#end if (min.reps < 2)
+for (i in 1:length(deg.groups)){
+	deg.group = deg.groups[i]
+	
+	if((i == 1) & (trt.group != "continuous")){
+		deg.group.values = deg.meta[,deg.group]
+		min.reps = min(table(deg.group.values))
+		if (min.reps < 2){
+			rep.check=0
+			print("There are not at least 2 samples per-group in order to calculate p-value.")
+			print("In the future, please make sure you at least have duplicate samples.")
+		}#end if (min.reps < 2)
+	} else if ((i == 2) & (trt.group2 != "continuous")){
+		deg.group.values = deg.meta[,deg.group]
+		min.reps = min(table(deg.group.values))
+		if (min.reps < 2){
+			rep.check=0
+			print("There are not at least 2 samples per-group in order to calculate p-value.")
+			print("In the future, please make sure you at least have duplicate samples.")
+		}#end if (min.reps < 2)
+	} else if (i > 2){
+		stop("Workflow currently doesn't support use of more than 2 variables")
+	}
 }#end for (deg.group in deg.groups)
 
 if(rep.check == 1){
+	#start p-value calculation
 	if (pvalue.method == "edgeR"){
 		library(edgeR)
 		
 		if ((length(deg.groups) == 2)&(interaction.flag == "filter-overlap")){
 			print("edgeR, Two-Step Analysis")
-			prim.counts = counts[,sample.description.table[,deg.groups[2]]==sec.groups[sec.groups==trt.group2]]
-			prim.edgeR.grp = sample.description.table[,deg.groups[1]][sample.description.table[,deg.groups[2]]==sec.groups[sec.groups==trt.group2]]
-
+				
+			if (trt.group == "continuous"){
+				prim.deg.grp = as.numeric(prim.deg.grp)
+			}
+			
 			y <- DGEList(counts=prim.counts, genes=genes)
 			y = estimateCommonDisp(y)
-			design <- model.matrix(~prim.edgeR.grp)
+			design <- model.matrix(~prim.deg.grp)
 			fit <- glmFit(y, design)
 			lrt <- glmLRT(fit, coef=2)
 
 			prim.pvalue = lrt$table$PValue
-			
-			sec.counts = counts[,sample.description.table[,deg.groups[2]]==sec.groups[sec.groups!=trt.group2]]
-			sec.edgeR.grp = sample.description.table[,deg.groups[1]][sample.description.table[,deg.groups[2]]!=sec.groups[sec.groups==trt.group2]]
 
+			if (trt.group2 == "continuous"){
+				sec.deg.grp = as.numeric(prim.deg.grp)
+			}
+			
 			y <- DGEList(counts=sec.counts, genes=genes)
 			y = estimateCommonDisp(y)
 			design <- model.matrix(~sec.edgeR.grp)
@@ -267,95 +398,352 @@ if(rep.check == 1){
 			sec.pvalue = lrt$table$PValue
 			
 		} else {
-			y <- DGEList(counts=counts, genes=genes)
+			y <- DGEList(counts=deg.counts, genes=genes)
 			y = estimateCommonDisp(y)
 			if (length(deg.groups) == 1){
 				print("edgeR with 1 variable")
-				var1 = sample.description.table[,deg.groups]
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
 				design <- model.matrix(~var1)
 				fit <- glmFit(y, design)
 				lrt <- glmLRT(fit, coef=2)
 				test.pvalue = lrt$table$PValue
 			} else if ((length(deg.groups) == 2)&(interaction.flag == "no")){
 				print("edgeR with 2 variables")
-				var1 = sample.description.table[,deg.groups[1]]
-				var2 = sample.description.table[,deg.groups[2]]
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				} else{
+					var1 = as.factor(var1)
+				}
+
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				} else{
+					var2 = as.factor(var2)
+				}
 				design <- model.matrix(~var1 + var2)
 				fit <- glmFit(y, design)
 				lrt <- glmLRT(fit, coef=2)
 				test.pvalue = lrt$table$PValue
 			} else if ((length(deg.groups) == 2)&(interaction.flag == "model")){
 				print("edgeR with 2 variables plus interaction")
-				var1 = sample.description.table[,deg.groups[1]]
-				var2 = sample.description.table[,deg.groups[2]]
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				}
 				design <- model.matrix(~var1*var2 + var1 + var2)
 				fit <- glmFit(y, design)
 				lrt <- glmLRT(fit, coef=4)
 				test.pvalue = lrt$table$PValue
 			}
 		}#end else
+	} else if (pvalue.method == "DESeq2"){
+		library(DESeq2)
+		
+		if ((length(deg.groups) == 2)&(interaction.flag == "filter-overlap")){
+			print("DESeq2, Two-Step Analysis")
+			
+			if (trt.group == "continuous"){
+				prim.deg.grp = as.numeric(prim.deg.grp)
+			}
+			
+			colData = data.frame(var1=prim.deg.grp)
+			rownames(colData) = colnames(prim.counts)
+			dds <- DESeqDataSetFromMatrix(countData = prim.counts,
+							colData = colData,
+							design = ~ var1)
+			dds <- DESeq(dds)
+			res <- results(dds)
+			prim.pvalue = res$pvalue
+			
+
+			if (trt.group2 == "continuous"){
+				sec.edgeR.grp = as.numeric(prim.edgeR.grp)
+			}
+			
+			colData = data.frame(var1=sec.edgeR.grp)
+			rownames(colData) = colnames(sec.counts)
+			dds <- DESeqDataSetFromMatrix(countData = sec.counts,
+							colData = colData,
+							design = ~ var1)
+			dds <- DESeq(dds)
+			res <- results(dds)
+			sec.pvalue = res$pvalue
+			
+		} else {
+			if (length(deg.groups) == 1){
+				print("DESeq2 with 1 variable")
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+
+				colData = data.frame(var1=var1)
+				rownames(colData) = colnames(deg.counts)
+				dds <- DESeqDataSetFromMatrix(countData = deg.counts,
+								colData = colData,
+								design = ~ var1)
+				dds <- DESeq(dds)
+				res <- results(dds)
+				test.pvalue = res$pvalue
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "no")){
+				print("DESeq2 (LRT) with 2 variables")
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				} else{
+					var1 = as.factor(var1)
+				}
+
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				} else{
+					var2 = as.factor(var2)
+				}
+
+				colData = data.frame(var1=var1, var2=var2)
+				rownames(colData) = colnames(deg.counts)
+				dds <- DESeqDataSetFromMatrix(countData = deg.counts,
+								colData = colData,
+								design = ~ var1 + var2)
+				Wald.flag = TRUE
+				if (Wald.flag){
+					dds <- DESeq(dds)
+					other.groups = as.character(levels(as.factor(as.character(var1[var1 != trt.group]))))
+					if(length(other.groups) > 1){
+						print("DESeq2 Wald-test will look at differences between two groups.")
+						print("You can manually switch code to use LRT instead of Wald test (set Wald.flag = FALSE).")
+						#The paired sample design in the DESeq2 manual uses the Wald test
+						stop("Or, please consider using an interaction model with LRT if your primary variable has more than two groups.")
+					}
+					res <- results(dds, contrast = c("var1", trt.group, other.groups))
+					#print(head(res))
+				} else {
+					dds <- DESeq(dds, test="LRT", reduced = ~ var2)
+					res = results(dds)
+					#print(head(res))
+				}
+				test.pvalue = res$pvalue
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "model")){
+				print("DESeq2 (LRT) with 2 variables plus interaction")
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				}
+
+				colData = data.frame(var1=var1, var2=var2)
+				rownames(colData) = colnames(deg.counts)
+				dds <- DESeqDataSetFromMatrix(countData = deg.counts,
+								colData = colData,
+								design = ~ var1*var2 + var1 + var2)
+				dds <- DESeq(dds, test="LRT", reduced = ~ var1 + var2)
+				res <- results(dds)
+				test.pvalue = res$pvalue
+			}
+		}#end else
+	} else if (pvalue.method == "limma-voom"){
+		library(edgeR)
+		library(limma)
+		
+		if ((length(deg.groups) == 2)&(interaction.flag == "filter-overlap")){
+			print("limma-voom, Two-Step Analysis")
+
+			if (trt.group == "continuous"){
+				prim.deg.grp = as.numeric(prim.deg.grp)
+			}
+			
+			y <- DGEList(counts=prim.counts, genes=genes)
+			png(paste(comp.name,"prim_voom_plot.png",sep="_"))
+			design <- model.matrix(~prim.deg.grp)
+			v <- voom(y,design,plot=TRUE)
+			dev.off()
+			fit <- lmFit(v,design)
+			fit <- eBayes(fit)
+			pvalue.mat = data.frame(fit$p.value)
+			prim.pvalue = pvalue.mat[,2]
+			
+
+			if (trt.group2 == "continuous"){
+				sec.deg.grp = as.numeric(sec.deg.grp)
+			}
+			
+			y <- DGEList(counts=sec.counts, genes=genes)
+			design <- model.matrix(~sec.deg.grp)
+			png(paste(comp.name,"sec_voom_plot.png",sep="_"))
+			v <- voom(y,design,plot=TRUE)
+			dev.off()
+			fit <- lmFit(v,design)
+			fit <- eBayes(fit)
+			pvalue.mat = data.frame(fit$p.value)
+			sec.pvalue = pvalue.mat[,2]
+			
+		} else {
+			y <- DGEList(counts=deg.counts, genes=genes)
+			if (length(deg.groups) == 1){
+				print("limma-voom with 1 variable")
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+				design <- model.matrix(~var1)
+				png(paste(comp.name,"voom_plot.png",sep="_"))
+				v <- voom(y,design,plot=TRUE)
+				dev.off()
+				fit <- lmFit(v,design)
+				fit <- eBayes(fit)
+				pvalue.mat = data.frame(fit$p.value)
+				test.pvalue = pvalue.mat[,2]
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "no")){
+				print("limma-voom with 2 variables")
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				} else{
+					var1 = as.factor(var1)
+				}
+
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				} else{
+					var2 = as.factor(var2)
+				}
+				design <- model.matrix(~var1 + var2)
+				png(paste(comp.name,"voom_plot.png",sep="_"))
+				v <- voom(y,design,plot=TRUE)
+				dev.off()
+				fit <- lmFit(v,design)
+				fit <- eBayes(fit)
+				pvalue.mat = data.frame(fit$p.value)
+				test.pvalue = pvalue.mat[,2]
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "model")){
+				print("limma-voom with 2 variables plus interaction")
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				}
+				design <- model.matrix(~var1*var2 + var1 + var2)
+				png(paste(comp.name,"voom_plot.png",sep="_"))
+				v <- voom(y,design,plot=TRUE)
+				dev.off()
+				fit <- lmFit(v,design)
+				fit <- eBayes(fit)
+				pvalue.mat = data.frame(fit$p.value)
+				test.pvalue = pvalue.mat[,4]
+			}
+		}#end else
 	} else if (pvalue.method == "lm"){
 		if ((length(deg.groups) == 2)&(interaction.flag == "filter-overlap")){
 			print("RPKM linear regression, Two-Step Analysis")
-			prim.RPKM = RPKM[,sample.description.table[,deg.groups[2]]==sec.groups[sec.groups==trt.group2]]
-			prim.lm.grp = sample.description.table[,deg.groups[1]][sample.description.table[,deg.groups[2]]==sec.groups[sec.groups==trt.group2]]
 
-			prim.pvalue = apply(prim.RPKM, 1, gene.lm, var1=prim.lm.grp)
+			if (trt.group == "continuous"){
+				prim.deg.grp = as.numeric(prim.deg.grp)
+			}
 			
-			sec.RPKM = RPKM[,sample.description.table[,deg.groups[2]]==sec.groups[sec.groups!=trt.group2]]
-			sec.lm.grp = sample.description.table[,deg.groups[1]][sample.description.table[,deg.groups[2]]!=sec.groups[sec.groups==trt.group2]]
+			prim.pvalue = apply(prim.RPKM, 1, gene.lm, var1=prim.deg.grp)
 			
-			sec.pvalue = apply(sec.RPKM, 1, gene.lm, var1=sec.lm.grp)
+
+			if (trt.group2 == "continuous"){
+				sec.deg.grp = as.numeric(sec.deg.grp)
+			}
+			
+			sec.pvalue = apply(sec.RPKM, 1, gene.lm, var1=sec.deg.grp)
 		} else {
 			if (length(deg.groups) == 1){
 				print("RPKM linear regression with 1 variable")
-				var1 = sample.description.table[,deg.groups]
-				test.pvalue = apply(RPKM, 1, gene.lm, var1=var1)
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+				test.pvalue = apply(deg.RPKM, 1, gene.lm, var1=var1)
 			} else if ((length(deg.groups) == 2)&(interaction.flag == "no")){
 				print("RPKM linear regression with 2 variables")
-				var1 = sample.description.table[,deg.groups[1]]
-				var2 = sample.description.table[,deg.groups[2]]
-				test.pvalue = apply(RPKM, 1, gene.lm, var1=var1, var2=var2)
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				}
+				test.pvalue = apply(deg.RPKM, 1, gene.lm, var1=var1, var2=var2)
 			} else if ((length(deg.groups) == 2)&(interaction.flag == "model")){
 				print("RPKM linear regression with 2 variables plus interaction")
-				var1 = as.factor(paste(sample.description.table[,deg.groups[1]],sample.description.table[,deg.groups[2]],sep=":"))
-				var2 = sample.description.table[,deg.groups[1]]
-				var3 = sample.description.table[,deg.groups[2]]
-				test.pvalue = apply(RPKM, 1, gene.lm, var1=var1, var2=var2, var3=var3)
+				var3 = as.factor(paste(var1,var2,sep=":"))
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+
+				if (trt.group == "continuous"){
+					var2 = as.numeric(var2)
+				}
+				test.pvalue = apply(deg.RPKM, 1, gene.lm, var1=var3, var2=var1, var3=var2)
 			}
 		}#end else
 	} else if (pvalue.method == "ANOVA"){
 		if ((length(deg.groups) == 2)&(interaction.flag == "filter-overlap")){
 			print("RPKM ANOVA, Two-Step Analysis")
-			prim.RPKM = RPKM[,sample.description.table[,deg.groups[2]]==sec.groups[sec.groups==trt.group2]]
-			prim.aov.grp = sample.description.table[,deg.groups[1]][sample.description.table[,deg.groups[2]]==sec.groups[sec.groups==trt.group2]]
 
-			prim.pvalue = apply(prim.RPKM, 1, gene.aov, var1=prim.aov.grp)
+			if (trt.group == "continuous"){
+				prim.deg.grp = as.numeric(prim.deg.grp)
+			}
 			
-			sec.RPKM = RPKM[,sample.description.table[,deg.groups[2]]==sec.groups[sec.groups!=trt.group2]]
-			sec.aov.grp = sample.description.table[,deg.groups[1]][sample.description.table[,deg.groups[2]]!=sec.groups[sec.groups==trt.group2]]
+			prim.pvalue = apply(prim.RPKM, 1, gene.aov, var1=prim.deg.grp)
 			
-			sec.pvalue = apply(sec.RPKM, 1, gene.aov, var1=sec.aov.grp)
+
+			if (trt.group2 == "continuous"){
+				sec.deg.grp = as.numeric(sec.deg.grp)
+			}
+			
+			sec.pvalue = apply(sec.RPKM, 1, gene.aov, var1=sec.deg.grp)
 		} else {
 			if (length(deg.groups) == 1){
 				print("RPKM ANOVA with 1 variable")
-				var1 = sample.description.table[,deg.groups]
-				test.pvalue = apply(RPKM, 1, gene.aov, var1=var1)
+				
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+				test.pvalue = apply(deg.RPKM, 1, gene.aov, var1=var1)
 			} else if ((length(deg.groups) == 2)&(interaction.flag == "no")){
 				print("RPKM ANOVA with 2 variables")
-				var1 = sample.description.table[,deg.groups[1]]
-				var2 = sample.description.table[,deg.groups[2]]
-				test.pvalue = apply(RPKM, 1, gene.aov, var1=var1, var2=var2)
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				}
+				test.pvalue = apply(deg.RPKM, 1, gene.aov, var1=var1, var2=var2)
 			} else if ((length(deg.groups) == 2)&(interaction.flag == "model")){
 				print("RPKM ANOVA with 2 variables plus interaction")
-				var1 = as.factor(paste(sample.description.table[,deg.groups[1]],sample.description.table[,deg.groups[2]],sep=":"))
-				var2 = sample.description.table[,deg.groups[1]]
-				var3 = sample.description.table[,deg.groups[2]]
-				test.pvalue = apply(RPKM, 1, gene.aov, var1=var1, var2=var2, var3=var3)
+				var3 = as.factor(paste(var1,var2,sep=":"))
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				}
+				test.pvalue = apply(deg.RPKM, 1, gene.aov, var1=var3, var2=var1, var3=var2)
 			}
 		}#end else
 	} else{
-		stop("pvalue_method must be \"edgeR\", \"lm\", or \"ANOVA\"")
+		stop("pvalue_method must be \"edgeR\", \"limma-voom\", \"DESeq2\", \"lm\", or \"ANOVA\"")
 	}
 } else{
 	test.pvalue = rep(1,times=length(genes))
@@ -363,32 +751,149 @@ if(rep.check == 1){
 	sec.pvalue = rep(1,times=length(genes))
 }#end else
 
+if (trt.group == "continuous"){
+	upID = "Increased Expression"
+	downID = "Decreased Expression"
+} else {
+	upID = paste(trt.group," Up",sep="")
+	downID = paste(trt.group," Down",sep="")	
+}
+
+
 if (interaction.flag == "no"){
-	fdr = p.adjust(test.pvalue, "fdr")
+	if (fdr.method == "BH"){
+		fdr = p.adjust(test.pvalue, "fdr")
+	} else if (fdr.method == "q-value"){
+		library(qvalue)
+		qobj <- qvalue(p = test.pvalue)
+		fdr = qobj$qvalue
+		png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+		qHist = hist(qobj)
+		print(qHist)
+		dev.off()
+	} else if (fdr.method == "q-lfdr"){
+		library(qvalue)
+		qobj <- qvalue(p = test.pvalue)
+		fdr = qobj$lfdr
+		png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+		qHist = hist(qobj)
+		print(qHist)
+		dev.off()
+	} else {
+		stop("fdr_method must be \"BH\", \"q-value\", or \"q-lfdr\"")
+	}
 	status = rep("No Change", times=length(fdr))
-	status[(fc >= fc.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = paste(trt.group," Up",sep="")
-	status[(fc <= -fc.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = paste(trt.group," Down",sep="")
+	if (trt.group == "continuous"){
+		status[(gene.cor >= cor.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = upID
+		status[(gene.cor <= -cor.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = downID
+		pvalue.table = data.frame(p.value = test.pvalue, FDR = fdr)
+	} else{
+		status[(fc >= fc.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = upID
+		status[(fc <= -fc.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = downID
+		pvalue.table = data.frame(p.value = test.pvalue, FDR = fdr)
+	}#end else
 } else{
 	trt.group = prim.trt
 	if(interaction.flag == "model"){
-		fdr = p.adjust(test.pvalue, "fdr")
+		if (fdr.method == "BH"){
+			fdr = p.adjust(test.pvalue, "fdr")
+		} else if (fdr.method == "q-value"){
+			library(qvalue)
+			qobj <- qvalue(p = test.pvalue)
+			fdr = qobj$qvalue
+			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			qHist = hist(qobj)
+			print(qHist)
+			dev.off()
+		} else if (fdr.method == "q-lfdr"){
+			library(qvalue)
+			qobj <- qvalue(p = test.pvalue)
+			fdr = qobj$lfdr
+			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			qHist = hist(qobj)
+			print(qHist)
+			dev.off()
+		} else {
+			stop("fdr_method must be \"BH\", \"q-value\", or \"q-lfdr\"")
+		}
 		status = rep("No Change", times=length(fdr))
-		status[(overall.fc >= fc.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = paste(trt.group," Up",sep="")
-		status[(overall.fc <= -fc.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = paste(trt.group," Down",sep="")
-		pvalue.table = data.frame(p.value = test.pvalue, FDR = fdr)
+		if ((trt.group == "continuous")&(trt.group2 == "continuous")){
+			status[(gene.cor.int >= cor.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = upID
+			status[(gene.cor.int <= -cor.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = downID
+			pvalue.table = data.frame(p.value = test.pvalue, FDR = fdr)
+		} else if ((trt.group != "continuous")&(trt.group2 != "continuous")){
+			status[(overall.fc >= fc.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = upID
+			status[(overall.fc <= -fc.cutoff) & (test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = downID
+			pvalue.table = data.frame(p.value = test.pvalue, FDR = fdr)
+		} else {
+			upID = "Variable Expression"
+			status[(test.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = upID
+			pvalue.table = data.frame(p.value = test.pvalue, FDR = fdr)
+		}#end else
 	} else if (interaction.flag == "filter-overlap"){
-		fdr = p.adjust(prim.pvalue, "fdr")
+		if (fdr.method == "BH"){
+			fdr = p.adjust(prim.pvalue, "fdr")
+		} else if (fdr.method == "q-value"){
+			library(qvalue)
+			qobj <- qvalue(p = prim.pvalue)
+			fdr = qobj$qvalue
+			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			qHist = hist(qobj)
+			print(qHist)
+			dev.off()
+		} else if (fdr.method == "q-lfdr"){
+			library(qvalue)
+			qobj <- qvalue(p = prim.pvalue)
+			fdr = qobj$lfdr
+			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			qHist = hist(qobj)
+			print(qHist)
+			dev.off()
+		} else {
+			stop("fdr_method must be \"BH\", \"q-value\", or \"q-lfdr\"")
+		}
 		pass1.status = rep("No Change", times=length(fdr))
-		pass1.status[(prim.fc >= fc.cutoff) & (prim.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = paste(trt.group," Up",sep="")
-		pass1.status[(prim.fc <= -fc.cutoff) & (prim.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = paste(trt.group," Down",sep="")
+		if (trt.group == "continuous"){
+			pass1.status[(gene.cor >= cor.cutoff) & (prim.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = paste(trt.group," Up",sep="")
+			pass1.status[(gene.cor <= -cor.cutoff) & (prim.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = paste(trt.group," Down",sep="")
+		} else{
+			pass1.status[(prim.fc >= fc.cutoff) & (prim.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = paste(trt.group," Up",sep="")
+			pass1.status[(prim.fc <= -fc.cutoff) & (prim.pvalue <= pvalue.cutoff) & (fdr <= fdr.cutoff)] = paste(trt.group," Down",sep="")
+		}#end else
 
 		print(paste("Primary Up-Regulated: ",length(pass1.status[pass1.status == paste(trt.group," Up",sep="")]),sep=""))
 		print(paste("Primary Down-Regulated: ",length(pass1.status[pass1.status == paste(trt.group," Down",sep="")]),sep=""))
-			
-		sec.fdr = p.adjust(sec.pvalue, "fdr")
+
+		if (fdr.method == "BH"){
+			sec.fdr = p.adjust(sec.pvalue, "fdr")
+		} else if (fdr.method == "q-value"){
+			library(qvalue)
+			qobj <- qvalue(p = sec.pvalue)
+			sec.fdr = qobj$qvalue
+			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			qHist = hist(qobj)
+			print(qHist)
+			dev.off()
+		} else if (fdr.method == "q-lfdr"){
+			library(qvalue)
+			qobj <- qvalue(p = sec.pvalue)
+			sec.fdr = qobj$lfdr
+			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			qHist = hist(qobj)
+			print(qHist)
+			dev.off()
+		} else {
+			stop("fdr_method must be \"BH\", \"q-value\", or \"q-lfdr\"")
+		}		
+
 		pass2.status = rep("No Change", times=length(fdr))
-		pass2.status[(sec.fc >= fc.cutoff2) & (sec.pvalue <= pvalue.cutoff2) & (sec.fdr <= fdr.cutoff2)] = paste(trt.group," Up",sep="")
-		pass2.status[(sec.fc <= -fc.cutoff2) & (sec.pvalue <= pvalue.cutoff2) & (sec.fdr <= fdr.cutoff2)] = paste(trt.group," Down",sep="")
+		if (trt.group2 == "continuous"){
+			pass2.status[(gene.cor2 >= cor.cutoff2) & (sec.pvalue <= pvalue.cutoff2) & (sec.fdr <= fdr.cutoff2)] = paste(trt.group," Up",sep="")
+			pass2.status[(gene.cor2 <= -cor.cutoff2) & (sec.pvalue <= pvalue.cutoff2) & (sec.fdr <= fdr.cutoff2)] = paste(trt.group," Down",sep="")
+		} else{
+			pass2.status[(sec.fc >= fc.cutoff2) & (sec.pvalue <= pvalue.cutoff2) & (sec.fdr <= fdr.cutoff2)] = paste(trt.group," Up",sep="")
+			pass2.status[(sec.fc <= -fc.cutoff2) & (sec.pvalue <= pvalue.cutoff2) & (sec.fdr <= fdr.cutoff2)] = paste(trt.group," Down",sep="")
+		}#end else
 
 		print(paste("Secondary Up-Regulated: ",length(pass2.status[pass2.status == paste(trt.group," Up",sep="")]),sep=""))
 		print(paste("Secondary Down-Regulated: ",length(pass2.status[pass2.status == paste(trt.group," Down",sep="")]),sep=""))
@@ -397,15 +902,15 @@ if (interaction.flag == "no"){
 										sec.pvalue=sec.pvalue, sec.fdr=sec.fdr)
 			
 		status = rep("No Change", times=length(fdr))
-		status[(pass1.status == paste(trt.group," Up",sep="")) & (pass2.status == "No Change")] = paste(trt.group," Up",sep="")
-		status[(pass1.status == paste(trt.group," Down",sep="")) & (pass2.status == "No Change")] = paste(trt.group," Down",sep="")
+		status[(pass1.status == paste(trt.group," Up",sep="")) & (pass2.status == "No Change")] = upID
+		status[(pass1.status == paste(trt.group," Down",sep="")) & (pass2.status == "No Change")] = downID
 	} else{
 		stop("interaction must be \"no\", \"model\", or \"filter-overlap\"")
 	}#end else
 }#end else
 
-print(paste("Up-Regulated: ",length(status[status == paste(trt.group," Up",sep="")]),sep=""))
-print(paste("Down-Regulated: ",length(status[status == paste(trt.group," Down",sep="")]),sep=""))
+print(paste("Up-Regulated: ",length(status[status == upID]),sep=""))
+print(paste("Down-Regulated: ",length(status[status == downID]),sep=""))
 
 if (interaction.flag == "filter-overlap"){
 	pvalue.method = paste(pvalue.method,"two-step_filtered",sep="_")
@@ -419,6 +924,7 @@ if(rep.check == 1){
 	deg.table = data.frame(symbol = genes, gene.length.kb=gene.length.kb,
 							average.rpkm, fc.table, status = status)	
 }#end else
+
 deg.file = paste(comp.name,"_lncRNA_",pvalue.method,"_lncRNA_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".txt",sep="")
 deg.file = gsub(":",".",deg.file)
 write.table(deg.table, file=deg.file, row.names=F, quote=F, sep="\t")
@@ -462,7 +968,7 @@ if(length(deg.genes) > 1){
 		row_annotation = as.matrix(t(row_annotation))
 		rownames(row_annotation) <- c(plot.groups)
 
-		heatmap.file <- paste(comp.name,"_",pvalue.method,"_lncRNA_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
+		heatmap.file <- paste(comp.name,"_lncRNA_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
 		heatmap.file = gsub(":",".",heatmap.file)
 		png(file = heatmap.file)
 		heatmap.3(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
@@ -472,13 +978,16 @@ if(length(deg.genes) > 1){
 							pch=15, cex=0.7)
 		dev.off()
 		
-		if(interaction.flag != "none"){
-			temp.fc.table = as.matrix(fc.table[,-ncol(fc.table)])
+		if(interaction.flag != "no"){
+			temp.fc.table = as.matrix(fc.table)
+			if (((trt.group == "continuous") & (trt.group2 == "continuous")) | ((trt.group != "continuous") & (trt.group2 != "continuous"))){
+				temp.fc.table = temp.fc.table[,-ncol(temp.fc.table)]
+			}
 			temp.fc.table = temp.fc.table[status != "No Change", ]
 			if(length(deg.genes) < 25){
 				rownames(temp.fc.table) = deg.genes
 			} else {
-				rownames(temp.fc.table) = rep("", length(deg.genes))
+				rownames(temp.fc.table) = rep("",times=length(deg.genes))
 			}
 			colnames(temp.fc.table) = gsub(".:.",":",gsub("fold.change.","",colnames(temp.fc.table)))
 		
@@ -491,7 +1000,7 @@ if(length(deg.genes) > 1){
 			heatmap.2(temp.fc.table, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
 						trace="none", margins = c(20,5), cexCol=1.5)
 			dev.off()
-		}#end if(interaction.flag != "none")
+		}#end if(interaction.flag != "no")
 		
 	} else {
 		group.levels = levels(as.factor(sample.description.table[,plot.groups]))
@@ -505,10 +1014,8 @@ if(length(deg.genes) > 1){
 		std.expr = apply(temp.rpkm, 1, standardize.arr)
 		if(length(deg.genes) < 25){
 			colnames(std.expr) = deg.genes
-			heatmap.margins = c(15,15)
 		} else {
 			colnames(std.expr) = rep("", length(deg.genes))
-			heatmap.margins = c(5,15)
 		}
 		rownames(std.expr) = sample.label
 		
@@ -516,7 +1023,7 @@ if(length(deg.genes) > 1){
 		heatmap.file = gsub(":",".",heatmap.file)
 		png(file = heatmap.file)
 		heatmap.2(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
-					 RowSideColors=labelColors, trace="none", margin=heatmap.margins, cexCol=1.5)
+					 RowSideColors=labelColors, trace="none", margins = c(5,15))
 		dev.off()
 	}#end else
-}#end if(length(deg.genes) > 0
+}#end if(length(deg.genes) > 1)
