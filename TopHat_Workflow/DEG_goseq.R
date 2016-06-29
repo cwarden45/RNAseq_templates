@@ -257,6 +257,7 @@ if (trt.group == "continuous"){
 }#end else
 
 if((interaction.flag == "no") & (trt.group != "continuous")){
+	print("Calculating fold-change for primary variable")
 	trt.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",trt.group), sep=".")]
 	cntl.expr = contrast.rpkm[,paste("avg.log2.rpkm", sub("-",".",groupIDs[groupIDs != trt.group]), sep=".")]
 
@@ -265,6 +266,7 @@ if((interaction.flag == "no") & (trt.group != "continuous")){
 	fc.table = data.frame(log2ratio=log2ratio, fold.change=fc)
 } else if ((interaction.flag == "model")|(interaction.flag == "filter-overlap")){
 	if ((trt.group == "continuous")&(trt.group2 == "continuous")){
+		print("Calculating  correlation for secondary variable")
 		sec.contrast.grp = as.numeric(var2)
 		
 		gene.cor2 = apply(deg.RPKM, 1, calc.gene.cor, indep.var=sec.contrast.grp)
@@ -308,6 +310,7 @@ if((interaction.flag == "no") & (trt.group != "continuous")){
 		
 		fc.table = data.frame(prim.fc=prim.fc, sec.cor = gene.cor2)
 	} else {
+		print("Calculating fold-change table for primary variables (within subsets of secondary variable)")
 		prim.groups = paste(var1,var2,sep=":")
 		prim.trt = paste(trt.group,trt.group2,sep=":")
 		prim.cntl = paste(prim.groups[prim.groups != trt.group],trt.group2,sep=":")
