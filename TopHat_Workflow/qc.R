@@ -37,25 +37,30 @@ quantiles = round(apply(normalized.mat, 2, quantile, probs=c(0.01,0.05,0.25,0.5,
 quantiles = data.frame(Percentage = rownames(quantiles), quantiles)
 write.table(quantiles, "log2_rpkm_quantiles.txt",sep="\t", quote=F, row.names=F)
 
-pca.values <- prcomp(na.omit(data.matrix(normalized.mat)))
-print(dim(pca.values))
-pc.values <- data.frame(pca.values$rotation)
-variance.explained <- (pca.values $sdev)^2 / sum(pca.values $sdev^2)
-pca.table <- data.frame(PC = 1:length(variance.explained), percent.variation = variance.explained, t(pc.values))
-
-pca.text.file = "pca_values.txt"
-write.table(pca.table, pca.text.file, quote=F, row.names=F, sep="\t")
 
 for (group in plot.groups){
 	print(group)
+	temp.mat = normalized.mat[,!is.na(sample.table[,group])]
+	print(dim(temp.mat))
+	qc.grp = sample.table[,group]
+	qc.grp = qc.grp[!is.na(sample.table[,group])]
+	clusterID = userID[!is.na(sample.table[,group])]
+	
+	pca.values <- prcomp(na.omit(data.matrix(temp.mat)))
+	pc.values <- data.frame(pca.values$rotation)
+	variance.explained <- (pca.values $sdev)^2 / sum(pca.values $sdev^2)
+	pca.table <- data.frame(PC = 1:length(variance.explained), percent.variation = variance.explained, t(pc.values))
 
-	groups = levels(as.factor(sample.table[,group]))
+	pca.text.file = paste(group,"_pca_values.txt",sep="")
+	write.table(pca.table, pca.text.file, quote=F, row.names=F, sep="\t")
+	
+	groups = levels(as.factor(as.character(qc.grp)))
 	num.sample.types = length(groups)
 	color.palette <- fixed.color.palatte[1:length(groups)]
 
-	labelColors = rep("black",times=ncol(normalized.mat))
+	labelColors = rep("black",times=ncol(temp.mat))
 	for (i in 1:length(groups)){
-		labelColors[sample.table[,group] == as.character(groups[i])] = color.palette[i]
+		labelColors[qc.grp == as.character(groups[i])] = color.palette[i]
 	}#end for (i in 1:length(groups))
 
 	pca.file = paste("pca_by_",group,".png",sep="")
@@ -67,15 +72,15 @@ for (group in plot.groups){
 
 	box.file = paste("box_plot_by_",group,".png",sep="")
 	png(file=box.file)
-	boxplot(normalized.mat, col=labelColors, xaxt='n')
+	boxplot(temp.mat, col=labelColors, xaxt='n')
 	legend("topright",legend=groups,col=color.palette,  pch=19)
 	dev.off()
 
 	cluster.file = paste("cluster_by_",group,".png",sep="")
 	if(cluster.distance == "Euclidean"){
-		dist1 <- dist(as.matrix(t(normalized.mat)))
+		dist1 <- dist(as.matrix(t(temp.mat)))
 	}else if (cluster.distance == "Pearson_Dissimilarity"){
-		cor.mat = cor(as.matrix(normalized.mat))
+		cor.mat = cor(as.matrix(temp.mat))
 		dis.mat = 1 - cor.mat
 		dist1 <- as.dist(dis.mat)
 	}else{
@@ -85,7 +90,7 @@ for (group in plot.groups){
 	hc <- hclust(dist1)
 	dend1 <- as.dendrogram(hc)
 	png(file = cluster.file)
-	dend1 <- dendrapply(dend1, colLab, labelColors=labelColors, clusMember=userID) 
+	dend1 <- dendrapply(dend1, colLab, labelColors=labelColors, clusMember=clusterID) 
 	a <- attributes(dend1) 
 	attr(dend1, "nodePar") <- c(a$nodePar, lab.col = labelColors) 
 	op <- par(mar = par("mar") + c(0,0,0,10)) 
@@ -95,9 +100,9 @@ for (group in plot.groups){
 
 	hist.file = paste("density_by_",group,".png",sep="")
 	png(file = hist.file)
-	for (i in 1:ncol(normalized.mat))
+	for (i in 1:ncol(temp.mat))
 		{		
-			data <- as.numeric(t(normalized.mat[,i]))
+			data <- as.numeric(t(temp.mat[,i]))
 			
 			if(i == 1)
 				{
@@ -115,6 +120,6 @@ for (group in plot.groups){
 					freq <- den$y
 					lines(expr, freq, type = "l", col=labelColors[i])
 				}#end else
-		}#end for (i in 1:length(ncol(normalized.mat)))
+		}#end for (i in 1:length(ncol(temp.mat)))
 	dev.off()	
 }#end for (group in plot.groups)
