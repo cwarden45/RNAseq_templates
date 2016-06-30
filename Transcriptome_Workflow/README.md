@@ -13,6 +13,7 @@
 *Alignment / Quantification*
 
 Salmon: https://combine-lab.github.io/salmon/
+
 Sailfish: http://www.cs.cmu.edu/~ckingsf/software/sailfish/
 
 *Differential Expression*
