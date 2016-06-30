@@ -61,7 +61,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |gene_counts_file|Name of File to Contain Read Counts Per Gene (Sum of Transcript Counts)|
 |transcript_tpm_file|Name of File to Contain TPM Expression Values per Transcript (unlike TopHat_Workflow, these are linear with rounding occuring later)|
 |transcript_counts_file|Name of File to Contain Read Counts Per Transcript|
-|rpkm_expression_cutoff|Rounding Value for TPM (minimum reliable expression level)|
+|tpm_expression_cutoff|Rounding Value for TPM (minimum reliable expression level)|
 |minimum_fraction_expressed|Minimum fraction of samples with expression above *rpkm_expression_cutoff*. Filter for differential expression anaylsis.|
 |fold_change_cutoff|Minimum fold-change difference to consider a gene differentially expressed|
 |cor_cutoff|If using a continuous variable, minimum absolute correlation to consider a gene differentially expressed|
