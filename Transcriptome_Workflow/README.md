@@ -6,7 +6,7 @@
 
 3) qc.R
 
-4) DEG_goseq.R
+4) DEG_goseq.R (for gene-level quantification)
 
 ### Dependencies (some optional) ###
 
