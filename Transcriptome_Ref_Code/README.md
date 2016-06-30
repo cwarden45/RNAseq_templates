@@ -6,7 +6,7 @@ This also creates gene to transcript mapping file for RSEM and annotation file f
 
 ### Annotation Resources ###
 
-    GENCODE (scripts use .fasta sequences and annotations in header)
+    GENCODE (scripts use .fasta sequences and annotations in sequence name)
 
 Human:
 http://www.gencodegenes.org/releases/reference_releases.html
