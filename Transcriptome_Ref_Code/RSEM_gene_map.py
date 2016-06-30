@@ -3,14 +3,14 @@ import re
 import os
 
 #gencodeFa = "mouse/gencode.vM9.transcripts.fa"
-#rsemFa = "mouse/gencode.vM9.transcriptID.fa"
-#geneTable = "mouse/gene_info.txt"
-#rsemMap = "mouse/transcript_to_gene.txt"
+#rsemFa = "mouse/RSEM_Bowtie_Index/gencode.vM9.transcriptID.fa"
+#geneTable = "mouse/RSEM_Bowtie_Index/gene_info.txt"
+#rsemMap = "mouse/RSEM_Bowtie_Index/transcript_to_gene.txt"
 
 gencodeFa = "human/gencode.v24.transcripts.fa"
-rsemFa = "human/gencode.v24.transcriptID.fa"
-geneTable = "human/gene_info.txt"
-rsemMap = "human/transcript_to_gene.txt"
+rsemFa = "human/RSEM_Bowtie_Index/gencode.v24.transcriptID.fa"
+geneTable = "human/RSEM_Bowtie_Index/gene_info.txt"
+rsemMap = "human/RSEM_Bowtie_Index/transcript_to_gene.txt"
 
 newFaHandle = open(rsemFa,'w')
 fullTableHandle = open(geneTable,'w')
