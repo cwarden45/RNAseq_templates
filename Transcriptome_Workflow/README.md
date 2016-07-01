@@ -8,7 +8,7 @@
 
 4) DEG_goseq.R
 
-*OR* 
+**OR** 
 
 1) se_Bowtie_alignment.py (currently, requires manual modification without use of parameters.txt)
 
