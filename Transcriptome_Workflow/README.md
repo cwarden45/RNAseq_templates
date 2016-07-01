@@ -36,6 +36,8 @@ limma-voom: https://bioconductor.org/packages/release/bioc/html/limma.html
 
 DESeq2: https://bioconductor.org/packages/release/bioc/html/DESeq2.html
 
+EBSeq: http://bioconductor.org/packages/release/bioc/html/EBSeq.html
+
 qvalue: https://bioconductor.org/packages/release/bioc/html/qvalue.html
 
 *Visualization*
@@ -60,7 +62,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |Raw_Code_PC|Path to output folder for most result|
 |Result_Folder|Path to output folder for selected, final results|
 |Reads_Folder_MAC|Path to Reads for Salmon/Sailfish Quantification|
-|pvalue_method|Method to Calculate P-value.  Can be *edgeR*, *limma-voom*, *DESeq2*, *lm* (linear regression), or *aov* (ANOVA)|
+|pvalue_method|Method to Calculate P-value.  Can be *edgeR*, *limma-voom*, *DESeq2*, *EBSeq*, *lm* (linear regression), or *aov* (ANOVA)|
 |fdr_method|Method to Calculate FDR.  Can be *BH* (Benjamini and Hochberg),*q-value*, or *q-lfdr*|
 |genome|Name of genome build|
 |Threads|Number of Threads for TopHat Alignment|
