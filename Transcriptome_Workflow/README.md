@@ -1,16 +1,25 @@
 ### Order to Run Scripts (Gene-Level Analysis) ###
 
-1a) salmon_quant.py (currently, requires manual modification without use of parameters.txt)
+1) salmon_quant.py (currently, requires manual modification without use of parameters.txt)
 
-1b) se_Bowtie_alignment.py + rsem_Bowtie_quant_BAM.py (currently, requires manual modification without use of parameters.txt)
-
-2a) salmon_sailfish_reformat.R
-
-2b) DEG_gene_reformat.R
+2) salmon_sailfish_reformat.R
 
 3) qc.R
 
-4) DEG_goseq.R (for gene-level quantification)
+4) DEG_goseq.R
+
+OR 
+
+
+1) se_Bowtie_alignment.py (currently, requires manual modification without use of parameters.txt)
+
+2) rsem_Bowtie_quant_BAM.py (currently, requires manual modification without use of parameters.txt)
+
+3) DEG_gene_reformat.R
+
+4) qc.R
+
+5) DEG_goseq.R
 
 ### Dependencies (some optional) ###
 
