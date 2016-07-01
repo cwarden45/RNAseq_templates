@@ -95,14 +95,15 @@ if (length(matched.transcripts) != 0){
 	colnames(count.mat) = sample.label
 	
 	for (i in 1:length(sampleID)){
-	temp.file = count.files[[i]]
-	temp.table = read.table(temp.file, sep="\t", header=T)
-	temp.transcripts = as.character(temp.table$Name)
-	temp.counts = temp.table$NumReads
-	temp.tpm = temp.table$TPM
-	
-	transcript.counts.mat[,i] = temp.counts[match(matched.transcripts, temp.transcripts, nomatch=0)]
-	transcript.tpm.mat[,i] = tpm[match(matched.transcripts, temp.transcripts, nomatch=0)]
+		print(sampleID[i])
+		temp.file = count.files[[i]]
+		temp.table = read.table(temp.file, sep="\t", header=T)
+		temp.transcripts = as.character(temp.table$Name)
+		temp.counts = temp.table$NumReads
+		temp.tpm = temp.table$TPM
+		
+		transcript.counts.mat[,i] = temp.counts[match(matched.transcripts, temp.transcripts, nomatch=0)]
+		transcript.tpm.mat[,i] = temp.tpm[match(matched.transcripts, temp.transcripts, nomatch=0)]
 	}#end for (i in 1:length(sampleID))
 	
 	transcripts = matched.transcripts
