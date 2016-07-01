@@ -1,4 +1,4 @@
-### Order to Run Scripts ###
+### Order to Run Scripts (Gene-Level Analysis) ###
 
 1) [alignment / quantification script]
 
@@ -57,8 +57,8 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |total_counts_file|Name of File to Contain Total Read Counts|
 |aligned_stats_file|Name of File to Contain Aligned and Exonic Read Counts|
 |cluster_distance| Distance metric for dendrogram.  Can be *Euclidean* or *Pearson_Dissimilarity*|
-|gene_tpm_file|Name of File to Contain TPM Expression Values per Gene (Sum of Transcript TPM)|
-|gene_counts_file|Name of File to Contain Read Counts Per Gene (Sum of Transcript Counts)|
+|gene_tpm_file|Name of File to Contain TPM Expression Values per Gene (Sum of Transcript TPM for Sailfish/Salmon)|
+|gene_counts_file|Name of File to Contain Read Counts Per Gene (Sum of Transcript Counts for Sailfish/Salmon)|
 |transcript_tpm_file|Name of File to Contain TPM Expression Values per Transcript (unlike TopHat_Workflow, these are linear with rounding occuring later)|
 |transcript_counts_file|Name of File to Contain Read Counts Per Transcript|
 |tpm_expression_cutoff|Rounding Value for TPM (minimum reliable expression level)|
