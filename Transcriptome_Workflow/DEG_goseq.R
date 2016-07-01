@@ -337,7 +337,32 @@ for (i in 1:length(deg.groups)){
 
 if(rep.check == 1){
 	#start p-value calculation
-	if (pvalue.method == "edgeR"){
+	if (pvalue.method == "EBSeq"){
+		library(EBSeq)
+		
+		if ((length(deg.groups) == 2)&(interaction.flag == "filter-overlap")){
+			print("EBSeq, Two-Step Analysis")
+			stop("Need to write code")
+			
+		} else {
+			if (length(deg.groups) == 1){
+				print("EBSeq with 1 variable")
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+				Sizes = MedianNorm(deg.counts)
+				EBOut = EBTest(Data=as.matrix(deg.counts), Conditions=var1, sizeFactors=Sizes, maxround=5)
+				pmat = data.frame(EBOut$PPMat)
+				test.pvalue = pmat$PPEE
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "no")){
+				print("EBSeq with 2 variables")
+				stop("Need to write code")
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "model")){
+				print("EBSeq with 2 variables plus interaction")
+				stop("Need to write code")
+			}
+		}#end else
+	} else if (pvalue.method == "edgeR"){
 		library(edgeR)
 		
 		if ((length(deg.groups) == 2)&(interaction.flag == "filter-overlap")){
