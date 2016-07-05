@@ -1,7 +1,6 @@
 import sys
 import re
 import os
-import subprocess
 
 parameterFile = "parameters.txt"
 
