@@ -149,7 +149,7 @@ write.table(annotated.gene.tpm, file=result.file, row.names=F, quote=F, sep="\t"
 annotated.gene.counts = data.frame(gene.info, gene.counts.mat)
 write.table(annotated.gene.counts, file = gene.counts.file, sep="\t", row.names=F, quote=T)
 
-result.file = paste(user.folder, gene.counts.mat, sep="/")
+result.file = paste(user.folder, gene.counts.file, sep="/")
 write.table(annotated.gene.counts, file=result.file, row.names=F, quote=F, sep="\t")
 
 transcript.reads = apply(gene.counts.mat, 2, sum)
