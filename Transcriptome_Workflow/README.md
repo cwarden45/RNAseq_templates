@@ -60,7 +60,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |deg_groups|Names of columns in *sample_description_file* to be plotted in QC and differential expression plots.  Use commas to include multiple variables (for multivariate model or gene list filtering)|
 |treatment_group|Treatment group for primary variable; enter *continuous* for a continuous variable and a correlation will be provided instead of a fold-change value.|
 |Raw_Code_PC|Path to output folder for most result|
-|Raw_Code_MAC|Path to output folder for most result(Mac/Linux/Docker format)|
+|Raw_Code_MAC|Path to output folder for most result (Mac/Linux/Docker format)|
 |Result_Folder|Path to output folder for selected, final results|
 |Reads_Folder_MAC|Path to Reads for Salmon/Sailfish Quantification (Mac/Linux/Docker format)|
 |Salmon_index|Path to Salmon index folder|
