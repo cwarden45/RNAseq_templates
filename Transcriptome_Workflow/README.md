@@ -1,6 +1,6 @@
 ### Order to Run Scripts (Gene-Level Analysis) ###
 
-1) salmon_quant.py (currently, requires manual modification without use of parameters.txt)
+1) salmon_quant.py
 
 2) salmon_sailfish_reformat.R
 
