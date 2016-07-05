@@ -123,14 +123,14 @@ if (length(matched.transcripts) == 0){
 annotated.transcript.tpm = data.frame(transcript.info, transcript.tpm.mat)
 write.table(annotated.transcript.tpm, file = transcript.tpm.file, sep="\t", row.names=F, quote=T)
 
-#result.file = paste(user.folder, transcript.tpm.file, sep="/")
-#write.table(annotated.transcript.tpm, file=result.file, row.names=F, quote=F, sep="\t")
+result.file = paste(user.folder, transcript.tpm.file, sep="/")
+write.table(annotated.transcript.tpm, file=result.file, row.names=F, quote=F, sep="\t")
 
 annotated.transcript.counts = data.frame(transcript.info, transcript.counts.mat)
 write.table(annotated.transcript.counts, file = transcript.counts.file, sep="\t", row.names=F, quote=T)
 
-#result.file = paste(user.folder, transcript.counts.file, sep="/")
-#write.table(annotated.transcript.counts, file=result.file, row.names=F, quote=F, sep="\t")
+result.file = paste(user.folder, transcript.counts.file, sep="/")
+write.table(annotated.transcript.counts, file=result.file, row.names=F, quote=F, sep="\t")
 
 gene.symbol = as.character(levels(as.factor(as.character(transcript.info$Gene.Name))))
 geneID= transcript.info$NCBI.GeneID[match(gene.symbol,as.character(transcript.info$Gene.Name))]
@@ -143,14 +143,14 @@ gene.counts.mat = round(apply(transcript.counts.mat, 2, gene.summary, gene.symbo
 annotated.gene.tpm = data.frame(gene.info, gene.tpm.mat)
 write.table(annotated.gene.tpm, file = gene.tpm.file, sep="\t", row.names=F, quote=T)
 
-#result.file = paste(user.folder, gene.tpm.file, sep="/")
-#write.table(annotated.gene.tpm, file=result.file, row.names=F, quote=F, sep="\t")
+result.file = paste(user.folder, gene.tpm.file, sep="/")
+write.table(annotated.gene.tpm, file=result.file, row.names=F, quote=F, sep="\t")
 
 annotated.gene.counts = data.frame(gene.info, gene.counts.mat)
 write.table(annotated.gene.counts, file = gene.counts.file, sep="\t", row.names=F, quote=T)
 
-#result.file = paste(user.folder, gene.counts.mat, sep="/")
-#write.table(annotated.gene.counts, file=result.file, row.names=F, quote=F, sep="\t")
+result.file = paste(user.folder, gene.counts.mat, sep="/")
+write.table(annotated.gene.counts, file=result.file, row.names=F, quote=F, sep="\t")
 
 transcript.reads = apply(gene.counts.mat, 2, sum)
 
@@ -178,16 +178,16 @@ expressed.protein.coding.transcript.counts = apply(protein.coding.transcript.tpm
 percent.expressed.protein.coding.transcripts = round( 100 * expressed.protein.coding.transcript.counts / nrow(protein.coding.transcript.tpm), digits=1)
 
 coverage.table = data.frame(Sample = sample.label,
-							transcript.reads=transcript.reads,
-							Expressed.Transcripts = expressed.transcript.counts, Percent.Expressed.Transcripts = percent.expressed.transcripts,
-							transcript.trimmed.percent=transcript.trimmed.percent,
-							Expressed.Genes = expressed.gene.counts, Percent.Expressed.Genes = percent.expressed.genes,
-							gene.trimmed.percent=gene.trimmed.percent,
+				transcript.reads=transcript.reads,
+				Expressed.Transcripts = expressed.transcript.counts, Percent.Expressed.Transcripts = percent.expressed.transcripts,
+				transcript.trimmed.percent=transcript.trimmed.percent,
+				Expressed.Genes = expressed.gene.counts, Percent.Expressed.Genes = percent.expressed.genes,
+				gene.trimmed.percent=gene.trimmed.percent,
 							
-							expressed.protein.coding.transcripts = expressed.protein.coding.transcript.counts,
-							percent.expressed.protein.coding.transcripts = percent.expressed.protein.coding.transcripts,
-							protein.coding.transcript.trimmed.percent=transcript.trimmed.protein.coding.percent,
-							expressed.protein.coding.genes = expressed.protein.coding.gene.counts,
-							percent.expressed.protein.coding.genes = percent.protein.coding.expressed.genes,
-							protein.coding.gene.trimmed.percent=gene.trimmed.protein.coding.percent)
+				expressed.protein.coding.transcripts = expressed.protein.coding.transcript.counts,
+				percent.expressed.protein.coding.transcripts = percent.expressed.protein.coding.transcripts,
+				protein.coding.transcript.trimmed.percent=transcript.trimmed.protein.coding.percent,
+				expressed.protein.coding.genes = expressed.protein.coding.gene.counts,
+				percent.expressed.protein.coding.genes = percent.protein.coding.expressed.genes,
+				protein.coding.gene.trimmed.percent=gene.trimmed.protein.coding.percent)
 write.table(coverage.table, file="gene_coverage_stats.txt", quote=F, row.names=F, sep="\t")
