@@ -4,7 +4,7 @@
 
 This also creates gene to transcript mapping file for RSEM and annotation file for all transcriptome-based workflows
 
-**Salmon Index Command**: /opt/salmon/bin/salmon index -t transcripts.fa -i transcripts_index --type quasi -k 31
+**Salmon Index Command**: /opt/salmon/bin/salmon index -t [RSEM_gene_map.py trimmed rsemFa].fa -i salmon_index
 - Recommend using default setting of *--type quasi*
 - *-k* must be less than the length of the read and must be odd number (manual recommends less than 1/2 read length).  Using shorter reads, use a lower value of k (such as 19).
 
