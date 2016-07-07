@@ -51,8 +51,14 @@ for subfolder in fileResults:
 				line = re.sub("\r","",line)
 
 				result2 = re.search("^reads_in =(\d+)",line)
+				result2b = re.search("^left_reads_in =(\d+)",line)
 				if result2:
 					totalReads = result2.group(1)			
 
 					text = sample + "\t" + totalReads + "\n";
 					outHandle.write(text)
+				elif result2b:
+					totalReads = result2b.group(1)			
+
+					text = sample + "\t" + totalReads + "\n";
+					outHandle.write(text)					
