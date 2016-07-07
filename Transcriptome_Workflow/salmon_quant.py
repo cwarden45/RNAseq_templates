@@ -37,6 +37,7 @@ fileResults = os.listdir(readsFolder)
 
 for file in fileResults:
 	result = re.search("(.*)_\w{6}_L\d{3}_R1_001.fastq$",file)
+	result2 = re.search("(.*)_\w{6}_L\d{3}_R2_001.fastq$",file)
 	
 	if result:
 		sample = result.group(1)
@@ -48,7 +49,14 @@ for file in fileResults:
 			os.system(command)
 									
 			read1 = readsFolder + "/" + file
-
-			command = "/opt/salmon/bin/salmon quant -l U -i " + ref +  " -p " + threads + " -o " + outputSubfolder + " -r " + read1
-			os.system(command)
+			read2 = re.sub("_R1_001.fastq$","_R2_001.fastq",read1)
+			
+			if os.path.isfile(read2):
+				print "Reverse Read Found --> Running PE Quantification"
+				command = "/opt/salmon/bin/salmon quant -l U -i " + ref +  " -p " + threads + " -o " + outputSubfolder + " -1 " + read1 + " -2 " + read2
+				os.system(command)
+			else:
+				print "Running SE Quantification"
+				command = "/opt/salmon/bin/salmon quant -l U -i " + ref +  " -p " + threads + " -o " + outputSubfolder + " -r " + read1
+				os.system(command)
 
