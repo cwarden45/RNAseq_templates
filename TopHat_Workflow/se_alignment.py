@@ -80,5 +80,5 @@ for file in fileResults:
 			os.system(command)
 
 			print "\n\nIndexing BAM File\n\n"
-			command = "samtools index " + userBam
+			command = "/opt/samtools-1.3/samtools index " + userBam
 			os.system(command)
