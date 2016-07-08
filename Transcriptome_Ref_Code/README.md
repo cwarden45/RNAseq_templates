@@ -1,6 +1,6 @@
 ### Refence Notes for Transcriptome_Workflow ###
 
-**For both RSEM and Sailfish/Salmon Workflows**: Use RSEM_gene_map.py to create a filtered transcriptome from **GENCODE annotations**.
+**For both RSEM and Sailfish/Salmon Workflows**: Use RSEM_gene_map.py to create a filtered transcriptome from *GENCODE annotations*.
 
 This also creates gene to transcript mapping file for RSEM and annotation file for all transcriptome-based workflows
 
