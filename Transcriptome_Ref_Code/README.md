@@ -6,7 +6,7 @@ This also creates gene to transcript mapping file for RSEM and annotation file f
 
 NOTE: The MiTranscriptome annotation file has a column called "Ensembl.TranscriptID".  This is not really an Ensembl ID - it is just the transcript name repeated so that the annoation file will work with the GENCODE reference scripts.  This is also why NCBI.GeneID is "NA" for all values.
 
-**Salmon Index Command**: /opt/salmon/bin/salmon index -t [RSEM_gene_map.py trimmed rsemFa].fa -i salmon_index
+**Salmon Index Command**: `/opt/salmon/bin/salmon index -t [RSEM_gene_map.py trimmed rsemFa].fa -i salmon_index`
 - Recommend using default setting of *--type quasi*
 - *-k* must be less than the length of the read and must be odd number (manual recommends less than 1/2 read length).  Using shorter reads, use a lower value of k (such as 19).
 
