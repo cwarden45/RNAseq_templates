@@ -14,11 +14,13 @@
 
 2) rsem_Bowtie_quant_BAM.py (currently, requires manual modification without use of parameters.txt)
 
-3) DEG_gene_reformat.R
+3) RSEM_gene_reformat.R
 
 4) qc.R
 
 5) DEG_goseq.R
+
+NOTE: If you really want to use these scripts for transcript-level differential expression, you can change the *gene_tpm_file* and *gene_counts_file* settings after you have created the transcript TPM and counts files using salmon_sailfish_reformat.R.  Manual modification of RSEM_gene_reformat.R and sample description file required for change RSEM summary input.
 
 ### Dependencies (some optional) ###
 
