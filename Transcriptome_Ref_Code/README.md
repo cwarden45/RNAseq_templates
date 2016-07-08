@@ -1,8 +1,10 @@
 ### Refence Notes for Transcriptome_Workflow ###
 
-**For both RSEM and Sailfish/Salmon Workflows**: Use RSEM_gene_map.py to create a filtered transcriptome from *GENCODE annotations*.
+**For both RSEM and Sailfish/Salmon Workflows**: Use RSEM_gene_map.py to create a filtered transcriptome from *GENCODE* annotations, and use MiTranscriptome_annotations.py to create annotation file for *MiTranscriptome* sequences.
 
 This also creates gene to transcript mapping file for RSEM and annotation file for all transcriptome-based workflows
+
+NOTE: The MiTranscriptome annotation file has a column called "Ensembl.TranscriptID".  This is not really an Ensembl ID - it is just the transcript name repeated so that the annoation file will work with the GENCODE reference scripts.  This is also why GeneID is "NA" for all values.
 
 **Salmon Index Command**: /opt/salmon/bin/salmon index -t [RSEM_gene_map.py trimmed rsemFa].fa -i salmon_index
 - Recommend using default setting of *--type quasi*
