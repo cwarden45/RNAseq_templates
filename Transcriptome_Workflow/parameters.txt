@@ -19,7 +19,7 @@ transcript_counts_file	transcript_estimated_counts.txt
 gene_tpm_file	gene_TPM.txt
 gene_counts_file	gene_estimated_counts.txt
 cluster_distance	Euclidean
-tpm_expression_cutoff	1
+tpm_expression_cutoff	0.1
 minimum_fraction_expressed	0.5
 fold_change_cutoff	1.5
 cor_cutoff	0.2
