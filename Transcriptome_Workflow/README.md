@@ -66,7 +66,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |Result_Folder|Path to output folder for selected, final results|
 |Reads_Folder_MAC|Path to Reads for Salmon/Sailfish Quantification (Mac/Linux/Docker format)|
 |Salmon_index|Path to Salmon index folder|
-|pvalue_method|Method to Calculate P-value.  Can be *edgeR*, *limma-voom*, *DESeq2*, *EBSeq*, *lm* (linear regression), or *aov* (ANOVA)|
+|pvalue_method|Method to Calculate P-value.  Can be *edgeR*, *limma-voom*, *DESeq2*, *EBSeq*, *lm* (linear regression), or *ANOVA*|
 |fdr_method|Method to Calculate FDR.  Can be *BH* (Benjamini and Hochberg),*q-value*, or *q-lfdr*|
 |genome|Name of genome build|
 |Threads|Number of Threads for TopHat Alignment|
