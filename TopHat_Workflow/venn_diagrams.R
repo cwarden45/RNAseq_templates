@@ -14,5 +14,6 @@ gene.list = list(UP1=set1.up,
 vennObj = Venn(gene.list)
 
 png("venn.png")
+#if 2 or 3 groups, use , doWeights = FALSE to remove scaling
 plot(vennObj, type="ellipses")
 dev.off()
