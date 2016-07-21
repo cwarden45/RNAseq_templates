@@ -43,7 +43,7 @@ if(length(dash.flag) > 0){
 	print(paste(paste(sample.label[dash.flag],collapse=",")," samples labels have dashes in their labels",sep=""))
 }
 num.flag = grep("^[0-9]",sample.label)
-if(length(dash.flag) > 0){
+if(length(num.flag) > 0){
 	print(paste(paste(sample.label[num.flag],collapse=",")," samples labels start with numbers",sep=""))
 }
 
