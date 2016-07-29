@@ -38,7 +38,8 @@ for file in fileResults:
 	
 	if result:
 		sample = re.sub(".bam$","",file)
-		if sample not in finishedSamples:
+		sortResult = re.search(".name.sort.bam",file)
+		if (sample not in finishedSamples) and (not sortResult):
 			print sample
 		
 			nameSortedBam = sample + ".name.sort.bam"
@@ -52,7 +53,7 @@ for file in fileResults:
 			
 			countsFile = sample + "_lncRNA_counts.txt"
 			command = "htseq-count -f bam -s no -i gene_name " + nameSortedBam + " " + lncRNAgtf + " > " + countsFile
-			os.system(command)
+			#os.system(command)
 	
 			command = "rm " + nameSortedBam
 			os.system(command)
