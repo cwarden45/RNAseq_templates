@@ -32,6 +32,7 @@ aligned.reads = rep(0, times=length(sampleIDs))
 exonic.reads = rep(0, times = length(sampleIDs))
 
 bam.files <- list.files(alignment.folder, pattern=".bam$")
+bam.files = bam.files[-grep("sort.bam",bam.files)]
 sampleIDs = sub(".bam$","",bam.files)
 
 for(i in 1:length(bam.files)){
