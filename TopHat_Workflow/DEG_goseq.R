@@ -163,9 +163,9 @@ RPKM = RPKM[,match(sample.label, colnames(RPKM))]
 
 print(dim(counts))
 expressed.sample.count = apply(RPKM, 1, count.defined.values, expr.cutoff = log2(min.expression))
-counts.table = counts.table[expressed.sample.count > round(min.fraction.expressed * ncol(counts)),]
-counts = counts[expressed.sample.count > round(min.fraction.expressed * ncol(counts)),]
-RPKM = RPKM[expressed.sample.count > round(min.fraction.expressed * ncol(counts)),]
+counts.table = counts.table[expressed.sample.count >= round(min.fraction.expressed * ncol(counts)),]
+counts = counts[expressed.sample.count >= round(min.fraction.expressed * ncol(counts)),]
+RPKM = RPKM[expressed.sample.count >= round(min.fraction.expressed * ncol(counts)),]
 print(dim(counts))
 
 genes = counts.table$symbol
