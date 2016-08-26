@@ -55,7 +55,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |plot_groups | Names of columns in *sample_description_file* to be plotted in QC and differential expression plots.  Use commas to plot multiple groups|
 |deg_groups|Names of columns in *sample_description_file* to be plotted in QC and differential expression plots.  Use commas to include multiple variables (for multivariate model or gene list filtering)|
 |treatment_group|Treatment group for primary variable; enter *continuous* for a continuous variable and a correlation will be provided instead of a fold-change value.|
-|Raw_Code_PC|Path to output folder for most result|
+|Raw_Code_PC|Path to output folder for most results|
 |Result_Folder|Path to output folder for selected, final results|
 |Alignment_Folder_MAC|Path to TopHat Alignments|
 |Reads_Folder_MAC|Path to Reads for TopHat Alignment|
