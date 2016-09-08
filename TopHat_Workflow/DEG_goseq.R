@@ -941,7 +941,8 @@ deg.genes = genes[status != "No Change"]
 
 if(length(deg.genes) > 1){
 	if(length(plot.groups) > 1){
-		source("heatmap.3.R")
+		#source("heatmap.3.R")
+		source("https://github.com/obigriffith/biostar-tutorials/raw/master/Heatmaps/heatmap.3.R")
 		grp1 = as.character(sample.description.table[,plot.groups[1]])
 		grp2 = as.character(sample.description.table[,plot.groups[2]])
 		group.levels = c(levels(as.factor(grp1)),levels(as.factor(grp2)))
