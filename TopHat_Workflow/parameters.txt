@@ -10,6 +10,7 @@ Bowtie2_Ref [required]
 Alignment_Folder_PC	[required]
 Alignment_Folder_MAC	[required]
 Reads_Folder_MAC  [required]
+Cluster_Email [required if using cluster]
 txGTF_MAC	[required]
 lncRNA_GTF_MAC	[required]
 lncRNA_ann_name GENCODE
