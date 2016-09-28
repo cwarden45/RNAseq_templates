@@ -6,7 +6,7 @@
 
 3) exonic_read_counts.R
 
-4) HTseq_counts.py
+4) HTseq_counts.py or cluster_HTseq_counts.py
 
 5) HTseq_reformat.R
 
