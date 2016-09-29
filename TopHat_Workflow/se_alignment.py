@@ -82,3 +82,7 @@ for file in fileResults:
 			print "\n\nIndexing BAM File\n\n"
 			command = "/opt/samtools-1.3/samtools index " + userBam
 			os.system(command)
+			
+			print "\n\nCompressing .fastq File\n\n"
+			command = "gzip " + read1
+			os.system(command)
