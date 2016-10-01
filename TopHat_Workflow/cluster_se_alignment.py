@@ -103,10 +103,7 @@ for file in fileResults:
 			text = "samtools index " + userBam + "\n"
 			outHandle.write(text)
 				
-			command = "dos2unix " + shellScript
-			#os.system(command)
-				
 			#have to run qsub manually....
 			#command = "qsub " + shellScript
 			#os.system(command)
-			#subprocess.run(command)
+			#subprocess.call(command, shell=True)
