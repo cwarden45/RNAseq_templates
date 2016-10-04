@@ -31,8 +31,10 @@ chromosomes = as.character(levels(as.factor(as.character(exon.info$chr))))
 aligned.reads = rep(0, times=length(sampleIDs))
 exonic.reads = rep(0, times = length(sampleIDs))
 
-bam.files <- list.files(alignment.folder, pattern=".bam$")
-bam.files = bam.files[-grep("sort.bam",bam.files)]
+bam.files = list.files(alignment.folder, pattern=".bam$")
+if(length(grep("sort.bam",bam.files)) > 0){
+	bam.files = bam.files[-grep("sort.bam",bam.files)]
+}
 sampleIDs = sub(".bam$","",bam.files)
 
 for(i in 1:length(bam.files)){
