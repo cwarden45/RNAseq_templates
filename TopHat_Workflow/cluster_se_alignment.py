@@ -67,7 +67,7 @@ for file in fileResults:
 	resultGZ = re.search("(.*)_L\d{3}_R1_001.fastq.gz$",file)
 	
 	if resultGZ:
-		sample = result.group(1)
+		sample = resultGZ.group(1)
 		jobCount += 1
 		
 		if (sample not in finishedSamples):
