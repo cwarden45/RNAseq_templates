@@ -39,7 +39,7 @@ for file in fileResults:
 			print sample
 			subfolder = alignmentFolder + "/" + sample
 			
-			print "Determining Strand"
+			print "Determining Strand for Housekeeping Genes"
 			strandStat = subfolder + "/" + sample + "_infer_strand.txt"
 			command = "infer_experiment.py -r " + bed_file + " -i " + fullPath + " > " + strandStat
 			os.system(command)
