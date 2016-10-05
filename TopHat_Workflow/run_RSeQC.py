@@ -44,7 +44,7 @@ for file in fileResults:
 			command = "infer_experiment.py -r " + bed_file + " -i " + fullPath + " > " + strandStat
 			os.system(command)
 
-			print "Calculating TIN scores"
+			#print "Calculating TIN scores"
 			#skip since output file not created
 			tinStat = subfolder + "/" + sample + "_tin_stat.txt"
 			command = "tin.py -r " + bed_file + " -i " + fullPath + " > " + tinStat
