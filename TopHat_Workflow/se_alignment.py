@@ -53,8 +53,14 @@ fileResults = os.listdir(readsFolder)
 
 for file in fileResults:
 	result = re.search("(.*)_\w{6}_L\d{3}_R1_001.fastq$",file)
-	
 	if result:
+		command = "gzip " + file
+		os.system(command)
+		file = file + ".gz"
+	
+	resultGZ = re.search("(.*)_L\d{3}_R1_001.fastq.gz$",file)
+	
+	if resultGZ:
 		sample = result.group(1)
 		if sample not in finishedSamples:
 			print sample
