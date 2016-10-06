@@ -49,6 +49,7 @@ heatmap.3 example: https://www.biostars.org/p/18211/
 goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 
 *QC*
+
 RSeQC: http://rseqc.sourceforge.net/
 
 ### Parameter Values ###
