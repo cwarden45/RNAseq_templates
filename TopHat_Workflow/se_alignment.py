@@ -9,6 +9,7 @@ threads = ""
 ref = ""
 alignmentFolder = ""
 readsFolder = ""
+strandType = ""
 
 inHandle = open(parameterFile)
 lines = inHandle.readlines()
@@ -32,6 +33,13 @@ for line in lines:
 		
 	if param == "Threads":
 		threads = value
+
+	if param == "strand":
+		strandType = value
+
+if (threads == "") or (threads == "[required]"):
+	print "Need to enter a value for 'strand'!"
+	sys.exit()
 		
 if (threads == "") or (threads == "[required]"):
 	print "Need to enter a value for 'Threads'!"
@@ -53,15 +61,9 @@ fileResults = os.listdir(readsFolder)
 
 for file in fileResults:
 	result = re.search("(.*)_\w{6}_L\d{3}_R1_001.fastq$",file)
+	
 	if result:
-		command = "gzip " + file
-		os.system(command)
-		file = file + ".gz"
-	
-	resultGZ = re.search("(.*)_\w{6}_L\d{3}_R1_001.fastq.gz$",file)
-	
-	if resultGZ:
-		sample = resultGZ.group(1)
+		sample = result.group(1)
 		if sample not in finishedSamples:
 			print sample
 
@@ -70,9 +72,20 @@ for file in fileResults:
 			os.system(command)
 									
 			read1 = readsFolder + "/" + file
-								
+			
+			tophatStrand = ""
+			if strandType == "no":
+				tophatStrand = "fr-unstranded"
+			elif strandType == "reverse":
+				tophatStrand = "fr-firststrand"
+			elif strandType == "yes":
+				tophatStrand = "fr-secondstrand"
+			else:
+				print "Need to provide TopHat mapping for strand: " + strandType
+				sys.exit()
+				
 			print "\n\nAlign via TopHat\n\n"
-			command = "tophat -o " + outputSubfolder + " -p " + threads + " --no-coverage-search " + ref + " " + read1 
+			command = "tophat -o " + outputSubfolder + " -p " + threads + " --no-coverage-search --library-type " + tophatStrand + " " + ref + " " + read1 
 			os.system(command)
 								
 			topHatBam = outputSubfolder + "/accepted_hits.bam";																			
@@ -92,3 +105,5 @@ for file in fileResults:
 			print "\n\nCompressing .fastq File\n\n"
 			command = "gzip " + read1
 			os.system(command)
+			
+			sys.exit()

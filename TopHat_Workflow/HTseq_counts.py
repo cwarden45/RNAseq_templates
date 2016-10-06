@@ -7,6 +7,7 @@ parameterFile = "parameters.txt"
 alignmentFolder = ""
 gtf_file = ""
 lncRNAgtf = ""
+strandType = ""
 
 inHandle = open(parameterFile)
 lines = inHandle.readlines()
@@ -28,6 +29,13 @@ for line in lines:
 	if param == "lncRNA_GTF_MAC":
 		lncRNAgtf = value		
 
+	if param == "strand":
+		strandType = value
+
+if (strandType != "yes") and (strandType != "no") and (strandType != "reverse"):
+	print "Need to provide HT-Seq mapping for strand: " + strandType
+	sys.exit()
+		
 fileResults = os.listdir(alignmentFolder)
 
 finishedSamples = ()
@@ -48,11 +56,11 @@ for file in fileResults:
 			os.system(command)
 		
 			countsFile = sample + "_gene_counts.txt"
-			command = "htseq-count -f bam -s no " + nameSortedBam + " " + gtf_file + " > " + countsFile
+			command = "htseq-count -f bam -s " + strandType + " " + nameSortedBam + " " + gtf_file + " > " + countsFile
 			os.system(command)
 			
 			countsFile = sample + "_lncRNA_counts.txt"
-			command = "htseq-count -f bam -s no -i gene_name " + nameSortedBam + " " + lncRNAgtf + " > " + countsFile
+			command = "htseq-count -f bam -s " + strandType + " -i gene_name " + nameSortedBam + " " + lncRNAgtf + " > " + countsFile
 			#os.system(command)
 	
 			command = "rm " + nameSortedBam
