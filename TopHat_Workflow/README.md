@@ -68,6 +68,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |txGTF_MAC|Path to GTF file for HTseq quantification|
 |lncRNA_GTF_MAC|Path to lncRNA GTF file for HTseq quantification|
 |lncRNA_ann_name|Game of extra lncRNA database (*GENCODE* or *MiTranscriptome*)|
+|RSeQC_bed_MAC|Path to .bed file with housekeeping gene annotations (for RSeQC)|
 |HTseq_input_folder|Path to folder containing GTF gene information|
 |sample_description_file|Name of Sample Description File|
 |total_counts_file|Name of File to Contain Total Read Counts|
