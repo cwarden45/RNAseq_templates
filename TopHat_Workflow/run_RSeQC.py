@@ -44,10 +44,16 @@ for file in fileResults:
 			command = "infer_experiment.py -r " + bed_file + " -i " + fullPath + " > " + strandStat
 			os.system(command)
 
-			#print "Calculating TIN scores"
-			#skip since output file not created
-			tinStat = subfolder + "/" + sample + "_tin_stat.txt"
-			command = "tin.py -r " + bed_file + " -i " + fullPath + " > " + tinStat
-			#os.system(command)
+			print "Calculating TIN scores"
+			command = "tin.py -r " + bed_file + " -i " + fullPath
+			os.system(command)
+			
+			tinOut1 = sample + ".summary.txt"
+			command = "mv " + tinOut1 + " " + subfolder + "/" + tinOut1
+			os.system(command)
+			
+			tinOut2 = sample + ".tin.xls"
+			command = "mv " + tinOut2 + " " + subfolder + "/" + tinOut2
+			os.system(command)
 
 		
