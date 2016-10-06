@@ -37,7 +37,7 @@ for line in lines:
 	if param == "strand":
 		strandType = value
 
-if (threads == "") or (threads == "[required]"):
+if (strandType == "") or (strandType == "[required]"):
 	print "Need to enter a value for 'strand'!"
 	sys.exit()
 		
