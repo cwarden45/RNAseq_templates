@@ -16,6 +16,8 @@
 
 ### Dependencies (some optional) ###
 
+Python scripts can be run within [Docker image](https://hub.docker.com/r/cwarden45/rnaseq-dependencies/)
+
 *Alignment*
 
 TopHat: https://ccb.jhu.edu/software/tophat/tutorial.shtml
