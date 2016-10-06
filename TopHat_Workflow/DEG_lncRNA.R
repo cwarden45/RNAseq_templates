@@ -515,15 +515,18 @@ if(rep.check == 1){
 				Wald.flag = TRUE
 				if (Wald.flag){
 					dds <- DESeq(dds)
-					other.groups = as.character(levels(as.factor(as.character(var1[var1 != trt.group]))))
-					if(length(other.groups) > 1){
-						print("DESeq2 Wald-test will look at differences between two groups.")
-						print("You can manually switch code to use LRT instead of Wald test (set Wald.flag = FALSE).")
-						#The paired sample design in the DESeq2 manual uses the Wald test
-						stop("Or, please consider using an interaction model with LRT if your primary variable has more than two groups.")
+					if (trt.group == "continuous"){
+						res <- results(dds, name = "var1")
+					} else{
+						other.groups = as.character(levels(as.factor(as.character(var1[var1 != trt.group]))))
+						if(length(other.groups) > 1){
+							print("DESeq2 Wald-test will look at differences between two groups.")
+							print("You can manually switch code to use LRT instead of Wald test (set Wald.flag = FALSE).")
+							#The paired sample design in the DESeq2 manual uses the Wald test
+							stop("Or, please consider using an interaction model with LRT if your primary variable has more than two groups.")
+						}
+						res <- results(dds, contrast = c("var1", trt.group, other.groups))
 					}
-					res <- results(dds, contrast = c("var1", trt.group, other.groups))
-					#print(head(res))
 				} else {
 					dds <- DESeq(dds, test="LRT", reduced = ~ var2)
 					res = results(dds)
