@@ -3,11 +3,12 @@ import re
 import os
 
 parameterFile = "parameters.txt"
-finishedSamples = ()
+unfinishedSamples = ()
 
 alignmentFolder = ""
 gtf_file = ""
 lncRNAgtf = ""
+strandType = ""
 email = ""
 
 inHandle = open(parameterFile)
@@ -30,8 +31,15 @@ for line in lines:
 	if param == "lncRNA_GTF_MAC":
 		lncRNAgtf = value		
 
+	if param == "strand":
+		strandType = value
+		
 	if param == "Cluster_Email":
 		email = value
+
+if (strandType != "yes") and (strandType != "no") and (strandType != "reverse"):
+	print "Need to provide HT-Seq mapping for strand: " + strandType
+	sys.exit()
 		
 fileResults = os.listdir(alignmentFolder)
 
@@ -48,7 +56,7 @@ for file in fileResults:
 		if not sortResult:
 			jobCount += 1
 		
-		if (sample not in finishedSamples) and (not sortResult):
+		if (sample in unfinishedSamples) and (not sortResult):
 			print sample
 	
 			shellScript = "htseq_" + sample + ".sh"
@@ -70,11 +78,11 @@ for file in fileResults:
 			outHandle.write(text)
 		
 			countsFile = sample + "_gene_counts.txt"
-			text = "htseq-count -f bam -s no " + nameSortedBam + " " + gtf_file + " > " + countsFile + "\n"
+			text = "htseq-count -f bam -s " + strandType + " " + nameSortedBam + " " + gtf_file + " > " + countsFile + "\n"
 			outHandle.write(text)
 			
 			countsFile = sample + "_lncRNA_counts.txt"
-			text = "htseq-count -f bam -s no -i gene_name " + nameSortedBam + " " + lncRNAgtf + " > " + countsFile + "\n"
+			text = "htseq-count -f bam -s " + strandType + " -i gene_name " + nameSortedBam + " " + lncRNAgtf + " > " + countsFile + "\n"
 			#os.system(command)
 	
 			text = "rm " + nameSortedBam + "\n"

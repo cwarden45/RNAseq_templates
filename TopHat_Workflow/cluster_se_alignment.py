@@ -4,12 +4,13 @@ import os
 import subprocess
 
 parameterFile = "parameters.txt"
-finishedSamples = []
+finishedSamples = ()
 
 threads = ""
 ref = ""
 alignmentFolder = ""
 readsFolder = ""
+strandType = ""
 email = ""
 
 inHandle = open(parameterFile)
@@ -34,12 +35,23 @@ for line in lines:
 		
 	if param == "Threads":
 		threads = value
+
+	if param == "strand":
+		strandType = value
 		
 	if param == "Cluster_Email":
 		email = value
 		
 if (threads == "") or (threads == "[required]"):
 	print "Need to enter a value for 'Threads'!"
+	sys.exit()
+
+if (strandType == "") or (strandType == "[required]"):
+	print "Need to enter a value for 'strand'!"
+	sys.exit()
+
+if (email == "") or (email == "[required]"):
+	print "Need to enter a value for 'Cluster_Email'!"
 	sys.exit()
 	
 if (ref == "") or (ref == "[required]"):
@@ -59,15 +71,9 @@ fileResults = os.listdir(readsFolder)
 jobCount = 0
 for file in fileResults:
 	result = re.search("(.*)_\w{6}_L\d{3}_R1_001.fastq$",file)
+	
 	if result:
-		command = "gzip " + file
-		os.system(command)
-		file = file + ".gz"
-	
-	resultGZ = re.search("(.*)_\w{6}_L\d{3}_R1_001.fastq.gz$",file)
-	
-	if resultGZ:
-		sample = resultGZ.group(1)
+		sample = result.group(1)
 		jobCount += 1
 		
 		if (sample not in finishedSamples):
@@ -92,8 +98,19 @@ for file in fileResults:
 			outHandle.write(text)
 										
 			read1 = readsFolder + "/" + file
-									
-			text = "tophat -o " + outputSubfolder + " -p " + threads + " --no-coverage-search " + ref + " " + read1 + "\n" 
+
+			tophatStrand = ""
+			if strandType == "no":
+				tophatStrand = "fr-unstranded"
+			elif strandType == "reverse":
+				tophatStrand = "fr-firststrand"
+			elif strandType == "yes":
+				tophatStrand = "fr-secondstrand"
+			else:
+				print "Need to provide TopHat mapping for strand: " + strandType
+				sys.exit()
+			
+			text = "tophat -o " + outputSubfolder + " -p " + threads + " --no-coverage-search --library-type " + tophatStrand + " " + ref + " " + read1 + "\n" 
 			outHandle.write(text)
 									
 			topHatBam = outputSubfolder + "/accepted_hits.bam"																			
@@ -108,8 +125,11 @@ for file in fileResults:
 
 			text = "samtools index " + userBam + "\n"
 			outHandle.write(text)
+
+			text = "gzip " + read1
+			outHandle.write(text)
 				
 			#have to run qsub manually....
 			#command = "qsub " + shellScript
 			#os.system(command)
-			#subprocess.call(command, shell=True)
+			#subprocess.run(command, shell=True)
