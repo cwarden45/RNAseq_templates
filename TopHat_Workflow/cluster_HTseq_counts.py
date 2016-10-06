@@ -3,7 +3,7 @@ import re
 import os
 
 parameterFile = "parameters.txt"
-unfinishedSamples = ()
+finishedSamples = ()
 
 alignmentFolder = ""
 gtf_file = ""
@@ -56,7 +56,7 @@ for file in fileResults:
 		if not sortResult:
 			jobCount += 1
 		
-		if (sample in unfinishedSamples) and (not sortResult):
+		if (sample not in finishedSamples) and (not sortResult):
 			print sample
 	
 			shellScript = "htseq_" + sample + ".sh"
