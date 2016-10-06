@@ -51,6 +51,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 *QC*
 
 RSeQC: http://rseqc.sourceforge.net/
+
 (use with `run_RSeQC.py` and `collect_RSeQC_metrics.py`)
 
 ### Parameter Values ###
