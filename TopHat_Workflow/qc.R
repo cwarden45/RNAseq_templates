@@ -23,7 +23,7 @@ cluster.distance = as.character(param.table$Value[param.table$Parameter == "clus
 min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "rpkm_expression_cutoff"]))
 plot.groups = unlist(strsplit(as.character(param.table$Value[param.table$Parameter == "plot_groups"]), split=","))
 
-fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
+fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black","darkgreen","thistle1","tan","orchid1",colors())
 
 sample.table = read.table(sample.description.file, sep="\t", header=T)
 userID = as.character(sample.table$userID)
