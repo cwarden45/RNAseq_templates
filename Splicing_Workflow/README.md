@@ -8,7 +8,7 @@
 
 ### Dependencies (some optional) ###
 
-Most Python scripts can be run within [Docker image](https://hub.docker.com/r/cwarden45/rnaseq-dependencies/)
+Most Python scripts can be run using this [Docker image](https://hub.docker.com/r/cwarden45/rnaseq-dependencies/)
 
 *Alignment*
 
