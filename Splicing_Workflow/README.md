@@ -35,7 +35,7 @@ JunctionSeq: https://bioconductor.org/packages/release/bioc/html/JunctionSeq.htm
 |treatment_group|Treatment group for primary variable; enter *continuous* for a continuous variable and a correlation will be provided instead of a fold-change value.|
 |Raw_Code_PC|Path to output folder for most results|
 |Result_Folder|Path to output folder for selected, final results|
-|Alignment_Folder_MAC|Path to TopHat Alignments|
+|Alignment_Folder|Path to TopHat Alignments|
 |fdr_method|Method to Calculate FDR.  Can be *BH* (Benjamini and Hochberg),*q-value*, or *q-lfdr*|
 |genome|Name of genome build|
 |Java_Mem|Java memory allocation for QoRTs|
