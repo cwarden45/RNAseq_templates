@@ -49,14 +49,13 @@ while line:
 		outHandle.write(text)
 	else:
 		#could really use same filters as .fa file to create filtered .gtf, but I want to make sure the two tables will match
-		transcriptResult = re.search("transcript_id \"(ENS[G|T]\d+.\d+)\";",lineInfo[8])
+		#all samples in filtered table have transcript IDs that start with ENST (not ENSTG or ENSTGR)
+		transcriptResult = re.search("transcript_id \"(ENS[T|TR]\d+.\d+)\";",lineInfo[8])
 		if transcriptResult:
 			transcript = transcriptResult.group(1)
 			if transcript in geneHash:
 				text = line + "\n"
 				outHandle.write(text)
-		else:
-			print "Problem parsing " + lineInfo[8]
-			sys.exit()
+
 	line = inHandle.readline()
 	
