@@ -44,7 +44,6 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |comp_name	| Name of differential expression comparison (used to name output file)
 |plot_groups | Names of columns in *sample_description_file* to be plotted in QC plots.  Use commas to plot multiple groups|
 |deg_groups|Names of columns in *sample_description_file* to be used for differential splicing analysis.  Use commas to include multiple variables (for multivariate model).  However, primary variable will be called "condition" for JunctionSeq, which is only designed for categorical variables.|
-|treatment_group|Treatment group for primary variable (used when calculating fold-change values for exons from normalized counts).  JunctionSeq not designed to work with continuous variable.|
 |Raw_Code_PC|Path to output folder for most results|
 |Result_Folder|Path to output folder for selected, final results|
 |Alignment_Folder|Path to TopHat Alignments|
@@ -57,6 +56,8 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |GENCODE_GTF|Path to GENCODE GTF file for QoRTs quantification.  Recommend using filtered gene annotations from [Genome_Ref_Code](https://github.com/cwarden45/RNAseq_templates/tree/master/Genome_Ref_Code)|
 |GENCODE_Gene_Info|Path to GENCODE gene annotation file (created using [Genome_Ref_Code](https://github.com/cwarden45/RNAseq_templates/tree/master/Genome_Ref_Code))|
 |sample_description_file|Name of Sample Description File.  "unique.ID" and "sample.ID" must match the QoRTs counts folder names, but you can use *userID* to change sample labels in result|
+|treatment_group|Treatment group for primary variable (used when calculating fold-change values for exons from normalized counts).  JunctionSeq not designed to work with continuous variable.|
+|fold_change_cutoff|Minimum fold-change difference to consider an exon differentially expressed|
 |pvalue_cutoff|Maximum p-value to consider a gene differenitally spliced|
 |fdr_cutoff|Maximum FDR to consider a gene differentially spliced|
 |strand|Library type.  Can be *no*, *yes*, or *reverse* (*reverse* typically used for Illumina stranded libraries)|
