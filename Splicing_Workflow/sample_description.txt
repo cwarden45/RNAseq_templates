@@ -1,1 +1,1 @@
-sample.ID	unique.ID	group.ID	countFiles
+sample.ID	unique.ID	userID  Group
