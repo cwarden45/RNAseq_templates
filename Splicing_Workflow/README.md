@@ -6,7 +6,11 @@
 
 2) run_QoRTs.py
 
-3) run_JunctionSeq.R
+3) junction_hist.R
+
+4) run_JunctionSeq.R
+
+5) create_stat_table.R
 
 ### Dependencies (some optional) ###
 
