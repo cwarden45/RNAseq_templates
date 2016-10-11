@@ -60,5 +60,4 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |fdr_cutoff|Maximum FDR to consider a gene differentially spliced|
 |strand|Library type.  Can be *no*, *yes*, or *reverse* (*reverse* typically used for Illumina stranded libraries)|
 |pairing|*SE* for single-end reads, *PE* for paired-end reads|
-|run_goseq| Run goseq?  It is useful to leave this as 'no' initially, and then switch to 'yes' after optimizing differential expression parameters|
 |run_goseq| Run goseq? *yes* or *no*|
