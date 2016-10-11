@@ -1,1 +1,1 @@
-sample.ID	unique.ID userID  Group
+sample.ID	unique.ID userID  Group 	file_bam	paired_end	read_length	frag_length lib_size
