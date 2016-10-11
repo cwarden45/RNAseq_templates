@@ -52,8 +52,8 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |GENCODE_GTF|Path to GENCODE GTF file for QoRTs quantification.  Recommend using filtered gene annotations from [Genome_Ref_Code](https://github.com/cwarden45/RNAseq_templates/tree/master/Genome_Ref_Code)|
 |GENCODE_Gene_Info|Path to GENCODE gene annotation file (created using [Genome_Ref_Code](https://github.com/cwarden45/RNAseq_templates/tree/master/Genome_Ref_Code))|
 |sample_description_file|Name of Sample Description File.  "unique.ID" and "sample.ID" must match the QoRTs counts folder names.|
-|pvalue_cutoff|Maximum p-value to consider a gene differenitally expressed|
-|fdr_cutoff|Maximum FDR to consider a gene differentially expressed|
+|pvalue_cutoff|Maximum p-value to consider a gene differenitally spliced|
+|fdr_cutoff|Maximum FDR to consider a gene differentially spliced|
 |strand|Library type.  Can be *no*, *yes*, or *reverse* (*reverse* typically used for Illumina stranded libraries)|
 |pairing|*SE* for single-end reads, *PE* for paired-end reads|
 |run_goseq| Run goseq?  It is useful to leave this as 'no' initially, and then switch to 'yes' after optimizing differential expression parameters|
