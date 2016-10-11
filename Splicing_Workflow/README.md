@@ -51,7 +51,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |Threads|Number of Threads for JunctionSeq Analysis|
 |GENCODE_GTF|Path to GENCODE GTF file for QoRTs quantification.  Recommend using filtered gene annotations from [Genome_Ref_Code](https://github.com/cwarden45/RNAseq_templates/tree/master/Genome_Ref_Code)|
 |GENCODE_Gene_Info|Path to GENCODE gene annotation file (created using [Genome_Ref_Code](https://github.com/cwarden45/RNAseq_templates/tree/master/Genome_Ref_Code))|
-|sample_description_file|Name of Sample Description File.  "unique.ID" and "sample.ID" must match the QoRTs counts folder names.|
+|sample_description_file|Name of Sample Description File.  "unique.ID" and "sample.ID" must match the QoRTs counts folder names, but you can use *userID* to change sample labels in result|
 |pvalue_cutoff|Maximum p-value to consider a gene differenitally spliced|
 |fdr_cutoff|Maximum FDR to consider a gene differentially spliced|
 |strand|Library type.  Can be *no*, *yes*, or *reverse* (*reverse* typically used for Illumina stranded libraries)|
