@@ -26,7 +26,7 @@ gff.file = paste(count.folder,"/withNovel.forJunctionSeq.gff.gz",sep="")
 
 sample.description.table = read.table(sample.description.file,head=T, sep="\t")
 sampleIDs = as.character(sample.description.table$sample.ID)
-sample.labels = as.character(sample.description.table$UserID)
+sample.labels = as.character(sample.description.table$userID)
 
 design = sample.description.table[,deg.groups]
 if (length(deg.groups) == 1){
