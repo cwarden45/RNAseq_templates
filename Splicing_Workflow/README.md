@@ -44,7 +44,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |comp_name	| Name of differential expression comparison (used to name output file)
 |plot_groups | Names of columns in *sample_description_file* to be plotted in QC plots.  Use commas to plot multiple groups|
 |deg_groups|Names of columns in *sample_description_file* to be used for differential splicing analysis.  Use commas to include multiple variables (for multivariate model).  However, primary variable will be called "condition" for JunctionSeq, which is only designed for categorical variables.|
-|treatment_group|Treatment group for primary variable (used when calculating fold-change values for exons).  JunctionSeq not designed to work with continuous variable.|
+|treatment_group|Treatment group for primary variable (used when calculating fold-change values for exons from normalized counts).  JunctionSeq not designed to work with continuous variable.|
 |Raw_Code_PC|Path to output folder for most results|
 |Result_Folder|Path to output folder for selected, final results|
 |Alignment_Folder|Path to TopHat Alignments|
