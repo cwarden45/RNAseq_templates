@@ -91,6 +91,6 @@ for file in fileResults:
 			if strand == "yes":
 				strandedFlag = "--stranded --stranded_fr_secondstrand "
 				
-			#omit --keepMultiMapped option listed in manual
-			command = "java -Xmx"+javaMem+" -jar "+qortsJar+" QC "+singleEndFlag+strandedFlag+"--runFunctions writeKnownSplices,writeNovelSplices,writeSpliceExon " + fullPath + " " + gtfFile + " " + resultFolder
+			#QoRTs has some issues with identifying multi-mapped reads via alignment score, so add --keepMultiMapped flag
+			command = "java -Xmx"+javaMem+" -jar "+qortsJar+" QC "+singleEndFlag+strandedFlag+"--keepMultiMapped --runFunctions writeKnownSplices,writeNovelSplices,writeSpliceExon " + fullPath + " " + gtfFile + " " + resultFolder
 			os.system(command)
