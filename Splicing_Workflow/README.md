@@ -8,7 +8,7 @@
 
 3) `junction_hist.R`
 
-4) `run_JunctionSeq.R` (plots created with FDR cutoff, but you can usually detect something with FDR < 0.05 and the R image is saved if you want to make new plots)
+4) `run_JunctionSeq.R` (plots created with FDR cutoff of 0.01, but the R image is saved if you want to make new plots)
 
 5) `create_stat_table.R` (this is the step where you would run goseq)
 
