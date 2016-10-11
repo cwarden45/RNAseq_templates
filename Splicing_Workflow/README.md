@@ -38,9 +38,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 | Parameter | Value|
 |---|---|
 |comp_name	| Name of differential expression comparison (used to name output file)
-|plot_groups | Names of columns in *sample_description_file* to be plotted in QC and differential expression plots.  Use commas to plot multiple groups|
-|deg_groups|Names of columns in *sample_description_file* to be plotted in QC and differential expression plots.  Use commas to include multiple variables (for multivariate model or gene list filtering)|
-|treatment_group|Treatment group for primary variable; enter *continuous* for a continuous variable and a correlation will be provided instead of a fold-change value.|
+|deg_groups|Names of columns in *sample_description_file* to be plotted in QC and differential expression plots.  Use commas to include multiple variables (for multivariate model).  However, primary variable will be called "condition" for JunctionSeq, which is only designed for categorical variables.|
 |Raw_Code_PC|Path to output folder for most results|
 |Result_Folder|Path to output folder for selected, final results|
 |Alignment_Folder|Path to TopHat Alignments|
@@ -55,13 +53,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |sample_description_file|Name of Sample Description File.  "unique.ID" and "sample.ID" must match the QoRTs counts folder names.|
 |pvalue_cutoff|Maximum p-value to consider a gene differenitally expressed|
 |fdr_cutoff|Maximum FDR to consider a gene differentially expressed|
-|sec_fold_change_cutoff|If comparing two gene lists, fold-change threshold for list you want to filter out|
-|sec_cor_cutoff|If comparing two gene lists and using a continuous variable, minimum absolute correlation to consider a gene differentially expressed|
-|sec_pvalue_cutoff|If comparing two gene lists, p-value threshold for list you want to filter out|
-|sec_fdr_cutoff|If comparing two gene lists, FDR threshold for list you want to filter out|
 |strand|Library type.  Can be *no*, *yes*, or *reverse* (*reverse* typically used for Illumina stranded libraries)|
 |pairing|*SE* for single-end reads, *PE* for paired-end reads|
 |run_goseq| Run goseq?  It is useful to leave this as 'no' initially, and then switch to 'yes' after optimizing differential expression parameters|
-|interaction| Method for comparing an interaction of two variables.  Can be *model*, *filter-overlap*, or *no*|
-|secondary_trt| If comparing two gene lists, this is treatment group for the list that you want to filter out; enter *continuous* for a continuous variable and a correlation will be provided instead of a fold-change value (also converts second variable from factor to numeric, even if interaction is set to *no*)|
 |run_goseq| Run goseq? *yes* or *no*|
