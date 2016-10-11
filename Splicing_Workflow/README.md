@@ -1,6 +1,6 @@
 ### Order to Run Scripts ###
 
-0) It is recommended that you filter the GENCODE .gtf file to match the gene annotation set using `filter_gtf.py`, which also creates gene info file (which is not identical to what is created from .fasta file in transcriptome workflow)
+0) It is recommended that you filter the GENCODE .gtf file to match the gene annotation set using `filter_gtf.py`, which also creates the necessary gene info file (which is not identical to what is created from .fasta file in transcriptome workflow)
 
 1) `se_alignment.py` or `cluster_se_alignment.py` (from [TopHat_Workflow](https://github.com/cwardn45/RNAseq_templates/tree/master/TopHat_Workflow))
 
