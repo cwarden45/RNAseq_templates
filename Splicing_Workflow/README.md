@@ -24,7 +24,7 @@ QoRTs: http://hartleys.github.io/QoRTs/index.html
 *Differential Splicing*
 
 JunctionSeq: https://bioconductor.org/packages/release/bioc/html/JunctionSeq.html
-
+MATS: http://rnaseq-mats.sourceforge.net/
 
 ### Parameter Values ###
 | Parameter | Value|
