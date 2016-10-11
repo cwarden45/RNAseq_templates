@@ -29,6 +29,11 @@ SGSeq: https://bioconductor.org/packages/release/bioc/html/SGSeq.html
 
 MATS: http://rnaseq-mats.sourceforge.net/
 
+
+*Functional Enrichment*
+
+goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
+
 ### Parameter Values ###
 | Parameter | Value|
 |---|---|
