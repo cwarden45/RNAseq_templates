@@ -1,6 +1,6 @@
 ### Order to Run Scripts ###
 
-0) It is recommended that you filter the .gtf file to match the gene annotation set using `filter_gtf.py`
+0) It is recommended that you filter the GENCODE .gtf file to match the gene annotation set using `filter_gtf.py`
 
 1) se_alignment.py or cluster_se_alignment.py (from [TopHat_Workflow](https://github.com/cwardn45/RNAseq_templates/tree/master/TopHat_Workflow))
 
