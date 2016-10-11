@@ -12,8 +12,6 @@ trt.group = as.character(param.table$Value[param.table$Parameter == "treatment_g
 goseq.flag = as.character(param.table$Value[param.table$Parameter == "run_goseq"])
 threads = as.character(param.table$Value[param.table$Parameter == "Threads"])
 output.folder = as.character(param.table$Value[param.table$Parameter == "Raw_Code_PC"])
-pvalue.cutoff = as.numeric(as.character(param.table$Value[param.table$Parameter == "pvalue_cutoff"]))
-fdr.cutoff = as.numeric(as.character(param.table$Value[param.table$Parameter == "fdr_cutoff"]))
 user.folder = as.character(param.table$Value[param.table$Parameter == "Result_Folder"])
 sample.description.file = as.character(param.table$Value[param.table$Parameter == "sample_description_file"])
 gene.mapping.file = as.character(param.table$Value[param.table$Parameter == "GENCODE_Gene_Info"])
@@ -66,7 +64,7 @@ plot.folder = paste(user.folder,"/DSG/",comp.name,"/",sep="")
 dir.create(plot.folder)
 								
 writeCompleteResults(jscs, outfile.prefix=raw.output.folder, save.jscs = TRUE,
-						FDR.threshold = fdr.cutoff, gzip.output = FALSE)
+						FDR.threshold = 0.01, gzip.output = FALSE)
 					
 buildAllPlots(jscs=jscs, outfile.prefix = plot.folder,
-				use.plotting.device = "png",FDR.threshold = fdr.cutoff)
+				use.plotting.device = "png",FDR.threshold = 0.01)
