@@ -11,6 +11,8 @@ alignmentFolder = ""
 javaMem = ""
 pairing = ""
 strand = ""
+sample_description = ""
+mergedFolder = ""
 qortsJar = "/opt/QoRTs/QoRTs_1.1.8/QoRTs.jar"
 
 inHandle = open(parameterFile)
@@ -33,6 +35,9 @@ for line in lines:
 	if param == "QoRTs_Count_Folder":
 		rawCountFolder = value
 
+	if param == "QoRTs_Merged_Folder":
+		mergedFolder = value
+		
 	if param == "Alignment_Folder":
 		alignmentFolder = value
 		
@@ -41,11 +46,22 @@ for line in lines:
 
 	if param == "Java_Mem":
 		javaMem = value	
+		
+	if param == "sample_description_file":
+		sample_description = value	
 
+if (sample_description == "") or (sample_description == "[required]"):
+	print "Need to enter a value for 'sample_description_file'!"
+	sys.exit()
+		
 if (alignmentFolder == "") or (alignmentFolder == "[required]"):
 	print "Need to enter a value for 'Alignment_Folder'!"
 	sys.exit()
-		
+
+if (mergedFolder == "") or (mergedFolder == "[required]"):
+	print "Need to enter a value for 'QoRTs_Merged_Folder'!"
+	sys.exit()
+	
 if (rawCountFolder == "") or (rawCountFolder == "[required]"):
 	print "Need to enter a value for 'QoRTs_Count_Folder'!"
 	sys.exit()
@@ -94,3 +110,9 @@ for file in fileResults:
 			#QoRTs has some issues with identifying multi-mapped reads via alignment score, so add --keepMultiMapped flag
 			command = "java -Xmx"+javaMem+" -jar "+qortsJar+" QC "+singleEndFlag+strandedFlag+"--keepMultiMapped --runFunctions writeKnownSplices,writeNovelSplices,writeSpliceExon " + fullPath + " " + gtfFile + " " + resultFolder
 			os.system(command)
+
+command = "java -Xmx"+javaMem+" -jar "+qortsJar+" mergeAllCounts " + rawCountFolder + "/ " + sample_description + " " + mergedFolder + "/"
+os.system(command)
+
+command = "java -Xmx"+javaMem+" -jar "+qortsJar+" mergeNovelSplices --minCount 6 " + mergedFolder + "/ " + sample_description + " " + gtfFile + " " + mergedFolder + "/"
+os.system(command)
