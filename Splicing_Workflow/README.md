@@ -39,6 +39,8 @@ MATS: http://rnaseq-mats.sourceforge.net/
 |Raw_Code_PC|Path to output folder for most results|
 |Result_Folder|Path to output folder for selected, final results|
 |Alignment_Folder|Path to TopHat Alignments|
+|QoRTs_Count_Folder| Per-Sample QoRTs QC/counts|
+|QoRTs_Merged_Folder| Folder with QoRTs merged counts formatted for JunctionSeq|
 |fdr_method|Method to Calculate FDR.  Can be *BH* (Benjamini and Hochberg),*q-value*, or *q-lfdr*|
 |genome|Name of genome build|
 |Java_Mem|Java memory allocation for QoRTs|
