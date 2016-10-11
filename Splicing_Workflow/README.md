@@ -2,15 +2,15 @@
 
 0) It is recommended that you filter the GENCODE .gtf file to match the gene annotation set using `filter_gtf.py`
 
-1) se_alignment.py or cluster_se_alignment.py (from [TopHat_Workflow](https://github.com/cwardn45/RNAseq_templates/tree/master/TopHat_Workflow))
+1) `se_alignment.py` or `cluster_se_alignment.py` (from [TopHat_Workflow](https://github.com/cwardn45/RNAseq_templates/tree/master/TopHat_Workflow))
 
-2) run_QoRTs.py
+2) `run_QoRTs.py`
 
-3) junction_hist.R
+3) `junction_hist.R`
 
-4) run_JunctionSeq.R (plots created with FDR cutoff, but you can usually detect something with FDR < 0.05)
+4) `run_JunctionSeq.R` (plots created with FDR cutoff, but you can usually detect something with FDR < 0.05)
 
-5) create_stat_table.R (this is the step where you would run goseq)
+5) `create_stat_table.R` (this is the step where you would run goseq)
 
 ### Dependencies (some optional) ###
 
