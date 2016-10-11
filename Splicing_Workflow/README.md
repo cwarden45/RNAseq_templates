@@ -49,7 +49,6 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |Alignment_Folder|Path to TopHat Alignments|
 |QoRTs_Count_Folder| Per-Sample QoRTs QC/counts|
 |QoRTs_Merged_Folder| Folder with QoRTs merged counts formatted for JunctionSeq|
-|fdr_method|Method to Calculate FDR.  Can be *BH* (Benjamini and Hochberg),*q-value*, or *q-lfdr*|
 |genome|Name of genome build|
 |Java_Mem|Java memory allocation for QoRTs|
 |Threads|Number of Threads for JunctionSeq Analysis (although it will switch to single-core for Windows users)|
