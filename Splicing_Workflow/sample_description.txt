@@ -1,1 +1,1 @@
-sample.ID	unique.ID	userID  Group
+sample.ID	unique.ID userID  Group
