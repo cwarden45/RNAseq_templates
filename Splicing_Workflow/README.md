@@ -25,6 +25,8 @@ QoRTs: http://hartleys.github.io/QoRTs/index.html
 
 JunctionSeq: https://bioconductor.org/packages/release/bioc/html/JunctionSeq.html
 
+SGSeq: https://bioconductor.org/packages/release/bioc/html/SGSeq.html
+
 MATS: http://rnaseq-mats.sourceforge.net/
 
 ### Parameter Values ###
