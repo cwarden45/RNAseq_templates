@@ -67,6 +67,13 @@ gene.start = tapply(txtable$EXONSTART, txtable$GENEID, min)
 gene.start = gene.start[match(geneIDs, names(gene.start))]
 gene.stop = tapply(txtable$EXONEND, txtable$GENEID, max)
 gene.stop = gene.stop[match(geneIDs, names(gene.stop))]
+	
+#you might need to uncomment these lines
+#gene.strand=gene.strand[-grep("_",gene.chr)]
+#gene.start=gene.start[-grep("_",gene.chr)]
+#gene.stop=gene.stop[-grep("_",gene.chr)]
+#gene.chr=gene.chr[-grep("_",gene.chr)]
+	
 rm(txtable)
 gr = GRanges(Rle(gene.chr),
               IRanges(start=gene.start, end=gene.stop),
