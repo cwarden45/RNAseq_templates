@@ -56,7 +56,7 @@ write.table(geneID.to.symbol.table, "ensid.2.symbol.txt", quote=F, sep="\t", row
 countFiles = paste(count.folder,"/",sampleIDs,"/QC.spliceJunctionAndExonCounts.withNovel.forJunctionSeq.txt.gz",sep="")
 
 jscs = readJunctionSeqCounts(countfiles = countFiles, samplenames = sample.labels, design = design,
-								flat.gff.file = gff.file, gene.names = geneID.to.symbol.file)
+								flat.gff.file = gff.file, gene.names = geneID.to.symbol.table)
 jscs = estimateJunctionSeqSizeFactors(jscs)
 jscs = estimateJunctionSeqDispersions(jscs, nCores = as.numeric(threads))
 jscs = fitJunctionSeqDispersionFunction(jscs)
