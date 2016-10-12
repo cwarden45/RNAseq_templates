@@ -12,6 +12,8 @@
 
 5) `create_stat_table.R` (this is the step where you would run goseq)
 
+6) `run_SGSeq.R` (optional: used to predict novel exons - uses different annotation database and is computationally intenstive, so try to make your number of differentially spliced genes below 1000)
+
 ### Dependencies (some optional) ###
 
 Most Python scripts can be run using this [Docker image](https://hub.docker.com/r/cwarden45/rnaseq-dependencies/)
