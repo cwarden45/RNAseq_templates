@@ -12,7 +12,7 @@
 
 5) `create_stat_table.R` (this is the step where you would run goseq)
 
-6) `run_SGSeq.R` (optional: used to predict novel exons - uses different annotation database and is computationally intenstive, so try to make your number of differentially spliced genes below 1000)
+6) `run_SGSeq.R` (optional: used to predict novel exons - uses different annotation database and is computationally intenstive, so try to make your number of differentially spliced genes below 500)
 
 ### Dependencies (some optional) ###
 
