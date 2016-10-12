@@ -47,8 +47,11 @@ new.col.names[1]= "condition"
 colnames(design) = new.col.names
 
 gene.info.table = read.table(gene.mapping.file, head=T, sep="\t")
-geneID.to.symbol.file = data.frame(ENS_GENEID = gene.info.table$Ensembl.GeneID, geneSymbol=gene.info.table$Gene.Name)
-write.table(geneID.to.symbol.file, "ensid.2.symbol.txt", quote=F, sep="\t", row.names=F)
+geneID.to.symbol.table = data.frame(ENS_GENEID = gene.info.table$Ensembl.GeneID, geneSymbol=gene.info.table$Gene.Name)
+gene.names = gene.info.table$Gene.Name
+gene.names = unique(gene.names)
+geneID.to.symbol.table =geneID.to.symbol.table[match(gene.names, geneID.to.symbol.table$geneSymbol),]
+write.table(geneID.to.symbol.table, "ensid.2.symbol.txt", quote=F, sep="\t", row.names=F)
 
 countFiles = paste(count.folder,"/",sampleIDs,"/QC.spliceJunctionAndExonCounts.withNovel.forJunctionSeq.txt.gz",sep="")
 
@@ -69,4 +72,4 @@ writeCompleteResults(jscs, outfile.prefix=raw.output.folder, save.jscs = TRUE,
 						FDR.threshold = fdr.cutoff, gzip.output = FALSE)
 					
 buildAllPlots(jscs=jscs, outfile.prefix = plot.folder,
-				use.plotting.device = "png",FDR.threshold = 0.01)
+				use.plotting.device = "png",FDR.threshold = 0.001)
