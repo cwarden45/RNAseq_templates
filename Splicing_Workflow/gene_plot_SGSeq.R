@@ -1,4 +1,4 @@
-genes = c("APOE")
+genes = c()
 
 param.table = read.table("parameters.txt", header=T, sep="\t")
 genome=as.character(param.table$Value[param.table$Parameter == "genome"])
