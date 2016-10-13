@@ -48,7 +48,11 @@ sample.table = read.table(sample.file, sep="\t", header=T)
 sampleID = as.character(sample.table$userID)
 countID = gsub("-",".",sampleID)
 countID = paste("normCount_",countID,sep="")
-group = as.factor(sample.table[,deg.groups][,1])
+if(length(deg.groups) == 1){
+	group = as.factor(sample.table[,deg.groups])
+}else{
+	group = as.factor(sample.table[,deg.groups][,1])
+}
 group.levels =levels(group)
 
 count.table = read.table(counts.file, sep="\t", header=T)
