@@ -31,7 +31,7 @@ raw.output.folder = paste(count.folder,"/",comp.name,"/",sep="")
 result.file = paste(raw.output.folder,"allGenes.results.txt",sep="")
 counts.file = paste(raw.output.folder,"allGenes.expression.data.txt",sep="")
 gene.file = paste(raw.output.folder,"sigGenes.genewiseResults.txt",sep="")
-custom.result = paste(user.folder,"/feature_stats_",comp.name,".txt",sep="")
+custom.result = paste(user.folder,"/DSG/feature_stats_",comp.name,".txt",sep="")
 gene.result = paste(user.folder,"/DSG/sig_gene_stats_",comp.name,".txt",sep="")
 
 result.table = read.table(result.file, head=T, sep="\t")
