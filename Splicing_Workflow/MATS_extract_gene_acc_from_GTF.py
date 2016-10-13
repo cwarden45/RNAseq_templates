@@ -14,6 +14,7 @@ geneList2 = "hg19_acc_RefSeq.txt"
 #	to match annotation script, you'll want to map to 'gene name'
 
 #2) currently, it looks like the easist way to get RefSeq IDs is: https://biodbnet-abcc.ncifcrf.gov/db/db2db.php
+#	mouse tax ID is 10090, human tax ID is 9606
 
 inHandle = open(gtfFile)
 line = inHandle.readline()
