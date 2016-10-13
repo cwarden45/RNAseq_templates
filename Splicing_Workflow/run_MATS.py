@@ -40,7 +40,7 @@ inclusion_cutoff =0.1
 #make sure you use python 2.7
 
 command = "python " + matsFolder + "RNASeq-MATS.py -b1 " + TRTbam + " -b2 " + CONTROLbam+ " -gtf " + matsGtf + " -o " + resultFolder + " -c 0.1 -novelSS 1 -t " +libType+" -len " + readLength + " -analysis " + analysisType + " -libType " + strand
-#os.system(command)
+os.system(command)
 
 matsOutputFolder = resultFolder + "/MATS_output"
 reformatFolder = resultFolder + "/MATS_output_reformat"
