@@ -3,13 +3,17 @@ import re
 import os
 
 #gtfFile = "Mus_musculus.knownGene.mm9.gtf"
-#geneList = "mm9_UniProt_IDs.txt"
+#geneList = "mm9_acc.txt"
+#geneList2 = "hg19_acc_RefSeq.txt"
 
 gtfFile = "Homo_sapiens.knownGene.hg19.gtf"
-geneList = "hg19_UniProt_IDs.txt"
+geneList = "hg19_acc.txt"
+geneList2 = "hg19_acc_RefSeq.txt"
 
-#get mapping from from UniProt website: http://www.uniprot.org/uploadlists/
-#to match annotation script, you'll want to map to 'gene name'
+#1) get mapping from from UniProt website: http://www.uniprot.org/uploadlists/
+#	to match annotation script, you'll want to map to 'gene name'
+
+#2) currently, it looks like the easist way to get RefSeq IDs is: https://biodbnet-abcc.ncifcrf.gov/db/db2db.php
 
 inHandle = open(gtfFile)
 line = inHandle.readline()
@@ -35,3 +39,6 @@ outHandle = open(geneList, "w")
 for gene in geneDict:
 	text = gene + "\n"
 	outHandle.write(text)
+	
+command = "grep \"^NP_\" " + geneList + " > " + geneList2
+os.system(command)
