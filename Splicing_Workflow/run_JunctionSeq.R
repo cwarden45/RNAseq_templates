@@ -32,7 +32,7 @@ design = sample.description.table[,deg.groups]
 if (length(deg.groups) == 1){
 	sampleIDs = sampleIDs[!is.na(design)]
 	sample.labels = sample.labels[!is.na(design)]
-	design = data.frame(condition = as.factor(design[!is.na(design),]))
+	design = data.frame(condition = as.factor(design[!is.na(design)]))
 } else {
 	deg.grp.na.counts = apply(design, 1, count.na.values)
 	sampleIDs = sampleIDs[deg.grp.na.counts == 0]
