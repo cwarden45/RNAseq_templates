@@ -1009,13 +1009,30 @@ if(length(deg.genes) > 1){
 		}#end if(interaction.flag != "no")
 		
 	} else {
-		group.levels = levels(as.factor(sample.description.table[,plot.groups]))
-
-		color.palette <- fixed.color.palatte[1:length(group.levels)]
 		labelColors = rep("black",times=length(sample.label))
-		for (i in 1:length(group.levels)){
-			labelColors[grp == as.character(group.levels[i])] = color.palette[i]
-		}#end for (i in 1:length(group.levels))
+		if(trt.group == "continuous"){
+			library("RColorBrewer")
+			continuous.color.breaks = 10
+			
+			plot.var = as.numeric(sample.description.table[,plot.groups])
+			plot.var.min = min(plot.var, na.rm=T)
+			plot.var.max = max(plot.var, na.rm=T)
+			
+			plot.var.range = plot.var.max - plot.var.min
+			plot.var.interval = plot.var.range / continuous.color.breaks
+			
+			color.range = colorRampPalette(c("green","black","orange"))(n = continuous.color.breaks)
+			plot.var.breaks = plot.var.min + plot.var.interval*(0:continuous.color.breaks)
+			for (j in 1:continuous.color.breaks){
+				#print(paste(plot.var.breaks[j],"to",plot.var.breaks[j+1]))
+				labelColors[(plot.var >= plot.var.breaks[j]) &(plot.var <= plot.var.breaks[j+1])] = color.range[j]
+			}#end for (j in 1:continuous.color.breaks)
+		}else{
+			group.levels = levels(as.factor(sample.description.table[,plot.groups]))
+			for (i in 1:length(group.levels)){
+				labelColors[grp == as.character(group.levels[i])] = color.palette[i]
+			}#end for (i in 1:length(group.levels))
+		}
 
 		std.expr = apply(temp.rpkm, 1, standardize.arr)
 		if(length(deg.genes) < 25){
@@ -1030,7 +1047,13 @@ if(length(deg.genes) > 1){
 		png(file = heatmap.file)
 		heatmap.2(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
 					 RowSideColors=labelColors, trace="none", margins = c(5,15))
-		legend("topright", group.levels, col=color.palette, pch=15)
+
+		if(trt.group == "continuous"){
+			legend("right",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
+								col=rev(color.range),  pch=15, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
+		}else{
+			legend("topright", group.levels, col=color.palette, pch=15)
+		}
 		dev.off()
 	}#end else
 }#end if(length(deg.genes) > 1)
