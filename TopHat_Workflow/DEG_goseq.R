@@ -945,19 +945,54 @@ deg.genes = genes[status != "No Change"]
 if(length(deg.genes) > 1){
 	if(length(plot.groups) > 1){
 		source("heatmap.3.R")
-		grp1 = as.character(sample.description.table[,plot.groups[1]])
-		grp2 = as.character(sample.description.table[,plot.groups[2]])
-		group.levels = c(levels(as.factor(grp1)),levels(as.factor(grp2)))
+		if((trt.group != "continuous")&(trt.group2 != "continuous")){
+			grp1 = as.character(sample.description.table[,plot.groups[1]])
+			grp2 = as.character(sample.description.table[,plot.groups[2]])
 
-		color.palette <- fixed.color.palatte[1:length(group.levels)]
-		labelColors1 = rep("black",times=length(sample.label))
-		for (i in 1:length(group.levels)){
-			labelColors1[grp1 == as.character(group.levels[i])] = color.palette[i]
-		}#end for (i in 1:length(group.levels))
-		labelColors2 = rep("black",times=length(sample.label))
-		for (i in 1:length(group.levels)){
-			labelColors2[grp2 == as.character(group.levels[i])] = color.palette[i]
-		}#end for (i in 1:length(group.levels))
+			group.levels = c(levels(as.factor(grp1)),levels(as.factor(grp2)))
+
+			color.palette <- fixed.color.palatte[1:length(group.levels)]
+			labelColors1 = rep("black",times=length(sample.label))
+			for (i in 1:length(group.levels)){
+				labelColors1[grp1 == as.character(group.levels[i])] = color.palette[i]
+			}#end for (i in 1:length(group.levels))
+			labelColors2 = rep("black",times=length(sample.label))
+			for (i in 1:length(group.levels)){
+				labelColors2[grp2 == as.character(group.levels[i])] = color.palette[i]
+			}#end for (i in 1:length(group.levels))
+		}else if((trt.group == "continuous")&(trt.group2 == "continuous")){
+			stop("Add code for two continuous variables")
+		}else if(trt.group == "continuous"){
+			grp1 = as.numeric(sample.description.table[,plot.groups[1]])
+			grp2 = as.character(sample.description.table[,plot.groups[2]])
+		
+			labelColors1 = rep("black",times=length(sample.label))
+			library("RColorBrewer")
+			continuous.color.breaks = 10
+				
+			plot.var = as.numeric(grp1)
+			plot.var.min = min(plot.var, na.rm=T)
+			plot.var.max = max(plot.var, na.rm=T)
+				
+			plot.var.range = plot.var.max - plot.var.min
+			plot.var.interval = plot.var.range / continuous.color.breaks
+				
+			color.range = colorRampPalette(c("green","black","orange"))(n = continuous.color.breaks)
+			plot.var.breaks = plot.var.min + plot.var.interval*(0:continuous.color.breaks)
+			for (j in 1:continuous.color.breaks){
+				#print(paste(plot.var.breaks[j],"to",plot.var.breaks[j+1]))
+				labelColors1[(plot.var >= plot.var.breaks[j]) &(plot.var <= plot.var.breaks[j+1])] = color.range[j]
+			}#end for (j in 1:continuous.color.breaks)
+			
+			group.levels = c(levels(as.factor(grp2)))
+			color.palette <- fixed.color.palatte[3:(2+length(group.levels))]
+			labelColors2 = rep("black",times=length(sample.label))
+			for (i in 1:length(group.levels)){
+				labelColors2[grp2 == as.character(group.levels[i])] = color.palette[i]
+			}#end for (i in 1:length(group.levels))
+		}else{
+			stop("Add code for primary discrete and secondary continuous variable")
+		}
 		
 		std.expr = apply(temp.rpkm, 1, standardize.arr)
 		if(length(deg.genes) < 25){
@@ -978,12 +1013,22 @@ if(length(deg.genes) > 1){
 		heatmap.file = gsub(":",".",heatmap.file)
 		png(file = heatmap.file)
 		heatmap.3(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
-					RowSideColors=row_annotation, trace="none", margins = c(8,13),RowSideColorsSize=4, dendrogram="both")
-		legend("topright", legend=group.levels,
+					RowSideColors=row_annotation, trace="none", margins = c(10,15),RowSideColorsSize=4, dendrogram="both")
+		if((trt.group != "continuous")&(trt.group2 != "continuous")){
+					legend("right", legend=group.levels,
 							col=color.palette,
 							pch=15, cex=0.7)
+		}else if((trt.group == "continuous")&(trt.group2 == "continuous")){
+			stop("Add code for two continuous variables")
+		}else if(trt.group == "continuous"){
+			legend("right",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
+								col=rev(color.range),  pch=15, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
+			legend("topright", legend=group.levels, col=color.palette, pch=15, cex=0.7)
+		}else{
+			stop("Add code for primary discrete and secondary continuous variable")
+		}
 		dev.off()
-		
+			
 		if(interaction.flag != "no"){
 			temp.fc.table = as.matrix(fc.table)
 			if (((trt.group == "continuous") & (trt.group2 == "continuous")) | ((trt.group != "continuous") & (trt.group2 != "continuous"))){
