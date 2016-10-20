@@ -1015,7 +1015,7 @@ if(length(deg.genes) > 1){
 		heatmap.3(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
 					RowSideColors=row_annotation, trace="none", margins = c(10,15),RowSideColorsSize=4, dendrogram="both")
 		if((trt.group != "continuous")&(trt.group2 != "continuous")){
-					legend("right", legend=group.levels,
+					legend("topright", legend=group.levels,
 							col=color.palette,
 							pch=15, cex=0.7)
 		}else if((trt.group == "continuous")&(trt.group2 == "continuous")){
