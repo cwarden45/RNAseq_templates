@@ -26,7 +26,6 @@
 **UCSC Table Browser (used to download RepeatMasker for any genome)**: https://genome.ucsc.edu/cgi-bin/hgTables
 
 **ORegAnno (for human genome; includes miRNA targets, and you might get some other regulatory mutations with variable UTRs)**: http://54.201.58.113/dump/
-
 -link to temporary website annotation
 
 **REDIportal (hg19 RNA-editing events)**: http://srv00.recas.ba.infn.it/atlas/
