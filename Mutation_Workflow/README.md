@@ -23,11 +23,11 @@
 
 **ANNOVAR**: http://annovar.openbioinformatics.org/en/latest/
 
-**UCSC Table Browser**: https://genome.ucsc.edu/cgi-bin/hgTables
+**UCSC Table Browser (used to download RepeatMasker for any genome)**: https://genome.ucsc.edu/cgi-bin/hgTables
 
--Used to download RepeatMasker for any genome
+**ORegAnno (for human genome; includes miRNA targets, and you might get some other regulatory mutations with variable UTRs)**: http://54.201.58.113/dump/
 
--Also used to download ORegAnno annotations for human genome (includes miRNA targets, and you might get some other regulatory mutations with variable UTRs)
+-link to temporary website annotation
 
 **REDIportal (hg19 RNA-editing events)**: http://srv00.recas.ba.infn.it/atlas/
 
