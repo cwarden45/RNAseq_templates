@@ -23,7 +23,11 @@ bedtools: http://bedtools.readthedocs.io/en/latest/
 
 ANNOVAR: http://annovar.openbioinformatics.org/en/latest/
 
-UCSC Table Browser (used to download RepeatMasker track for any genome): https://genome.ucsc.edu/cgi-bin/hgTables
+UCSC Table Browser: https://genome.ucsc.edu/cgi-bin/hgTables
+
+-Used to download RepeatMasker for any genome
+
+-Also used to download ORegAnno annotations for human genome (includes miRNA targets, and you might get some other regulatory mutations with variable UTRs)
 
 REDIportal (hg19 RNA-editing events): http://srv00.recas.ba.infn.it/atlas/
 
