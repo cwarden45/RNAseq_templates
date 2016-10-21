@@ -92,3 +92,25 @@ for file in fileResults:
 			bedOut = resultSubfolder + "/" + sample + "_bedtools_ORegAnno.bed"
 			command = "/opt/bedtools2/bin/bedtools intersect -wa -wb -a " + vcf +" -b " + bedAnn + " > " + bedOut
 			os.system(command)
+			
+			oregannoVCF = resultSubfolder + "/" + sample + "_bedtools_ORegAnno.vcf"
+			outHandle = open(oregannoVCF,"w")
+
+			inHandle = open(bedOut)
+			line = inHandle.readline()
+			
+			while line:
+				lineInfo = line.split("\t")
+				ORegAnnoID = lineInfo[len(lineInfo)-3]
+				lineInfo[2] = ORegAnnoID
+				
+				text = "\t".join(lineInfo)
+				outHandle.write(text)
+				
+				line = inHandle.readline()
+			inHandle.close()
+			outHandle.close()
+			
+			oregannoANNOVAR= resultSubfolder + "/" + sample + "_bedtools_ORegAnno.avinput"
+			command = annovarPath + "convert2annovar.pl -format vcf4 --includeinfo " + oregannoVCF + " > " + oregannoANNOVAR
+			os.system(command)
