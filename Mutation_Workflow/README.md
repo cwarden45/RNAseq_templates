@@ -13,23 +13,23 @@
 
 ### Dependencies (some optional) ###
 
-STAR: https://github.com/alexdobin/STAR
+**STAR**: https://github.com/alexdobin/STAR
 
-Picard: https://broadinstitute.github.io/picard/
+**Picard**: https://broadinstitute.github.io/picard/
 
-GATK: https://software.broadinstitute.org/gatk/
+**GATK**: https://software.broadinstitute.org/gatk/
 
-bedtools: http://bedtools.readthedocs.io/en/latest/
+**bedtools**: http://bedtools.readthedocs.io/en/latest/
 
-ANNOVAR: http://annovar.openbioinformatics.org/en/latest/
+**ANNOVAR**: http://annovar.openbioinformatics.org/en/latest/
 
-UCSC Table Browser: https://genome.ucsc.edu/cgi-bin/hgTables
+**UCSC Table Browser**: https://genome.ucsc.edu/cgi-bin/hgTables
 
 -Used to download RepeatMasker for any genome
 
 -Also used to download ORegAnno annotations for human genome (includes miRNA targets, and you might get some other regulatory mutations with variable UTRs)
 
-REDIportal (hg19 RNA-editing events): http://srv00.recas.ba.infn.it/atlas/
+**REDIportal (hg19 RNA-editing events)**: http://srv00.recas.ba.infn.it/atlas/
 
 
 ### Parameter Values ###
