@@ -72,7 +72,7 @@ for file in fileResults:
 			insertionCounts = 0
 			deletionCounts = 0
 			
-			outHandle = inHandle = open(vcfFlagFilter,"w")
+			outHandle = open(vcfFlagFilter,"w")
 			
 			inHandle = open(vcfFull)
 			line = inHandle.readline()
