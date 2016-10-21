@@ -4,12 +4,9 @@
 
 1b) `cluster_se_STAR_alignment.py` + `STAR_post_processing.py`
 
-
 2) `GATK_variant_calls.py`
 
-
 3) `filter_variants.py`
-
 
 4) `annotate_variants.py`
 
