@@ -42,5 +42,5 @@ REDIportal (hg19 RNA-editing events): http://srv00.recas.ba.infn.it/atlas/
 |Path_to_STAR|Full path to STAR binary|
 |ANNOVAR_Path|Path to ANNOVAR script folder|
 |RepeatMasker_BED|BED file of repetitive elements to exclude variants|
-|RNA_Editing_VCF|VCF file of repetitive elements to exclude variants|
+|RNA_Editing_BED|BED file of RNA editing elements to exclude variants|
 
