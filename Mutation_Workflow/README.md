@@ -44,6 +44,7 @@
 |Max_Alt_Alleles|Maximum alternative alleles for GATK HaplotypeCaller (default = 6)|
 |Path_to_STAR|Full path to STAR binary|
 |ANNOVAR_Path|Path to ANNOVAR script folder|
+|genome|Name of genome build|
 |RepeatMasker_BED|BED file of repetitive elements to exclude variants|
 |RNA_Editing_BED|BED file of RNA editing elements to exclude variants|
 
