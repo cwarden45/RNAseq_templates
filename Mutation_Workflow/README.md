@@ -10,6 +10,8 @@
 
 4) `annotate_variants.py`
 
+5) `variant_summary.R`
+
 
 ### Dependencies (some optional) ###
 
