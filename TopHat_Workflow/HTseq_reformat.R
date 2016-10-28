@@ -19,6 +19,40 @@ trimmed.counts <- function(counts, min.percent, max.percent)
 	return(trimmed.percent)
 }#end def count.values
 
+reduced.exon.length = function(text.arr){
+	#print(text.arr)
+	mat = matrix(unlist(strsplit(text.arr,split="\t")),ncol=4, byrow=TRUE)
+	#print(mat)
+	exon.chr = mat[,1]
+	non.canonical = exon.chr[grep("_",exon.chr)]
+	if ((length(non.canonical) > 0)&(length(non.canonical) != nrow(mat))){
+		if(nrow(mat) - length(non.canonical) == 1){
+			mat = mat[-grep("_",exon.chr),]
+			#print(mat)
+			return(as.numeric(mat[3]) - as.numeric(mat[2]))
+		}else{
+			mat = mat[-grep("_",exon.chr),]
+			#print(mat)
+			exon.chr = mat[,1]
+		}
+	}#end if ((length(non.canonical) > 0)&(length(non.canonical) != nrow(mat)))
+	exon.start = as.numeric(mat[,2])
+	exon.stop = as.numeric(mat[,3])
+	exon.strand = mat[,4]
+	
+	#gr = reduce(GRanges(Rle(exon.chr),
+    #         IRanges(start=exon.start, end=exon.stop),
+    #        Rle(strand(exon.strand))))
+	#reduced.start = start(gr)
+	#reduced.stop = end(gr)
+	
+	ir = reduce(IRanges(start=exon.start, end=exon.stop))
+	reduced.start = start(ir)
+	reduced.stop = end(ir)
+	merged.exon.length = reduced.stop - reduced.start
+	return(sum(merged.exon.length))
+}#end def reduced.exon.length
+
 param.table = read.table("parameters.txt", header=T, sep="\t")
 comp.name=as.character(param.table$Value[param.table$Parameter == "comp_name"])
 genome=as.character(param.table$Value[param.table$Parameter == "genome"])
@@ -33,6 +67,7 @@ counts.file = as.character(param.table$Value[param.table$Parameter == "counts_fi
 rpkm.file = as.character(param.table$Value[param.table$Parameter == "rpkm_file"])
 full.annotation.file = paste(htseq.anno.folder,"\\TxDb_",genome,"_exon_annotations.txt",sep="")
 
+library(GenomicRanges)
 setwd(output.folder)
 
 sample.table = read.table(sample.file, header=T, sep="\t")
@@ -120,7 +155,8 @@ gene.strand= exon.info$strand[match(gene.symbol,exon.info$symbol)]
 gene.description = exon.info$description[match(gene.symbol,exon.info$symbol)]
 gene.start= tapply(as.numeric(exon.info$start), as.character(exon.info$symbol), min)
 gene.end = tapply(as.numeric(exon.info$end), as.character(exon.info$symbol), max)
-gene.length.kb = tapply(exon.length, as.character(exon.info$symbol), sum) / 1000
+pre.gr = paste(exon.info$chr,exon.info$start,exon.info$end,exon.info$strand,sep="\t")
+gene.length.kb = tapply(pre.gr, as.character(exon.info$symbol), reduced.exon.length) / 1000
 
 gene.info = data.frame(symbol = gene.symbol, chr = gene.chr, start = gene.start, stop = gene.end, length.kb = gene.length.kb,
 						strand = gene.strand, description=gene.description)
