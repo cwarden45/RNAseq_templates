@@ -24,9 +24,11 @@ TopHat: https://ccb.jhu.edu/software/tophat/tutorial.shtml
 
 GenomicAlignments: https://bioconductor.org/packages/release/bioc/html/GenomicAlignments.html
 
-*Read Counting*
+*Read Counting / RPKM*
 
 HTseq: http://www-huber.embl.de/HTSeq/doc/install.html#install
+
+GenomicRanges: https://bioconductor.org/packages/release/bioc/html/GenomicRanges.html
 
 *Differential Expression*
 
