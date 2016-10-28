@@ -41,8 +41,8 @@ reduced.exon.length = function(text.arr){
 	exon.strand = mat[,4]
 	
 	#gr = reduce(GRanges(Rle(exon.chr),
-    #         IRanges(start=exon.start, end=exon.stop),
-    #        Rle(strand(exon.strand))))
+    	#		IRanges(start=exon.start, end=exon.stop),
+    	#		Rle(strand(exon.strand))))
 	#reduced.start = start(gr)
 	#reduced.stop = end(gr)
 	
