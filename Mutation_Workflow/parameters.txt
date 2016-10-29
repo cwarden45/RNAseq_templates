@@ -1,0 +1,17 @@
+Parameter	Value
+Raw_Code_PC	[required]
+Result_Folder	[required]
+Alignment_Folder	[required]
+Reads_Folder	[required]
+STAR_Ref	/path/to/STAR_folder
+FA_Ref	/path/to/hg19.fa
+Threads	4
+Java_Mem	20g
+genome	hg19
+strand	reverse
+Cluster_Email	[required]
+Max_Alt_Alleles	6
+Path_to_STAR	/path/to/STAR-2.5/bin/Linux_x86_64_static/STAR
+RepeatMasker_BED	/path/to/RepeatMasker.bed
+RNA_Editing_BED	/path/to/REDIportal.bed
+ANNOVAR_Path	/path/to/ANNOVAR/
