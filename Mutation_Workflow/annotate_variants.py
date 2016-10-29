@@ -11,6 +11,7 @@ alignmentFolder = ""
 annovarPath = ""
 resultFolder = ""
 build = ""
+threads = ""
 
 inHandle = open(parameterFile)
 lines = inHandle.readlines()
@@ -32,11 +33,18 @@ for line in lines:
 	if param == "Result_Folder":
 		resultFolder = value		
 
+	if param == "Threads":
+		threads = value
+		
 	if param == "genome":
 		build = value
 
 if (build == "") or (build == "[required]"):
 	print "Need to enter a value for 'genome'!"
+	sys.exit()
+	
+if (threads == "") or (threads == "[required]"):
+	print "Need to enter a value for 'Threads'!"
 	sys.exit()
 		
 if (alignmentFolder == "") or (alignmentFolder == "[required]"):
@@ -60,7 +68,7 @@ for file in fileResults:
 		sample = result.group(1)
 		
 		if (sample not in finishedSamples):
-			print sample
+			print "\n\n" + sample + "\n\n"
 			
 			resultSubfolder = resultFolder + "/" + sample
 			command = "mkdir " + resultSubfolder
@@ -76,10 +84,10 @@ for file in fileResults:
 
 			annotationPrefix = resultSubfolder + "/" + sample
 			if build == "hg19":
-				command = annovarPath + "table_annovar.pl " + annovarVar +" " + annovarPath + "humandb/ -csvout -buildver "+build+" -out " + annotationPrefix +" -protocol refGene,clinvar_20160302,cosmic70,nci60,kaviar_20150923,hrcr1,dbnsfp30a,exac03,avsnp147,cadd13gt20,gwava -operation g,f,f,f,f,f,f,f,f,f,f -nastring NA"
+				command = annovarPath + "table_annovar.pl --otherinfo " + annovarVar +" " + annovarPath + "humandb/ -csvout -buildver "+build+" -out " + annotationPrefix +" -protocol refGene,clinvar_20160302,cosmic70,nci60,kaviar_20150923,hrcr1,dbnsfp30a,exac03,avsnp147,cadd13gt20,gwava -operation g,f,f,f,f,f,f,f,f,f,f -nastring NA --thread " + threads
 				os.system(command)
 			else:
-				command = annovarPath + "table_annovar.pl " + annovarVar +" " + annovarPath + "humandb/ -csvout -buildver "+build+" -out " + annotationPrefix +" -protocol refGene,clinvar_20160302,cosmic70,nci60,kaviar_20150923,hrcr1,dbnsfp30a,exac03,avsnp147 -operation g,f,f,f,f,f,f,f,f -nastring NA"
+				command = annovarPath + "table_annovar.pl --otherinfo " + annovarVar +" " + annovarPath + "humandb/ -csvout -buildver "+build+" -out " + annotationPrefix +" -protocol refGene,clinvar_20160302,cosmic70,nci60,kaviar_20150923,hrcr1,dbnsfp30a,exac03,avsnp147 -operation g,f,f,f,f,f,f,f,f -nastring NA --thread " + threads
 				os.system(command)
 
 			bedAnn = build + "_GWAScatalog.bed"
