@@ -37,7 +37,6 @@ for (i in 1:length(annotated.samples)){
 		big.table = read.csv(annovar.csv)
 		other.info.mat = matrix(unlist(strsplit(as.character(big.table$Otherinfo),split="\t")),ncol=3, byrow=T)
 		colnames(other.info.mat)=c("genotype","variant.quality.score","coverage")
-		
 		big.table = data.frame(big.table[,1:5],other.info.mat,big.table[,6:(ncol(big.table)-1)])
 		
 		exonic.count = c(exonic.count, length(big.table$Func.refGene[big.table$Func.refGene == "exonic"]))
