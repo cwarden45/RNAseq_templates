@@ -1074,6 +1074,7 @@ if(length(deg.genes) > 1){
 			}#end for (j in 1:continuous.color.breaks)
 		}else{
 			group.levels = levels(as.factor(sample.description.table[,plot.groups]))
+			color.palette = fixed.color.palatte[1:length(group.levels)]
 			for (i in 1:length(group.levels)){
 				labelColors[grp == as.character(group.levels[i])] = color.palette[i]
 			}#end for (i in 1:length(group.levels))
