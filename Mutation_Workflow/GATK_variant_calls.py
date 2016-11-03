@@ -78,7 +78,7 @@ for file in fileResults:
 								
 			fullVCF = outputSubfolder + "/" + sample + ".GATK.HC.full.vcf"																			
 			command = "java -Xmx" + java_mem + " -jar /opt/GenomeAnalysisTK-3.6.jar -T HaplotypeCaller -R " + fa_ref + " -I " + filteredBam + " -o " + fullVCF + " -dontUseSoftClippedBases -stand_call_conf 20.0 -stand_emit_conf 20.0 --max_alternate_alleles " + max_alt_allele
-			#os.system(command)
+			os.system(command)
 			
 			#QD = quality score / depth
 			#so, QD > 2.0 is not a very strict filter
