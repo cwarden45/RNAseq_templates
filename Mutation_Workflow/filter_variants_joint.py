@@ -161,7 +161,7 @@ noRepeatDel = 0
 noRepeatVCF = re.sub(".vcf$",".sansRepeatMasker.vcf",vcfOut)
 			
 command = "/opt/bedtools2/bin/bedtools intersect -header -v -a " + vcfOut + " -b " + repeatBED + " > " + noRepeatVCF
-#os.system(command)
+os.system(command)
 
 inHandle = open(noRepeatVCF)
 line = inHandle.readline()
@@ -243,7 +243,7 @@ noRNAeditDel = 0
 noRNAeditVCF = re.sub(".vcf$",".sansRNAedit.vcf",vcfOut)
 
 command = "/opt/bedtools2/bin/bedtools intersect -header -v -a " + noRepeatVCF + " -b " + rnaEditBED + " > " + noRNAeditVCF
-#os.system(command)
+os.system(command)
 
 inHandle = open(noRNAeditVCF)
 line = inHandle.readline()
