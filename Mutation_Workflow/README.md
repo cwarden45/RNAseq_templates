@@ -21,6 +21,8 @@
 
 **GATK**: https://software.broadinstitute.org/gatk/
 
+**VarScan**: http://varscan.sourceforge.net/
+
 **bedtools**: http://bedtools.readthedocs.io/en/latest/
 
 **ANNOVAR**: http://annovar.openbioinformatics.org/en/latest/
