@@ -82,27 +82,31 @@ for file in fileResults:
 			#bed annotation mostly works OK, but bedtools was more accurate for ORegAnno hit (probably because it isn't sorted)
 			bedAnn = annovarPath + "/humandb/" + build + "_ORegAnno.bed"
 			bedOut = resultSubfolder + "/" + sample + "_bedtools_ORegAnno.bed"
-			command = "/opt/bedtools2/bin/bedtools intersect -wa -wb -a " + vcf +" -b " + bedAnn + " > " + bedOut
+			command = "/opt/bedtools2/bin/bedtools intersect -wa -wb -a " + annovarVar +" -b " + bedAnn + " > " + bedOut
 			os.system(command)
 			
-			oregannoVCF = resultSubfolder + "/" + sample + "_bedtools_ORegAnno.vcf"
-			outHandle = open(oregannoVCF,"w")
-
+			#minor formatting modification to work with variant summary script
+			oregannoANNOVAR= resultSubfolder + "/" + sample + "_bedtools_ORegAnno.avinput"
+			outHandle = open(oregannoANNOVAR,"w")
+			
 			inHandle = open(bedOut)
 			line = inHandle.readline()
 			
 			while line:
 				lineInfo = line.split("\t")
-				ORegAnnoID = lineInfo[len(lineInfo)-3]
-				lineInfo[2] = ORegAnnoID
-				
-				text = "\t".join(lineInfo)
+				chr = lineInfo[0]
+				start = lineInfo[1]
+				stop = lineInfo[2]
+				ref = lineInfo[3]
+				var = lineInfo[4]
+				type = lineInfo[5]
+				somatic_pvalue = lineInfo[6]
+				totalCov = lineInfo[7]
+				oreg = lineInfo[11]
+					
+				text = chr + "\t" + start+ "\t" + stop + "\t" + ref + "\t" + var + "\t" + type + "\t" + somatic_pvalue+ "\t" + oreg + "\n"
 				outHandle.write(text)
-				
+						
 				line = inHandle.readline()
 			inHandle.close()
 			outHandle.close()
-			
-			oregannoANNOVAR= resultSubfolder + "/" + sample + "_bedtools_ORegAnno.avinput"
-			command = annovarPath + "convert2annovar.pl -format vcf4 --includeinfo " + oregannoVCF + " > " + oregannoANNOVAR
-			os.system(command)
