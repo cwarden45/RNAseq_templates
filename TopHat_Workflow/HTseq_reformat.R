@@ -207,7 +207,7 @@ coverage.table = data.frame(Sample = sample.label, total.reads = total.reads,
 write.table(coverage.table, file="gene_coverage_stats.txt", quote=F, row.names=F, sep="\t")
 
 	
-#tables have different file formats for Excel import versus downstream R analysis
+#tables have different file formats for downstream R analysis versus other applications that involve parsing text files
 #	--> don't set the Result folder to the working directory, or you may skip genes during DEG analysis
 annotated.rpkm = data.frame(gene.info, RPKM)
 write.table(annotated.rpkm, file = rpkm.file, sep="\t", row.names=F, quote=T)
