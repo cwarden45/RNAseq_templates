@@ -206,6 +206,9 @@ coverage.table = data.frame(Sample = sample.label, total.reads = total.reads,
 							trimmed.percent=paste(trimmed.percent,"%",sep=""))
 write.table(coverage.table, file="gene_coverage_stats.txt", quote=F, row.names=F, sep="\t")
 
+	
+#tables have different file formats for Excel import versus downstream R analysis
+#	--> don't set the Result folder to the working directory, or you may skip genes during DEG analysis
 annotated.rpkm = data.frame(gene.info, RPKM)
 write.table(annotated.rpkm, file = rpkm.file, sep="\t", row.names=F, quote=T)
 
