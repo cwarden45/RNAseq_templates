@@ -991,7 +991,33 @@ if(length(deg.genes) > 1){
 				labelColors2[grp2 == as.character(group.levels[i])] = color.palette[i]
 			}#end for (i in 1:length(group.levels))
 		}else{
-			stop("Add code for primary discrete and secondary continuous variable")
+			grp1 = as.character(sample.description.table[,plot.groups[1]])
+			grp2 = as.numeric(sample.description.table[,plot.groups[2]])
+
+			group.levels = c(levels(as.factor(grp1)))
+			color.palette <- fixed.color.palatte[1:(length(group.levels))]
+			labelColors1 = rep("black",times=length(sample.label))
+			for (i in 1:length(group.levels)){
+				labelColors1[grp1 == as.character(group.levels[i])] = color.palette[i]
+			}#end for (i in 1:length(group.levels))
+			
+			labelColors2 = rep("black",times=length(sample.label))
+			library("RColorBrewer")
+			continuous.color.breaks = 10
+				
+			plot.var = as.numeric(grp2)
+			plot.var.min = min(plot.var, na.rm=T)
+			plot.var.max = max(plot.var, na.rm=T)
+				
+			plot.var.range = plot.var.max - plot.var.min
+			plot.var.interval = plot.var.range / continuous.color.breaks
+				
+			color.range = colorRampPalette(c("purple","black","cyan"))(n = continuous.color.breaks)
+			plot.var.breaks = plot.var.min + plot.var.interval*(0:continuous.color.breaks)
+			for (j in 1:continuous.color.breaks){
+				#print(paste(plot.var.breaks[j],"to",plot.var.breaks[j+1]))
+				labelColors2[(plot.var >= plot.var.breaks[j]) &(plot.var <= plot.var.breaks[j+1])] = color.range[j]
+			}#end for (j in 1:continuous.color.breaks)
 		}
 		
 		std.expr = apply(temp.rpkm, 1, standardize.arr)
@@ -1025,7 +1051,9 @@ if(length(deg.genes) > 1){
 								col=rev(color.range),  pch=15, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
 			legend("topright", legend=group.levels, col=color.palette, pch=15, cex=0.7)
 		}else{
-			stop("Add code for primary discrete and secondary continuous variable")
+			legend("right",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
+								col=rev(color.range),  pch=15, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
+			legend("topright", legend=group.levels, col=color.palette, pch=15, cex=0.7)
 		}
 		dev.off()
 			
