@@ -195,12 +195,15 @@ if(length(groupIDs) == 1){
 }
 colnames(average.rpkm) = paste("avg.log2.rpkm", sub("-",".",groupIDs), sep=".")
 
-#removed undefined group IDs (so, you can visualize samples that aren't in your comparison)
+#remove undefined group IDs (so, you can visualize samples that aren't in your comparison)
 if(length(deg.groups) == 1){
 	var1 = sample.description.table[,deg.groups]
 	deg.counts = counts[,!is.na(var1)]
 	deg.RPKM = RPKM[,!is.na(var1)]
 	var1 = var1[!is.na(var1)]
+	if (trt.group != "continuous"){
+		var1 = as.factor(as.character(var1[!is.na(var1)]))
+	}
 } else if (length(deg.groups) == 2){
 	if(interaction.flag == "filter-overlap"){
 		var1 = sample.description.table[,deg.groups[1]]
@@ -225,7 +228,13 @@ if(length(deg.groups) == 1){
 		deg.counts = counts[,deg.samples]
 		deg.RPKM = RPKM[,deg.samples]
 		var1 = var1[deg.samples]
+		if (trt.group != "continuous"){
+			var1 = as.factor(as.character(var1[!is.na(var1)]))
+		}
 		var2 = var2[deg.samples]
+		if (trt.group2 != "continuous"){
+			var2 = as.factor(as.character(var2[!is.na(var2)]))
+		}
 	}
 } else {
 	stop("Code currently doesn't support more than 2 group model for DEG (with or without interaction)")
@@ -348,7 +357,7 @@ for (i in 1:length(deg.groups)){
 	deg.group = deg.groups[i]
 	
 	if((i == 1) & (trt.group != "continuous")){
-		deg.group.values = deg.meta[,deg.group]
+		deg.group.values = as.factor(as.character(deg.meta[,deg.group]))
 		min.reps = min(table(deg.group.values))
 		if (min.reps < 2){
 			rep.check=0
@@ -356,7 +365,7 @@ for (i in 1:length(deg.groups)){
 			print("In the future, please make sure you at least have duplicate samples.")
 		}#end if (min.reps < 2)
 	} else if ((i == 2) & (trt.group2 != "continuous")){
-		deg.group.values = deg.meta[,deg.group]
+		deg.group.values = as.factor(as.character(deg.meta[,deg.group]))
 		min.reps = min(table(deg.group.values))
 		if (min.reps < 2){
 			rep.check=0
