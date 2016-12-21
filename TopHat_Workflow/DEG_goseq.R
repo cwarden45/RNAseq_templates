@@ -78,7 +78,7 @@ calc.gene.cor = function(arr, indep.var)
 		gene.cor.coef = NA
 	}
 	return(gene.cor.coef)
-}#end def gene.aov
+}#end def calc.gene.cor
 
 library(gplots)
 fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black","darkgreen","thistle1","tan","orchid1",colors())
