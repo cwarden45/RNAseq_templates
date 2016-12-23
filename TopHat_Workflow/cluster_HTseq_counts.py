@@ -43,6 +43,11 @@ if (strandType != "yes") and (strandType != "no") and (strandType != "reverse"):
 		
 fileResults = os.listdir(alignmentFolder)
 
+submitAll = "master_htseq_queue.sh"
+masterHandle = open(submitAll,"w")
+text = "#!/bin/bash\n"
+masterHandle.write(text)
+
 jobCount = 0
 
 for file in fileResults:
@@ -60,6 +65,9 @@ for file in fileResults:
 			print sample
 	
 			shellScript = "htseq_" + sample + ".sh"
+			text = "qsub " + shellScript + "\n"
+			masterHandle.write(text)
+			
 			outHandle = open(shellScript, "w")
 			text = "#!/bin/bash\n"
 			text = text + "#$ -M "+email+"\n"
