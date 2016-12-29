@@ -68,6 +68,11 @@ if (alignmentFolder == "") or (alignmentFolder == "[required]"):
 	
 fileResults = os.listdir(readsFolder)
 
+submitAll = "master_tophat_queue.sh"
+masterHandle = open(submitAll,"w")
+text = "#!/bin/bash\n"
+masterHandle.write(text)
+
 jobCount = 0
 for file in fileResults:
 	result = re.search("(.*)_\w{6}_L\d{3}_R1_001.fastq$",file)
@@ -79,6 +84,9 @@ for file in fileResults:
 		if (sample not in finishedSamples):
 			print sample
 			shellScript = sample + ".sh"
+			text = "qsub " + shellScript + "\n"
+			masterHandle.write(text)
+
 			outHandle = open(shellScript, "w")
 			text = "#!/bin/bash\n"
 			text = text + "#$ -M "+email+"\n"
