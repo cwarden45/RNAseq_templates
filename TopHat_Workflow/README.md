@@ -87,6 +87,7 @@ RSeQC: http://rseqc.sourceforge.net/
 |aligned_stats_file|Name of File to Contain Aligned and Exonic Read Counts|
 |cluster_distance| Distance metric for dendrogram.  Can be *Euclidean* or *Pearson_Dissimilarity*|
 |rpkm_file|Name of File to Contain log2(RPKM + *rpkm_expression_cutoff*) Expression Values|
+|RPKM_norm|How to count number of aligned reads: *aligned* or *quantified*|
 |counts_file|Name of File to Contain Read Counts Per Gene|
 |rpkm_expression_cutoff|Rounding Value for RPKM (minimum reliable expression level)|
 |minimum_fraction_expressed|Minimum fraction of samples with expression above *rpkm_expression_cutoff*. Filter for differential expression anaylsis.|
