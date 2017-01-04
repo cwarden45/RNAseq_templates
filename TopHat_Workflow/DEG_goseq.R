@@ -87,6 +87,7 @@ param.table = read.table("parameters.txt", header=T, sep="\t")
 comp.name=as.character(param.table$Value[param.table$Parameter == "comp_name"])
 genome=as.character(param.table$Value[param.table$Parameter == "genome"])
 min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "rpkm_expression_cutoff"]))
+aligned.type = as.character(param.table$Value[param.table$Parameter == "RPKM_norm"])
 min.fraction.expressed = as.numeric(as.character(param.table$Value[param.table$Parameter == "minimum_fraction_expressed"]))
 fc.cutoff = as.numeric(as.character(param.table$Value[param.table$Parameter == "fold_change_cutoff"]))
 cor.cutoff = as.numeric(as.character(param.table$Value[param.table$Parameter == "cor_cutoff"]))
@@ -140,12 +141,17 @@ counts.table = counts.table[as.numeric(counts.table$length.kb) > gene.length.cut
 print(dim(counts.table))
 print(dim(counts))
 
-
 genes = counts.table$symbol
 gene.length.kb = as.numeric(counts.table$length.kb)
 
-exonic.stat.table = read.table(aligned.stats.file, header=T, sep="\t")
-aligned.reads = as.numeric(exonic.stat.table$aligned.reads[match(longID, exonic.stat.table$Sample)])
+if(aligned.type =="aligned"){
+	exonic.stat.table = read.table(aligned.stats.file, header=T, sep="\t")
+	aligned.reads = as.numeric(exonic.stat.table$aligned.reads[match(longID, exonic.stat.table$Sample)])
+}else if(aligned.type =="quantified"){
+	aligned.reads=apply(counts, 2, sum)
+}else{
+	stop("Print RPKM_norm must be either 'aligned' or 'quantified'")
+}#end else
 
 total.million.aligned.reads = aligned.reads / 1000000
 print(total.million.aligned.reads)

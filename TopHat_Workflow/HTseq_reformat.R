@@ -65,6 +65,7 @@ total.reads.file = as.character(param.table$Value[param.table$Parameter == "tota
 exonic.stat.file = as.character(param.table$Value[param.table$Parameter == "aligned_stats_file"])
 counts.file = as.character(param.table$Value[param.table$Parameter == "counts_file"])
 rpkm.file = as.character(param.table$Value[param.table$Parameter == "rpkm_file"])
+aligned.type = as.character(param.table$Value[param.table$Parameter == "RPKM_norm"])
 full.annotation.file = paste(htseq.anno.folder,"\\TxDb_",genome,"_exon_annotations.txt",sep="")
 
 library(GenomicRanges)
@@ -175,8 +176,16 @@ exonic.stat.table = read.table(exonic.stat.file, header=T, sep="\t")
 exonicID = as.character(exonic.stat.table$Sample)
 exonic.stat.table = exonic.stat.table[match(sampleID, exonicID),]
 total.reads = as.numeric(total.reads.table$Total.Reads)
+
+
 aligned.reads = as.numeric(exonic.stat.table$aligned.reads)
 percent.aligned.reads = round(100 * aligned.reads / total.reads, digits=1)
+if(aligned.type =="quantified"){
+	aligned.reads=apply(count.mat, 2, sum)
+}else if (aligned.type !="aligned"){
+	#percent aligned not useful statistic if using quantified reads
+	stop("Print RPKM_norm must be either 'aligned' or 'quantified'")
+}#end else
 
 intergenic.reads = extra.stats[irrelevant.counts == "__no_feature", ]
 exonic.reads = apply(count.mat, 2, sum)
