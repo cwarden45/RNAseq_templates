@@ -24,6 +24,7 @@ aligned_stats_file	findOverlaps_exonic_stats.txt
 cluster_distance  Euclidean
 Threads 4
 rpkm_file	log2_rpkm.txt
+RPKM_norm	aligned
 counts_file	read_counts.txt
 rpkm_expression_cutoff	0.1
 minimum_fraction_expressed	0.5
