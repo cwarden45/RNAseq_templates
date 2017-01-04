@@ -177,16 +177,16 @@ exonicID = as.character(exonic.stat.table$Sample)
 exonic.stat.table = exonic.stat.table[match(sampleID, exonicID),]
 total.reads = as.numeric(total.reads.table$Total.Reads)
 
-
-aligned.reads = as.numeric(exonic.stat.table$aligned.reads)
-percent.aligned.reads = round(100 * aligned.reads / total.reads, digits=1)
-if(aligned.type =="quantified"){
+if(aligned.type == "aligned"){
+	aligned.reads = as.numeric(exonic.stat.table$aligned.reads)
+} else if(aligned.type =="quantified"){
 	aligned.reads=apply(count.mat, 2, sum)
-}else if (aligned.type !="aligned"){
-	#percent aligned not useful statistic if using quantified reads
+}else {
 	stop("Print RPKM_norm must be either 'aligned' or 'quantified'")
 }#end else
 
+percent.aligned.reads = round(100 * aligned.reads / total.reads, digits=1)
+	
 intergenic.reads = extra.stats[irrelevant.counts == "__no_feature", ]
 exonic.reads = apply(count.mat, 2, sum)
 unique.reads = exonic.reads + intergenic.reads
