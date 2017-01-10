@@ -6,6 +6,7 @@ parameterFile = "parameters.txt"
 
 alignmentFolder = ""
 bed_file = ""
+sample_description = ""
 
 inHandle = open(parameterFile)
 lines = inHandle.readlines()
@@ -24,6 +25,9 @@ for line in lines:
 	if param == "RSeQC_bed_MAC":
 		bed_file = value	
 
+	if param == "sample_description_file":
+		sample_description = value	
+		
 fileResults = os.listdir(alignmentFolder)
 
 finishedSamples = ()
@@ -56,4 +60,33 @@ for file in fileResults:
 			command = "mv " + tinOut2 + " " + subfolder + "/" + tinOut2
 			os.system(command)
 
-		
+plotBams = ""
+lineCount = 0
+sampleIDindex = -1
+
+inHandle = open(sample_description)
+line = inHandle.readline()
+
+while line:
+	line = re.sub("\r","",line)
+	line = re.sub("\n","",line)
+	lineInfo = line.split("\t")
+	
+	lineCount +=1
+	
+	if lineCount ==1:
+		for i in range(0, len(lineInfo)):
+			if lineInfo[i] == "sampleID":
+				sampleIDindex = i
+				
+		if sampleIDindex == -1:
+			print "There must be a column in the sample description file called 'sampleID' to define ordered .bam files!"
+			sys.exit()
+	elif lineCount == 2:
+		plotBams = alignmentFolder + "/" + lineInfo[sampleIDindex] + ".bam"
+	else:
+		plotBams = plotBams + "," + alignmentFolder + "/" + lineInfo[sampleIDindex] + ".bam"
+	line = inHandle.readline()
+
+command = "geneBody_coverage.py -r " + bed_file + " -i " + plotBams + " -o gene_coverage"
+os.system(command)	
