@@ -21,7 +21,7 @@ fdr_method  BH
 sample_description_file	sample_description.txt
 total_counts_file	total_read_counts.txt
 aligned_stats_file	findOverlaps_exonic_stats.txt
-cluster_distance  Euclidean
+cluster_distance  Pearson_Dissimilarity
 Threads 4
 rpkm_file	log2_rpkm.txt
 RPKM_norm	aligned
