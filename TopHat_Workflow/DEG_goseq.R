@@ -788,7 +788,7 @@ if (interaction.flag == "no"){
 		library(qvalue)
 		qobj <- qvalue(p = test.pvalue)
 		fdr = qobj$qvalue
-		png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+		png(paste(comp.name,"_",pvalue.method,"_qvalue_plot.png",sep=""))
 		qHist = hist(qobj)
 		print(qHist)
 		dev.off()
@@ -796,7 +796,7 @@ if (interaction.flag == "no"){
 		library(qvalue)
 		qobj <- qvalue(p = test.pvalue)
 		fdr = qobj$lfdr
-		png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+		png(paste(comp.name,"_",pvalue.method,"_qvalue_plot.png",sep=""))
 		qHist = hist(qobj)
 		print(qHist)
 		dev.off()
@@ -822,7 +822,7 @@ if (interaction.flag == "no"){
 			library(qvalue)
 			qobj <- qvalue(p = test.pvalue)
 			fdr = qobj$qvalue
-			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			png(paste(comp.name,"_",pvalue.method,"_qvalue_plot.png",sep=""))
 			qHist = hist(qobj)
 			print(qHist)
 			dev.off()
@@ -830,7 +830,7 @@ if (interaction.flag == "no"){
 			library(qvalue)
 			qobj <- qvalue(p = test.pvalue)
 			fdr = qobj$lfdr
-			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			png(paste(comp.name,"_",pvalue.method,"_qvalue_plot.png",sep=""))
 			qHist = hist(qobj)
 			print(qHist)
 			dev.off()
@@ -858,7 +858,7 @@ if (interaction.flag == "no"){
 			library(qvalue)
 			qobj <- qvalue(p = prim.pvalue)
 			fdr = qobj$qvalue
-			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			png(paste(comp.name,"_",pvalue.method,"_prim_qvalue_plot.png",sep=""))
 			qHist = hist(qobj)
 			print(qHist)
 			dev.off()
@@ -866,7 +866,7 @@ if (interaction.flag == "no"){
 			library(qvalue)
 			qobj <- qvalue(p = prim.pvalue)
 			fdr = qobj$lfdr
-			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			png(paste(comp.name,"_",pvalue.method,"_prim_qvalue_plot.png",sep=""))
 			qHist = hist(qobj)
 			print(qHist)
 			dev.off()
@@ -891,7 +891,7 @@ if (interaction.flag == "no"){
 			library(qvalue)
 			qobj <- qvalue(p = sec.pvalue)
 			sec.fdr = qobj$qvalue
-			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			png(paste(comp.name,"_",pvalue.method,"_sec_qvalue_plot.png",sep=""))
 			qHist = hist(qobj)
 			print(qHist)
 			dev.off()
@@ -899,7 +899,7 @@ if (interaction.flag == "no"){
 			library(qvalue)
 			qobj <- qvalue(p = sec.pvalue)
 			sec.fdr = qobj$lfdr
-			png(paste(pvalue.method,"_qvalue_plot.png",sep=""))
+			png(paste(comp.name,"_",pvalue.method,"_sec_qvalue_plot.png",sep=""))
 			qHist = hist(qobj)
 			print(qHist)
 			dev.off()
