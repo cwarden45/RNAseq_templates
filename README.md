@@ -1,5 +1,5 @@
 # RNAseq_templates
-template scripts for RNA-Seq analysis (currently,  no promises / support for other users)
+template scripts for RNA-Seq analysis
 
 Genome_Ref_Code is used to prepare annotations for TopHat_Workflow
 
