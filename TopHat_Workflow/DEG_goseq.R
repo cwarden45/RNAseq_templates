@@ -1161,7 +1161,7 @@ if (goseq.flag == "yes"){
 	png(bias.file)
 	pwf=nullp(deg,genome,"geneSymbol")
 	GO.wall=goseq(pwf,genome,"geneSymbol")
-	GO.wall = data.frame(GO.wall, overenrichment.fdr=p.adjust(GO.wall$over_represented_pvalue))
+	GO.wall = data.frame(GO.wall, overenrichment.fdr=p.adjust(GO.wall$over_represented_pvalue,"fdr"))
 
 	GO.wall = GO.wall[GO.wall$over_represented_pvalue < 0.05,]
 	genes2go=getgo(gene.symbol[deg == 1],genome,"geneSymbol")
@@ -1189,7 +1189,7 @@ if (goseq.flag == "yes"){
 	png(bias.file)
 	pwf=nullp(deg,genome,"geneSymbol")
 	GO.wall=goseq(pwf,genome,"geneSymbol")
-	GO.wall = data.frame(GO.wall, overenrichment.fdr=p.adjust(GO.wall$over_represented_pvalue))
+	GO.wall = data.frame(GO.wall, overenrichment.fdr=p.adjust(GO.wall$over_represented_pvalue, "fdr"))
 
 	GO.wall = GO.wall[GO.wall$over_represented_pvalue < 0.05,]
 	genes2go=getgo(gene.symbol[deg == 1],genome,"geneSymbol")
