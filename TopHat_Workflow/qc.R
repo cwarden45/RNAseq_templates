@@ -66,13 +66,14 @@ for (group in plot.groups){
 	pca.file = paste("pca_by_",group,".png",sep="")
 	png(file=pca.file)
 	plot(pc.values$PC1, pc.values$PC2, col = labelColors, xlab = paste("PC1 (",round(100* variance.explained[1] , digits = 2),"%)", sep = ""),
-			ylab = paste("PC2 (",round(100* variance.explained[2] , digits = 2),"%)", sep = ""), pch=19)
+			ylab = paste("PC2 (",round(100* variance.explained[2] , digits = 2),"%)", sep = ""), pch=19,
+	    		main = group)
 	legend("topright",legend=groups,col=color.palette,  pch=19)
 	dev.off()
 
 	box.file = paste("box_plot_by_",group,".png",sep="")
 	png(file=box.file)
-	boxplot(temp.mat, col=labelColors, xaxt='n')
+	boxplot(temp.mat, col=labelColors, xaxt='n', main = group)
 	legend("topright",legend=groups,col=color.palette,  pch=19)
 	dev.off()
 
@@ -94,7 +95,7 @@ for (group in plot.groups){
 	a <- attributes(dend1) 
 	attr(dend1, "nodePar") <- c(a$nodePar, lab.col = labelColors) 
 	op <- par(mar = par("mar") + c(0,0,0,10)) 
-	plot(dend1, horiz=T)
+	plot(dend1, horiz=T, main = group)
 	par(op) 
 	dev.off()
 
@@ -110,7 +111,8 @@ for (group in plot.groups){
 					expr <- den$x
 					freq <- den$y
 					plot(expr, freq, type="l", xlab = paste("Log2(RPKM + ",min.expression,") Expression",sep=""), ylab = "Density",
-							xlim=c(expr.min,expr.max), ylim=c(0,0.2), col=labelColors[i])
+							xlim=c(expr.min,expr.max), ylim=c(0,0.2), col=labelColors[i],
+					    		main = group)
 					legend("topright",legend=groups,col=color.palette,  pch=19)
 				}#end if(i == 1)
 			else
