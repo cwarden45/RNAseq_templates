@@ -29,7 +29,8 @@ batch.center = function(arr, batchID)
 deg.table = read.table(deg.file, sep="\t", head=T)
 deg.genes = deg.table$symbol[deg.table$status != "No Change"]
 	
-fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
+fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black","darkgreen","thistle1","tan","orchid1",colors())
+
 sample.description.table = read.table(metadata.table, sep="\t", head=T)
 sample.label = sample.description.table$userID
 batchID = as.character(sample.description.table[,batch.group])
