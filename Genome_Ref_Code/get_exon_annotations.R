@@ -45,8 +45,8 @@ gene.keys = keys(txdb, keytype="GENEID")
 txcols = c("EXONCHROM", "EXONSTART","EXONEND","GENEID","EXONID","EXONSTRAND")
 txtable = select(txdb, keys=gene.keys, columns=txcols, keytype="GENEID")
 print(dim(txtable))
-gene.length = txtable$EXONEND - txtable$EXONSTART + 1
-txtable = data.frame(txtable, LENGTH=gene.length)
+exon.length = txtable$EXONEND - txtable$EXONSTART + 1
+txtable = data.frame(txtable, LENGTH=exon.length)
 
 gene.symbols = keys(orgdb, keytype="SYMBOL")
 genecols = c("SYMBOL", "ENTREZID","GENENAME")
