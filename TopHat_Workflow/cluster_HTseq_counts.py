@@ -91,7 +91,7 @@ for file in fileResults:
 			
 			countsFile = sample + "_lncRNA_counts.txt"
 			text = "htseq-count -f bam -s " + strandType + " -i gene_name " + nameSortedBam + " " + lncRNAgtf + " > " + countsFile + "\n"
-			#os.system(command)
+			#outHandle.write(text)
 	
 			text = "rm " + nameSortedBam + "\n"
 			outHandle.write(text)
