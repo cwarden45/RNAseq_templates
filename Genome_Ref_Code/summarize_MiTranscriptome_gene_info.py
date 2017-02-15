@@ -3,11 +3,14 @@ import re
 import os
 
 gtf = "hg19/hg19_cancer_specific.gtf"
+gtf2 = "hg19/hg19_cancer_specific_stranded.gtf"
 txTable = "hg19/hg19_gene_info.txt"
 
 txOut = open(txTable, 'w')
 text = "symbol\ttranscript.id\tchr\tstart\tend\tstrand\ttx.max.length\n"
 txOut.write(text)
+
+gtfHandle = open(gtf2, 'w')
 
 inHandle = open(gtf)
 lines = inHandle.readlines()
@@ -20,6 +23,9 @@ txStartHash = {}
 txStopHash = {}
 txStrandHash = {}
 txLengthHash = {}
+
+totalExons = 0
+strandExons = 0
 
 for line in lines:
 	line = re.sub("\n","",line)
@@ -37,6 +43,13 @@ for line in lines:
 		symbol = lineInfo[4]
 		strand = lineInfo[6]
 		
+		totalExons += 1
+		
+		if (strand == "+") or (strand == "-"):
+			text = line + "\n"
+			gtfHandle.write(text)
+		
+			strandExons +=1
 		if annType == "exon":
 			annText = lineInfo[8]
 			annInfo = annText.split("; ")
@@ -83,3 +96,9 @@ for txID in geneHash:
 		
 	text = geneSymbol + "\t" + txID + "\t" + txChr + "\t" + str(txStart) + "\t" + str(txStop) + "\t" + txStrand + "\t" + str(txLength) + "\n"
 	txOut.write(text)
+	
+filteredExonCount = totalExons - strandExons
+percentStranded = 100 * float(strandExons) / float(totalExons)
+
+print "There were " + str(filteredExonCount) + " exons without strand information"
+print '{0:.2f}'.format(percentStranded)+"% used for htseq-count on stranded libraries"
