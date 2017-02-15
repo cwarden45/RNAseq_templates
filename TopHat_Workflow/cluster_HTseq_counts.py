@@ -90,6 +90,7 @@ for file in fileResults:
 			outHandle.write(text)
 			
 			countsFile = sample + "_lncRNA_counts.txt"
+			#switch to " -i gene_id " for MiTranscriptome
 			text = "htseq-count -f bam -s " + strandType + " -i gene_name " + nameSortedBam + " " + lncRNAgtf + " > " + countsFile + "\n"
 			#outHandle.write(text)
 	
