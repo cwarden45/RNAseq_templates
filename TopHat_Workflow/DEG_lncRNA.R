@@ -1027,7 +1027,7 @@ if(length(deg.genes) > 1){
 		heatmap.file = gsub(":",".",heatmap.file)
 		png(file = heatmap.file)
 		heatmap.2(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
-					 RowSideColors=labelColors, trace="none", margins = c(5,15))
+					 RowSideColors=labelColors, trace="none", margins = c(10,15))
 		dev.off()
 	}#end else
 }#end if(length(deg.genes) > 1)
