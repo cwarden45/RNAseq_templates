@@ -929,7 +929,7 @@ if(rep.check == 1){
 							average.rpkm, fc.table, status = status)	
 }#end else
 
-deg.file = paste(comp.name,"_lncRNA_",pvalue.method,"_lncRNA_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".txt",sep="")
+deg.file = paste(comp.name,"_lncRNA_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".txt",sep="")
 deg.file = gsub(":",".",deg.file)
 write.table(deg.table, file=deg.file, row.names=F, quote=F, sep="\t")
 
