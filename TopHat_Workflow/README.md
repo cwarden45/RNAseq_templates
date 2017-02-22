@@ -50,6 +50,8 @@ heatmap.3: https://github.com/obigriffith/biostar-tutorials/blob/master/Heatmaps
 
 heatmap.3 example: https://www.biostars.org/p/18211/
 
+IGV / igvtools: http://software.broadinstitute.org/software/igv/
+
 *Gene Set Enrichment*
 
 goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
