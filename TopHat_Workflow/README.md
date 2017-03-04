@@ -20,7 +20,11 @@ Most Python scripts can be run using this [Docker image](https://hub.docker.com/
 
 *Alignment*
 
-TopHat: https://ccb.jhu.edu/software/tophat/tutorial.shtml
+TopHat2: https://ccb.jhu.edu/software/tophat/tutorial.shtml
+
+Bowtie2:http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
+
+ - TopHat2 alignments run against bowtie2 indexed reference, created using `bowtie2-build ref_name.fa ref_name`
 
 GenomicAlignments: https://bioconductor.org/packages/release/bioc/html/GenomicAlignments.html
 
