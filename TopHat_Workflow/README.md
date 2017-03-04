@@ -1,12 +1,12 @@
 ### Order to Run Scripts ###
 
-1) se_alignment.py or cluster_se_alignment.py
+1) cluster_se_alignment.py or cluster_pe_alignment.py (or se_alignment.py)
 
 2) extract_total_reads.py
 
 3) exonic_read_counts.R
 
-4) HTseq_counts.py or cluster_HTseq_counts.py
+4) cluster_HTseq_counts.py or HTseq_counts.py
 
 5) HTseq_reformat.R
 
