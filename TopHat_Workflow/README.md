@@ -22,7 +22,7 @@ Most Python scripts can be run using this [Docker image](https://hub.docker.com/
 
 TopHat2: https://ccb.jhu.edu/software/tophat/tutorial.shtml
 
-Bowtie2:http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
+Bowtie2: http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
 
  - TopHat2 alignments run against bowtie2 indexed reference, created using `bowtie2-build ref_name.fa ref_name`
 
@@ -110,3 +110,4 @@ RSeQC: http://rseqc.sourceforge.net/
 |run_goseq| Run goseq?  It is useful to leave this as 'no' initially, and then switch to 'yes' after optimizing differential expression parameters|
 |interaction| Method for comparing an interaction of two variables.  Can be *model*, *filter-overlap*, or *no*|
 |secondary_trt| If comparing two gene lists, this is treatment group for the list that you want to filter out; enter *continuous* for a continuous variable and a correlation will be provided instead of a fold-change value (also converts second variable from factor to numeric, even if interaction is set to *no*)|
+|Read_Pairing|Are you using single-end ('SE', typical for gene expession analysis) or paired-end ('PE') reads?|
