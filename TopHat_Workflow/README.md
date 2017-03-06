@@ -28,7 +28,7 @@ Bowtie2: http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
 
 GenomicAlignments: https://bioconductor.org/packages/release/bioc/html/GenomicAlignments.html
 
-*Read Counting / RPKM*
+*Read Counting / FPKM*
 
 HTseq: http://www-huber.embl.de/HTSeq/doc/install.html#install
 
