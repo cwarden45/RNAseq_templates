@@ -56,7 +56,7 @@ reduced.exon.length = function(text.arr){
 param.table = read.table("parameters.txt", header=T, sep="\t")
 comp.name=as.character(param.table$Value[param.table$Parameter == "comp_name"])
 genome=as.character(param.table$Value[param.table$Parameter == "genome"])
-min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "rpkm_expression_cutoff"]))
+min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "fpkm_expression_cutoff"]))
 output.folder = as.character(param.table$Value[param.table$Parameter == "Raw_Code_PC"])
 user.folder = as.character(param.table$Value[param.table$Parameter == "Result_Folder"])
 htseq.anno.folder = as.character(param.table$Value[param.table$Parameter == "HTseq_input_folder"])
@@ -64,7 +64,7 @@ sample.file = as.character(param.table$Value[param.table$Parameter == "sample_de
 total.reads.file = as.character(param.table$Value[param.table$Parameter == "total_counts_file"])
 exonic.stat.file = as.character(param.table$Value[param.table$Parameter == "aligned_stats_file"])
 counts.file = as.character(param.table$Value[param.table$Parameter == "counts_file"])
-rpkm.file = as.character(param.table$Value[param.table$Parameter == "rpkm_file"])
+rpkm.file = as.character(param.table$Value[param.table$Parameter == "fpkm_file"])
 aligned.type = as.character(param.table$Value[param.table$Parameter == "FPKM_norm"])
 full.annotation.file = paste(htseq.anno.folder,"\\TxDb_",genome,"_exon_annotations.txt",sep="")
 
