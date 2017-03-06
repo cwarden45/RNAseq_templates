@@ -1,20 +1,20 @@
-normalizeTotalExpression <- function (geneExpr, totalReads) {
+normalizeTotalExpression = function (geneExpr, totalReads) {
 	return(geneExpr / totalReads)
 }#end def normalizeTotalExpression
 
-avgGroupExpression <- function (geneExpr, groups) {
+avgGroupExpression = function (geneExpr, groups) {
 	avg.expr = tapply(geneExpr, groups, mean)
 	return(avg.expr)
 }#end def avgGroupExpression
 
-standardize.arr <- function(arr)
+standardize.arr = function(arr)
 {
 	center.arr = as.numeric(arr) - mean(as.numeric(arr), na.rm=T)
 	norm.arr = center.arr / sd(center.arr, na.rm=T)
 	return(norm.arr)
 }#end def standardize.arr
 
-count.defined.values <- function(arr, expr.cutoff)
+count.defined.values = function(arr, expr.cutoff)
 {
 	return(length(arr[arr > expr.cutoff]))
 }#end def count.values
@@ -24,7 +24,7 @@ count.na.values <- function(arr)
 	return(length(arr[is.na(arr)]))
 }#end def count.values
 
-ratio2fc <- function(value)
+ratio2fc = function(value)
 {
 	if(value >= 0){
 		return(2^value)
@@ -33,7 +33,7 @@ ratio2fc <- function(value)
 	}
 }#end def ratio2fc
 
-gene.lm <- function(arr, var1, var2=c(), var3=c())
+gene.lm = function(arr, var1, var2=c(), var3=c())
 {	
 	if (length(var2) == 0){
 		fit = lm(as.numeric(arr) ~ var1)
@@ -51,7 +51,7 @@ gene.lm <- function(arr, var1, var2=c(), var3=c())
 	return(pvalue)
 }#end def gene.lm
 
-gene.aov <- function(arr, var1, var2=c(), var3=c())
+gene.aov = function(arr, var1, var2=c(), var3=c())
 {	
 	if (length(var2) == 0){
 		fit = aov(as.numeric(arr) ~ var1)
@@ -86,7 +86,7 @@ fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow
 param.table = read.table("parameters.txt", header=T, sep="\t")
 comp.name=as.character(param.table$Value[param.table$Parameter == "comp_name"])
 genome=as.character(param.table$Value[param.table$Parameter == "genome"])
-min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "rpkm_expression_cutoff"]))
+min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "fpkm_expression_cutoff"]))
 aligned.type = as.character(param.table$Value[param.table$Parameter == "FPKM_norm"])
 min.fraction.expressed = as.numeric(as.character(param.table$Value[param.table$Parameter == "minimum_fraction_expressed"]))
 fc.cutoff = as.numeric(as.character(param.table$Value[param.table$Parameter == "fold_change_cutoff"]))
