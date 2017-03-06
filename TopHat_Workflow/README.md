@@ -92,11 +92,11 @@ RSeQC: http://rseqc.sourceforge.net/
 |total_counts_file|Name of File to Contain Total Read Counts|
 |aligned_stats_file|Name of File to Contain Aligned and Exonic Read Counts|
 |cluster_distance| Distance metric for dendrogram.  Can be *Euclidean* or *Pearson_Dissimilarity*|
-|rpkm_file|Name of File to Contain log2(RPKM + *rpkm_expression_cutoff*) Expression Values|
+|fpkm_file|Name of File to Contain log2(FPKM + *rpkm_expression_cutoff*) Expression Values|
 |FPKM_norm|How to count number of aligned reads: *aligned* or *quantified*|
 |counts_file|Name of File to Contain Read Counts Per Gene|
-|rpkm_expression_cutoff|Rounding Value for RPKM (minimum reliable expression level)|
-|minimum_fraction_expressed|Minimum fraction of samples with expression above *rpkm_expression_cutoff*. Filter for differential expression anaylsis.|
+|fpkm_expression_cutoff|Rounding Value for FPKM (minimum reliable expression level)|
+|minimum_fraction_expressed|Minimum fraction of samples with expression above *fpkm_expression_cutoff*. Filter for differential expression anaylsis.|
 |fold_change_cutoff|Minimum fold-change difference to consider a gene differentially expressed|
 |cor_cutoff|If using a continuous variable, minimum absolute correlation to consider a gene differentially expressed|
 |pvalue_cutoff|Maximum p-value to consider a gene differenitally expressed|
