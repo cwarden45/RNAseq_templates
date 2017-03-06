@@ -18,8 +18,8 @@ count.defined.values <- function(arr)
 
 param.table = read.table("parameters_lncRNA.txt", header=T, sep="\t")
 sample.description.file = as.character(param.table$Value[param.table$Parameter == "sample_description_file"])
-rpkm.file = as.character(param.table$Value[param.table$Parameter == "rpkm_file"])
-min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "rpkm_expression_cutoff"]))
+rpkm.file = as.character(param.table$Value[param.table$Parameter == "fpkm_file"])
+min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "fpkm_expression_cutoff"]))
 plot.groups = unlist(strsplit(as.character(param.table$Value[param.table$Parameter == "plot_groups"]), split=","))
 
 fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black","darkgreen","thistle1","tan","orchid1",colors())
