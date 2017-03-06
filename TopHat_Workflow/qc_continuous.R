@@ -1,4 +1,4 @@
-colLab <- function(n, labelColors, clusMember) { 
+colLab = function(n, labelColors, clusMember) { 
    if(is.leaf(n)) { 
        a <- attributes(n) 
 	   #print(a)
@@ -11,7 +11,7 @@ colLab <- function(n, labelColors, clusMember) {
    n 
 }
 
-count.defined.values <- function(arr)
+count.defined.values = function(arr)
 {
 	return(length(arr[!is.na(arr)]))
 }#end def count.values
@@ -20,9 +20,9 @@ library("RColorBrewer")
 
 param.table = read.table("parameters.txt", header=T, sep="\t")
 sample.description.file = as.character(param.table$Value[param.table$Parameter == "sample_description_file"])
-rpkm.file = as.character(param.table$Value[param.table$Parameter == "rpkm_file"])
+rpkm.file = as.character(param.table$Value[param.table$Parameter == "fpkm_file"])
 cluster.distance = as.character(param.table$Value[param.table$Parameter == "cluster_distance"])
-min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "rpkm_expression_cutoff"]))
+min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "fpkm_expression_cutoff"]))
 plot.groups = unlist(strsplit(as.character(param.table$Value[param.table$Parameter == "plot_groups"]), split=","))
 
 sample.table = read.table(sample.description.file, sep="\t", header=T)
