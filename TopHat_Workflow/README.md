@@ -60,6 +60,12 @@ IGV / igvtools: http://software.broadinstitute.org/software/igv/
 
 goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 
+BD-Func: https://sourceforge.net/projects/bdfunc/
+
+GSEA: http://software.broadinstitute.org/gsea/index.jsp
+
+IPA: https://www.qiagenbioinformatics.com/products/ingenuity-pathway-analysis/
+
 *QC*
 
 RSeQC: http://rseqc.sourceforge.net/
