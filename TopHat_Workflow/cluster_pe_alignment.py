@@ -138,7 +138,10 @@ for file in fileResults:
 
 			text = "gzip " + read1
 			outHandle.write(text)
-				
+
+			text = "gzip " + read2
+			outHandle.write(text)
+			
 			#run shell script to submit all samples.  Otherwise, you can run qsub manually.
 			#command = "qsub " + shellScript
 			#os.system(command)
