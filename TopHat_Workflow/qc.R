@@ -18,9 +18,9 @@ count.defined.values <- function(arr)
 
 param.table = read.table("parameters.txt", header=T, sep="\t")
 sample.description.file = as.character(param.table$Value[param.table$Parameter == "sample_description_file"])
-rpkm.file = as.character(param.table$Value[param.table$Parameter == "rpkm_file"])
+rpkm.file = as.character(param.table$Value[param.table$Parameter == "fpkm_file"])
 cluster.distance = as.character(param.table$Value[param.table$Parameter == "cluster_distance"])
-min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "rpkm_expression_cutoff"]))
+min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "fpkm_expression_cutoff"]))
 plot.groups = unlist(strsplit(as.character(param.table$Value[param.table$Parameter == "plot_groups"]), split=","))
 
 fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black","darkgreen","thistle1","tan","orchid1",colors())
