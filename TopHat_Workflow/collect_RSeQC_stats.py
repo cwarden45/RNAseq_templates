@@ -5,6 +5,7 @@ import os
 parameterFile = "parameters.txt"
 
 alignmentFolder = ""
+libraryType = ""
 
 inHandle = open(parameterFile)
 lines = inHandle.readlines()
@@ -20,6 +21,13 @@ for line in lines:
 	if param == "Alignment_Folder_MAC":
 		alignmentFolder = value
 
+	if param == "Read_Pairing":
+		libraryType = value
+
+if (libraryType == "") or (libraryType == "[required]"):
+	print "Need to enter a value for 'Read_Pairing'!"
+	sys.exit()
+		
 fileResults = os.listdir(alignmentFolder)
 
 statsFile = "RSeQC_stats.txt"
@@ -45,11 +53,21 @@ for file in fileResults:
 			line = re.sub("\n","",line)
 			line = re.sub("\r","",line)
 			
-			result2 = re.search("Fraction of reads explained by \"\+-,-\+\": (.*)",line)
-			
-			if result2:
-				formatFrac =  '{0:.2g}'.format(float(result2.group(1)))
-				text = text + "\t" +  formatFrac
+			if libraryType == "SE":
+				result2 = re.search("Fraction of reads explained by \"\+-,-\+\": (.*)",line)
+				
+				if result2:
+					formatFrac =  '{0:.2g}'.format(float(result2.group(1)))
+					text = text + "\t" +  formatFrac
+			elif libraryType == "PE":
+				result2 = re.search("Fraction of reads explained by \"1\+-,1-\+,2\+\+,2--\": (.*)",line)
+				
+				if result2:
+					formatFrac =  '{0:.2g}'.format(float(result2.group(1)))
+					text = text + "\t" +  formatFrac
+			else:
+				print "'Read_Pairing' must be 'SE' or 'PE'"
+				sys.exit()
 			
 	
 		tinStat = subfolder + "/" + sample + ".summary.txt"
