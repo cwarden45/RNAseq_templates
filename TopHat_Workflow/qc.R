@@ -46,10 +46,11 @@ for (group in plot.groups){
 	qc.grp = qc.grp[!is.na(sample.table[,group])]
 	clusterID = userID[!is.na(sample.table[,group])]
 	
-	pca.values <- prcomp(na.omit(data.matrix(temp.mat)))
-	pc.values <- data.frame(pca.values$rotation)
-	variance.explained <- (pca.values $sdev)^2 / sum(pca.values $sdev^2)
-	pca.table <- data.frame(PC = 1:length(variance.explained), percent.variation = variance.explained, t(pc.values))
+	#you can also try adding center=F, if you are concerned zero-centering is skewing results
+	pca.values = prcomp(na.omit(data.matrix(temp.mat)))
+	pc.values = data.frame(pca.values$rotation)
+	variance.explained = (pca.values $sdev)^2 / sum(pca.values $sdev^2)
+	pca.table = data.frame(PC = 1:length(variance.explained), percent.variation = variance.explained, t(pc.values))
 
 	pca.text.file = paste(group,"_pca_values.txt",sep="")
 	write.table(pca.table, pca.text.file, quote=F, row.names=F, sep="\t")
