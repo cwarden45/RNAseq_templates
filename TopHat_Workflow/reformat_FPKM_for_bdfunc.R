@@ -1,5 +1,5 @@
-in.file = "log2_rpkm.txt"
-out.file = "log2_rpkm_GROUP.txt"
+in.file = "log2_fpkm.txt"
+out.file = "log2_fpkm_GROUP.txt"
 meta.file = "sample_description.txt"
 groupID = "Group"
 
