@@ -23,7 +23,7 @@ total_counts_file	total_read_counts.txt
 aligned_stats_file	findOverlaps_exonic_stats.txt
 cluster_distance  Pearson_Dissimilarity
 Threads 4
-rpkm_file	log2_fpkm.txt
+fpkm_file	log2_fpkm.txt
 FPKM_norm	aligned
 strand  reverse
 counts_file	read_counts.txt
