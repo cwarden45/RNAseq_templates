@@ -8,7 +8,7 @@ sampleID = meta.table$userID
 group = meta.table[,groupID]
 
 expr.table = read.table(in.file,head=T,sep="\t")
-rpkm.mat = expr.table[,match(sampleID, names(expr.table))]
+rpkm.mat = round(expr.table[,match(sampleID, names(expr.table))], digits=2)
 colnames(rpkm.mat)=group
 
 output.table = data.frame(gene=expr.table$symbol, rpkm.mat)
