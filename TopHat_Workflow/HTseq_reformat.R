@@ -65,7 +65,7 @@ total.reads.file = as.character(param.table$Value[param.table$Parameter == "tota
 exonic.stat.file = as.character(param.table$Value[param.table$Parameter == "aligned_stats_file"])
 counts.file = as.character(param.table$Value[param.table$Parameter == "counts_file"])
 rpkm.file = as.character(param.table$Value[param.table$Parameter == "rpkm_file"])
-aligned.type = as.character(param.table$Value[param.table$Parameter == "RPKM_norm"])
+aligned.type = as.character(param.table$Value[param.table$Parameter == "FPKM_norm"])
 full.annotation.file = paste(htseq.anno.folder,"\\TxDb_",genome,"_exon_annotations.txt",sep="")
 
 library(GenomicRanges)
