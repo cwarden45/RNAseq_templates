@@ -111,7 +111,7 @@ for (group in plot.groups){
 					den <- density(data, na.rm=T,from=expr.min, to=expr.max)
 					expr <- den$x
 					freq <- den$y
-					plot(expr, freq, type="l", xlab = paste("Log2(RPKM + ",min.expression,") Expression",sep=""), ylab = "Density",
+					plot(expr, freq, type="l", xlab = paste("Log2(FPKM + ",min.expression,") Expression",sep=""), ylab = "Density",
 							xlim=c(expr.min,expr.max), ylim=c(0,0.2), col=labelColors[i],
 					    		main = group)
 					legend("topright",legend=groups,col=color.palette,  pch=19)
