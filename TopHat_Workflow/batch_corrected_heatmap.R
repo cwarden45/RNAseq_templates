@@ -2,7 +2,7 @@ deg.prefix = ""
 deg.file = paste(deg.prefix,".txt",sep="")
 heatmap.file  = paste("batch_corrected_",deg.prefix,".png",sep="")
 metadata.table = "sample_description.txt"
-expression.table = "log2_rpkm.txt"
+expression.table = "log2_fpkm.txt"
 plot.groups = c("Group")
 batch.group = "Batch"
 
