@@ -73,7 +73,7 @@ for file in fileResults:
 			text = text + "#$ -M "+email+"\n"
 			text = text + "#$ -m bea\n"
 			text = text + "#$ -N cwHT"+str(jobCount)+"\n"
-			text = text + "#$ -q all.q\n"
+			text = text + "#$ -q short.q\n"
 			text = text + "#$ -j yes\n"
 			text = text + "#$ -o cwHT"+str(jobCount)+".log\n"
 			text = text + "#$ -cwd\n"
