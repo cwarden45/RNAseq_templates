@@ -15,7 +15,9 @@ fpkm.mat = round(expr.table[,match(sampleID, names(expr.table))], digits=2)
 if(convert.upper){
 	#if working with other organisms (like mouse), convert symbol to upper-case
 	gene = toupper(expr.table$symbol)
-}#end if(convert.upper)
+}else{
+	gene = expr.table$symbol
+}
 
 output.table = data.frame(NAME=gene,Description=gene,
 						fpkm.mat)
