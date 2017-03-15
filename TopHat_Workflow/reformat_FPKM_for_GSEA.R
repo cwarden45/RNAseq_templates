@@ -3,6 +3,7 @@ gct.file = "../Result/GSEA/log2_fpkm.gct"
 cls.file = "../Result/GSEA/log2_fpkm.cls"
 meta.file = "sample_description.txt"
 group = "Group"
+convert.upper=TRUE
 
 meta.table = read.table(meta.file,head=T,sep="\t")
 sampleID = meta.table$userID
@@ -11,8 +12,10 @@ cls.group = meta.table[,group]
 expr.table = read.table(in.file,head=T,sep="\t")
 fpkm.mat = round(expr.table[,match(sampleID, names(expr.table))], digits=2)
 
-#if working with other organisms (like mouse), convert symbol to upper-case
-gene = toupper(expr.table$symbol)
+if(convert.upper){
+	#if working with other organisms (like mouse), convert symbol to upper-case
+	gene = toupper(expr.table$symbol)
+}#end if(convert.upper)
 
 output.table = data.frame(NAME=gene,Description=gene,
 						fpkm.mat)
