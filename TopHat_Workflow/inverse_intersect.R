@@ -133,6 +133,7 @@ if(heatmap.flag){
 		png(file = intersect.output.heatmap)
 		heatmap.2(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
 					 RowSideColors=labelColors, trace="none", margins = c(5,15))
+		legend("topright", legend=group.levels,	col=color.palette, pch=15, cex=0.7)
 		dev.off()
 	}#end else
 }#end heatmap code
