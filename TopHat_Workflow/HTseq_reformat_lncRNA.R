@@ -116,7 +116,7 @@ for (i in 1:ncol(count.mat)){
 	temp.rpk = counts / as.numeric(gene.length.kb)
 	rpk[,i] = temp.rpk 
 }
-RPKM = log2(t(apply(rpk, 1, normalizeTotalExpression, totalReads = total.million.aligned.reads)) + min.expression)
+RPKM = round(log2(t(apply(rpk, 1, normalizeTotalExpression, totalReads = total.million.aligned.reads)) + min.expression), digits=2)
 colnames(RPKM) = sample.label
 
 trimmed.percent = apply(count.mat, 2, trimmed.counts, min.percent=0.3, max.percent=0.95)
