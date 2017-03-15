@@ -11,7 +11,7 @@ switched.downID = "Decreased Expression"
 #if you want to make a heatmap
 heatmap.flag = FALSE
 metadata.table = "sample_description.txt"
-expression.table = "log2_rpkm.txt"
+expression.table = "log2_fpkm.txt"
 plot.groups = c("Group")
 
 #if you want to run goseq
@@ -25,6 +25,8 @@ intersect.output.table = ".txt"
 intersect.output.heatmap = ".png"
 goseq.up.file = ".txt"
 goseq.down.file = ".txt"
+goseq.bias.up.file = "goseq_up_bias.png"
+goseq.bias.down.file = "goseq_down_bias.png"
 
 normal.dir.table = read.table(normal.dir.file, sep="\t", head=T)
 switched.dir.table = read.table(switched.dir.file, sep="\t", head=T)
@@ -145,7 +147,7 @@ if (goseq.flag){
 	gene.symbol = as.character(levels(as.factor(as.character(matched.genes))))
 	names(deg)=gene.symbol
 	
-	bias.file = "goseq_up_bias.png"
+	bias.file = goseq.bias.up.file
 	png(bias.file)
 	pwf=nullp(deg,genome,"geneSymbol")
 	GO.wall=goseq(pwf,genome,"geneSymbol")
@@ -172,7 +174,7 @@ if (goseq.flag){
 	gene.symbol = as.character(levels(as.factor(as.character(matched.genes))))
 	names(deg)=gene.symbol
 
-	bias.file = "goseq_down_bias.png"
+	bias.file = goseq.bias.down.file
 	png(bias.file)
 	pwf=nullp(deg,genome,"geneSymbol")
 	GO.wall=goseq(pwf,genome,"geneSymbol")
