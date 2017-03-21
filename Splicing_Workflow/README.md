@@ -64,4 +64,3 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |strand|Library type.  Can be *no*, *yes*, or *reverse* (*reverse* typically used for Illumina stranded libraries)|
 |pairing|*SE* for single-end reads, *PE* for paired-end reads|
 |run_goseq| Run goseq? *yes* or *no*|
-|Read_Pairing|Are you using single-end (*SE*) or paired-end (*PE*) reads?|
