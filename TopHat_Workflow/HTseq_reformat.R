@@ -1,13 +1,18 @@
-normalizeTotalExpression <- function (geneExpr, totalReads) {
+normalizeTotalExpression = function (geneExpr, totalReads) {
 	return(geneExpr / totalReads)
 }#end def normalizeTotalExpression
 
-count.defined.values <- function(arr, expr.cutoff)
+count.defined.values = function(arr, expr.cutoff)
 {
+	sig.figures = 1
+	if (expr.cutoff > 0)
+		sig.figures = 0
+	expr.cutoff = round(expr.cutoff, digits=sig.figures)
+	arr = round(arr, digits=sig.figures)
 	return(length(arr[arr > expr.cutoff]))
 }#end def count.values
 
-trimmed.counts <- function(counts, min.percent, max.percent)
+trimmed.counts = function(counts, min.percent, max.percent)
 {
 	total.counts = sum(counts)
 	counts = counts[order(counts)]
