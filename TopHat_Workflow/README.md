@@ -102,7 +102,7 @@ RSeQC: http://rseqc.sourceforge.net/
 |FPKM_norm|How to count number of aligned reads: *aligned* or *quantified*|
 |counts_file|Name of File to Contain Read Counts Per Gene|
 |fpkm_expression_cutoff|Rounding Value for FPKM (minimum reliable expression level)|
-|minimum_fraction_expressed|Minimum fraction of samples with expression above *fpkm_expression_cutoff*. Filter for differential expression anaylsis.|
+|minimum_fraction_expressed|Minimum fraction of samples with expression above *fpkm_expression_cutoff*. Filter for differential expression analysis.|
 |fold_change_cutoff|Minimum fold-change difference to consider a gene differentially expressed|
 |cor_cutoff|If using a continuous variable, minimum absolute correlation to consider a gene differentially expressed|
 |pvalue_cutoff|Maximum p-value to consider a gene differenitally expressed|
