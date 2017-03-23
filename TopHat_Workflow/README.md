@@ -96,7 +96,7 @@ RSeQC: http://rseqc.sourceforge.net/
 |HTseq_input_folder|Path to folder containing GTF gene information|
 |sample_description_file|Name of Sample Description File|
 |total_counts_file|Name of File to Contain Total Read Counts|
-|aligned_stats_file|Name of File to Contain Aligned and Exonic Read Counts|
+|aligned_stats_file|Name of File to Contain Aligned Read Counts|
 |cluster_distance| Distance metric for dendrogram.  Can be *Euclidean* or *Pearson_Dissimilarity*|
 |fpkm_file|Name of File to Contain log2(FPKM + *rpkm_expression_cutoff*) Expression Values|
 |FPKM_norm|How to count number of aligned reads: *aligned* or *quantified*|
