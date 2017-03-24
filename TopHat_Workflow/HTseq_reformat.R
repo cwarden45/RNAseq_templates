@@ -59,7 +59,6 @@ reduced.exon.length = function(text.arr){
 }#end def reduced.exon.length
 
 param.table = read.table("parameters.txt", header=T, sep="\t")
-comp.name=as.character(param.table$Value[param.table$Parameter == "comp_name"])
 genome=as.character(param.table$Value[param.table$Parameter == "genome"])
 min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "fpkm_expression_cutoff"]))
 output.folder = as.character(param.table$Value[param.table$Parameter == "Raw_Code_PC"])
