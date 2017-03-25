@@ -13,7 +13,7 @@ pairing = ""
 strand = ""
 sample_description = ""
 mergedFolder = ""
-qortsJar = "/opt/QoRTs/QoRTs_1.1.8/QoRTs.jar"
+qortsJar = "/opt/QoRTs-1.1.8/QoRTs.jar"
 
 inHandle = open(parameterFile)
 lines = inHandle.readlines()
