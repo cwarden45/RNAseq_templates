@@ -3,7 +3,7 @@ import re
 import os
 import subprocess
 
-parameterFile = "parameters_cluster.txt"
+parameterFile = "parameters.txt"
 finishedSamples = ()
 
 java_mem = ""
