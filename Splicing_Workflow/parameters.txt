@@ -21,3 +21,4 @@ fold_change_cutoff	1.5
 pvalue_cutoff	0.05
 fdr_cutoff	0.01
 run_goseq	yes
+secondary_plot  discrete
