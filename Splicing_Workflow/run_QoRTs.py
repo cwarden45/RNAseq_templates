@@ -81,6 +81,12 @@ if (pairing == "") or (pairing == "[required]"):
 if (strand == "") or (strand == "[required]"):
 	print "Need to enter a value for 'strand'!"
 	sys.exit()
+
+command = "mkdir " + rawCountFolder
+os.system(command)
+
+command = "mkdir " + mergedFolder
+os.system(command)
 	
 fileResults = os.listdir(alignmentFolder)
 
