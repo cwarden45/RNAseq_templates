@@ -63,7 +63,9 @@ jscs = estimateEffectSizes(jscs, nCores = as.numeric(threads))
 
 raw.output.folder = paste(count.folder,"/",comp.name,"/",sep="")
 dir.create(raw.output.folder)
-plot.folder = paste(user.folder,"/DSG/",comp.name,"/",sep="")
+DSG.folder = paste(user.folder,"/DSG/","/",sep="")
+dir.create(DSG.folder)
+plot.folder = paste(DSG.folder,comp.name,"/",sep="")
 dir.create(plot.folder)
 								
 writeCompleteResults(jscs, outfile.prefix=raw.output.folder, save.jscs = TRUE,
