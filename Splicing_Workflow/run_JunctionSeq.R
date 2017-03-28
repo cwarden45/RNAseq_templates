@@ -78,7 +78,7 @@ plot.folder = paste(DSG.folder,comp.name,"/",sep="")
 dir.create(plot.folder)
 								
 writeCompleteResults(jscs, outfile.prefix=raw.output.folder, save.jscs = TRUE,
-						FDR.threshold = fdr.cutoff, gzip.output = FALSE)
+				FDR.threshold = fdr.cutoff, gzip.output = FALSE)
 					
 buildAllPlots(jscs=jscs, outfile.prefix = plot.folder,  sequencing.type = lib.type,
 				use.plotting.device = "png",FDR.threshold = 0.001)
