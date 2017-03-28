@@ -26,6 +26,10 @@ plot.folder = paste(user.folder,"/DSG/",comp.name,"/",sep="")
 
 writeCompleteResults(jscs, outfile.prefix=raw.output.folder, save.jscs = FALSE,
 						FDR.threshold = new.FDR.cutoff, gzip.output = FALSE)
-					
-buildAllPlots(jscs=jscs, outfile.prefix = plot.folder, sequencing.type = lib.type,
+
+if(FALSE){
+	#you most likely don't want to output all genes in a more liberally defined list
+	#...but you can change to TRUE if original criteria was too string
+	buildAllPlots(jscs=jscs, outfile.prefix = plot.folder, sequencing.type = lib.type,
 				use.plotting.device = "png",FDR.threshold = new.FDR.cutoff)
+}#end if(FALSE)
