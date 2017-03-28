@@ -77,8 +77,8 @@ dir.create(DSG.folder)
 plot.folder = paste(DSG.folder,comp.name,"/",sep="")
 dir.create(plot.folder)
 								
-writeCompleteResults(jscs, outfile.prefix=raw.output.folder, save.jscs = TRUE, sequencing.type = lib.type,
+writeCompleteResults(jscs, outfile.prefix=raw.output.folder, save.jscs = TRUE,
 						FDR.threshold = fdr.cutoff, gzip.output = FALSE)
 					
-buildAllPlots(jscs=jscs, outfile.prefix = plot.folder,
+buildAllPlots(jscs=jscs, outfile.prefix = plot.folder,  sequencing.type = lib.type,
 				use.plotting.device = "png",FDR.threshold = 0.001)
