@@ -1,9 +1,9 @@
-avgGroupExpression <- function (geneExpr, groups) {
+avgGroupExpression = function (geneExpr, groups) {
 	avg.expr = tapply(geneExpr, groups, mean)
 	return(avg.expr)
 }#end def avgGroupExpression
 
-ratio2fc <- function(value)
+ratio2fc = function(value)
 {
 	if(value >= 0){
 		return(2^value)
@@ -11,6 +11,11 @@ ratio2fc <- function(value)
 		return (-2^(-value))
 	}
 }#end def ratio2fc
+
+count.transcript = function(char){
+	tmp.transcripts = unlist(strsplit(as.character(char),split=";"))
+	return(length(tmp.transcripts))
+}#end def count.transcript
 
 param.table = read.table("parameters.txt", header=T, sep="\t")
 comp.name=as.character(param.table$Value[param.table$Parameter == "comp_name"])
@@ -38,11 +43,46 @@ result.table = read.table(result.file, head=T, sep="\t")
 featureID = result.table$featureID
 
 mapping.table = read.table(gene.mapping.file, head=T, sep="\t")
-symbol = mapping.table$Gene.Name[match(result.table$transcripts, mapping.table$Ensembl.TranscriptID)]
+feature.geneID = as.character(result.table$geneID)
+feature.geneID = gsub("\\.\\d+$","",feature.geneID,perl=T)
+mapping.geneID = as.character(mapping.table$Ensembl.GeneID)
+mapping.geneID = gsub("\\.\\d+$","",mapping.geneID,perl=T)
+
+symbol = rep(NA,nrow(result.table))
+
+symbol.levels = unique(feature.geneID)
+print(dim(mapping.table))
+gene.mapping.table = mapping.table[match(symbol.levels,mapping.geneID),]
+gene.mapping.table$Ensembl.GeneID = as.character(gene.mapping.table$Ensembl.GeneID)
+gene.mapping.table$Ensembl.GeneID = symbol.levels
+print(dim(gene.mapping.table))
+for(i in 1:length(symbol.levels)){
+	matched.symbol = as.character(gene.mapping.table$Gene.Name[i])
+	if(length(matched.symbol) != 1){
+		print(paste("Problem mapping",symbol.levels[i]))
+		stop()
+	}
+	symbol[feature.geneID == symbol.levels[i]]=matched.symbol
+}#end for(i in 1:length(symbol.levels))
+
+transcripts.per.feature = sapply(result.table$transcripts, count.transcript)
 
 temp.exonID = featureID[grep(":E\\d{3}$",featureID,perl=T)]
 temp.exon.pvalue = result.table$pvalue[match(temp.exonID, featureID)]
+
 temp.exon.fdr = result.table$padjust[match(temp.exonID, featureID)]
+#feature FDR values are only provided for a subset of p-values, so I'm providing a B-H FDR and using that for exon counts
+feature.fdr.BH = p.adjust(result.table$pvalue,"fdr")
+if(FALSE){
+	#switch to TRUE to calculate FDR values on your own (FALSE uses FDR values provided by JunctionSeq)
+	
+	#this also switches FDR calculation to just using exons
+	temp.exon.fdr = p.adjust(temp.exon.pvalue,"fdr")
+	feature.fdr.BH = temp.exon.fdr[match(featureID,temp.exonID)]
+	
+	#or this uses all p-values
+	#temp.exon.fdr = feature.fdr.BH[match(temp.exonID, featureID)]
+}#end if(FALSE)
 
 sample.table = read.table(sample.file, sep="\t", header=T)
 sampleID = as.character(sample.table$userID)
@@ -78,13 +118,6 @@ cntl.expr = dsg.counts[,levels(dsg.group)[levels(dsg.group) != trt]]
 log2ratio = round(trt.expr - cntl.expr, digits = 2)
 fc = round(sapply(log2ratio, ratio2fc), digits = 2)
 
-custom.table = data.frame(featureID = featureID, geneName = symbol, transcripts = result.table$transcripts,
-				feature.chr = result.table$chr, feature.start = result.table$start, feature.end = result.table$end,
-				group.counts, log2ratio = log2ratio, fold.change=fc,
-				feature.pvalue =result.table$pvalue, feature.fdr = result.table$padjust,
-				gene.fdr = result.table$geneWisePadj)
-write.table(custom.table, custom.result, sep="\t", row.names=F)
-
 temp.exon.fc = fc[match(temp.exonID,count.feature)]
 
 exonID = temp.exonID[!is.na(temp.exon.fdr) & !is.na(temp.exon.fc)]
@@ -96,6 +129,20 @@ up.exons = as.character(exonID[(exon.fc > fc.cutoff) & (exon.pvalue < pvalue.cut
 print(paste("Up-Regulated Exons:",length(up.exons),sep=""))
 down.exons = as.character(exonID[(exon.fc < - fc.cutoff) & (exon.pvalue < pvalue.cutoff)& (exon.fdr < fdr.cutoff)])
 print(paste("Down-Regulated Exons:",length(down.exons),sep=""))
+
+exon.status = rep(NA,nrow(result.table))
+exon.status[grep(":E\\d{3}$",featureID,perl=T)]="No Change"
+exon.status[match(up.exons,featureID)]="exon Up"
+exon.status[match(down.exons,featureID)]="exon Down"
+
+custom.table = data.frame(featureID = featureID, geneName = symbol,
+				transcripts = result.table$transcripts, transcripts.per.feature,
+				feature.chr = result.table$chr, feature.start = result.table$start, feature.end = result.table$end,
+				group.counts, log2ratio = log2ratio, fold.change=fc,
+				feature.pvalue = result.table$pvalue, feature.fdr = result.table$padjust,
+				feature.fdr.BH, exon.status,
+				gene.fdr = result.table$geneWisePadj)
+write.table(custom.table, custom.result, sep="\t", row.names=F)
 
 gene.table = read.table(gene.file, head=T, sep="\t")
 
@@ -120,7 +167,7 @@ if(goseq.flag == "yes"){
 	png(bias.file)
 	pwf=nullp(deg,genome,"geneSymbol")
 	GO.wall=goseq(pwf,genome,"geneSymbol")
-	GO.wall = data.frame(GO.wall, overenrichment.fdr=p.adjust(GO.wall$over_represented_pvalue))
+	GO.wall = data.frame(GO.wall, overenrichment.fdr=p.adjust(GO.wall$over_represented_pvalue,"fdr"))
 
 	GO.wall = GO.wall[GO.wall$over_represented_pvalue < 0.05,]
 	genes2go=getgo(gene.symbol[deg == 1],genome,"geneSymbol")
