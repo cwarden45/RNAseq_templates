@@ -15,10 +15,19 @@ fdr.cutoff = as.numeric(as.character(param.table$Value[param.table$Parameter == 
 user.folder = as.character(param.table$Value[param.table$Parameter == "Result_Folder"])
 sample.description.file = as.character(param.table$Value[param.table$Parameter == "sample_description_file"])
 gene.mapping.file = as.character(param.table$Value[param.table$Parameter == "GENCODE_Gene_Info"])
+lib.type=as.character(param.table$Value[param.table$Parameter == "pairing"])
 
 library(JunctionSeq)
 
 setwd(output.folder)
+
+if (lib.type == "SE"){
+	lib.type = "single-end"
+}else if (lib.type == "PE"){
+	lib.type = "paired-end"
+}else{
+	stop(paste("Need to map `pairing` to `single-end` or `paired-end`:",lib.type))
+}
 
 gff.file = paste(count.folder,"/withNovel.forJunctionSeq.gff.gz",sep="")
 
@@ -68,7 +77,7 @@ dir.create(DSG.folder)
 plot.folder = paste(DSG.folder,comp.name,"/",sep="")
 dir.create(plot.folder)
 								
-writeCompleteResults(jscs, outfile.prefix=raw.output.folder, save.jscs = TRUE,
+writeCompleteResults(jscs, outfile.prefix=raw.output.folder, save.jscs = TRUE, sequencing.type = lib.type,
 						FDR.threshold = fdr.cutoff, gzip.output = FALSE)
 					
 buildAllPlots(jscs=jscs, outfile.prefix = plot.folder,
