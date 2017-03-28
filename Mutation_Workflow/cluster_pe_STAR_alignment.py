@@ -123,7 +123,6 @@ for file in fileResults:
 			outHandle.write(text)
 
 			read2 = re.sub("_R1_001.fastq","_R2_001.fastq",read1)
-
 			text = "gunzip -c " + read2 + ".gz > " + read2+ "\n"
 			outHandle.write(text)
 			
