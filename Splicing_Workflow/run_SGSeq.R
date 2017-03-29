@@ -156,17 +156,17 @@ save.image(data.image)
 
 ###plot commands###
 plot.folder = paste(SGS.folder,"/plots",sep="")
-dir.create(SGS.folder)
+dir.create(plot.folder)
 
 for (i in 1:length(sig.symbol)){
 	gene = as.character(sig.symbol[i])
 	geneID = as.character(geneIDs[i])
-	splicing.heatmap = paste(SGS.folder,"/",gene,"_junction_heatmap.png",sep="")
+	splicing.heatmap = paste(plot.folder,"/",gene,"_junction_heatmap.png",sep="")
 	png(splicing.heatmap)
 	gene.stats = plotFeatures(sgfc_pred, geneName=geneID, color_novel="red", toscale = "none", include="junctions")
 	dev.off()
 
-	splice.graph = paste(SGS.folder,"/",gene,"_splice_graph.png",sep="")
+	splice.graph = paste(plot.folder,"/",gene,"_splice_graph.png",sep="")
 	png(splice.graph)
 	par(mfrow = c(nrow(si)+1, 1), mar = c(1, 3, 1, 1))
 	plotSpliceGraph(rowRanges(sgfc_pred), geneName= geneID, toscale = "none", color_novel = "red")
