@@ -88,7 +88,7 @@ txf_ucsc = convertToTxFeatures(txdb)
 sgfc_pred = analyzeFeatures(si, which=gr, cores=as.numeric(threads))
 sgfc_pred = annotate(sgfc_pred, txf_ucsc)
 
-SGS.folder = paste(user.folder,"/SGSeq_plots",sep="")
+plot.folder = paste(user.folder,"/SGSeq/plots",sep="")
 dir.create(SGS.folder)
 
 for (i in 1:length(genes)){
