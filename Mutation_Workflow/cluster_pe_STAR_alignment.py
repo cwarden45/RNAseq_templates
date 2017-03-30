@@ -89,7 +89,7 @@ fileResults = os.listdir(readsFolder)
 
 jobCount = 0
 for file in fileResults:
-	#Code designed for .gz files - **PLEASE** be careful to remove deletion of uncompressed reads (and add compressed step) at end of code
+	#Code designed for .gz files - **PLEASE** be careful to remove deletion of uncompressed reads (and add compressed step) at end of code, if this is not the case
 	resultGZ = re.search("(.*)_\w{6}_L\d{3}_R1_001.fastq.gz$",file)
 	
 	if resultGZ:
