@@ -30,8 +30,8 @@ for comparison in comparisons:
 		command = command + " -res " + expression_table
 		command = command + " -cls " + category_table + "#" + comparison
 		command = command + " -gmx " + gene_set
-		command = command + " -rpt_label " + comparison + "_" + short_gs_ID
-		command = command + " -out " + outputFolder
+		command = command + " -rpt_label " + short_gs_ID
+		command = command + " -out " + outputFolder + "/" + comparison
 		command = command + " -permute gene_set -collapse false -rnd_seed 0"
 		
 		os.system(command)
