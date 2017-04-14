@@ -23,10 +23,10 @@ overall.upID = "Increased comp1 Expression"
 overall.downID = "Decreased comp1 Expression"
 intersect.output.table = ".txt"
 intersect.output.heatmap = ".png"
-goseq.up.file = ".txt"
-goseq.down.file = ".txt"
-goseq.bias.up.file = "goseq_up_bias.png"
-goseq.bias.down.file = "goseq_down_bias.png"
+goseq.up.file = "_goseq_UP.txt"
+goseq.down.file = "_goseq_DOWN.txt"
+goseq.bias.up.file = "_goseq_up_bias.png"
+goseq.bias.down.file = "_goseq_down_bias.png"
 
 normal.dir.table = read.table(normal.dir.file, sep="\t", head=T)
 switched.dir.table = read.table(switched.dir.file, sep="\t", head=T)
