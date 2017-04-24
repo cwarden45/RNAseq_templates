@@ -30,8 +30,8 @@ userID = as.character(sample.table$userID)
 
 normalized.table = read.table(rpkm.file, sep="\t", header=T)
 normalized.mat = normalized.table[,match(userID, names(normalized.table))]
-expr.max <- ceiling(max(normalized.mat, na.rm = T))
-expr.min <- ceiling(min(normalized.mat, na.rm = T))
+expr.max = ceiling(max(normalized.mat, na.rm = T))
+expr.min = ceiling(min(normalized.mat, na.rm = T))
 
 quantiles = round(apply(normalized.mat, 2, quantile, probs=c(0.01,0.05,0.25,0.5,0.75,0.95,0.99)), digits=2)
 quantiles = data.frame(Percentage = rownames(quantiles), quantiles)
@@ -57,7 +57,7 @@ for (group in plot.groups){
 	
 	groups = levels(as.factor(as.character(qc.grp)))
 	num.sample.types = length(groups)
-	color.palette <- fixed.color.palatte[1:length(groups)]
+	color.palette = fixed.color.palatte[1:length(groups)]
 
 	labelColors = rep("black",times=ncol(temp.mat))
 	for (i in 1:length(groups)){
@@ -80,22 +80,22 @@ for (group in plot.groups){
 
 	cluster.file = paste("cluster_by_",group,".png",sep="")
 	if(cluster.distance == "Euclidean"){
-		dist1 <- dist(as.matrix(t(temp.mat)))
+		dist1 = dist(as.matrix(t(temp.mat)))
 	}else if (cluster.distance == "Pearson_Dissimilarity"){
 		cor.mat = cor(as.matrix(temp.mat))
 		dis.mat = 1 - cor.mat
-		dist1 <- as.dist(dis.mat)
+		dist1 = as.dist(dis.mat)
 	}else{
 		stop("cluster_distance must be 'Euclidean' or 'Pearson_Dissimilarity'")
 	}
-	clusMember <- groups
-	hc <- hclust(dist1)
-	dend1 <- as.dendrogram(hc)
+	clusMember = groups
+	hc = hclust(dist1)
+	dend1 = as.dendrogram(hc)
 	png(file = cluster.file)
-	dend1 <- dendrapply(dend1, colLab, labelColors=labelColors, clusMember=clusterID) 
-	a <- attributes(dend1) 
-	attr(dend1, "nodePar") <- c(a$nodePar, lab.col = labelColors) 
-	op <- par(mar = par("mar") + c(0,0,0,10)) 
+	dend1 = dendrapply(dend1, colLab, labelColors=labelColors, clusMember=clusterID) 
+	a = attributes(dend1) 
+	attr(dend1, "nodePar") = c(a$nodePar, lab.col = labelColors) 
+	op = par(mar = par("mar") + c(0,0,0,10)) 
 	plot(dend1, horiz=T, main = group)
 	par(op) 
 	dev.off()
@@ -108,9 +108,9 @@ for (group in plot.groups){
 			
 			if(i == 1)
 				{
-					den <- density(data, na.rm=T,from=expr.min, to=expr.max)
-					expr <- den$x
-					freq <- den$y
+					den = density(data, na.rm=T,from=expr.min, to=expr.max)
+					expr = den$x
+					freq = den$y
 					plot(expr, freq, type="l", xlab = paste("Log2(FPKM + ",min.expression,") Expression",sep=""), ylab = "Density",
 							xlim=c(expr.min,expr.max), ylim=c(0,0.2), col=labelColors[i],
 					    		main = group)
@@ -118,9 +118,9 @@ for (group in plot.groups){
 				}#end if(i == 1)
 			else
 				{
-					den <- density(data, na.rm=T,from=expr.min, to=expr.max)
-					expr <- den$x
-					freq <- den$y
+					den = density(data, na.rm=T,from=expr.min, to=expr.max)
+					expr = den$x
+					freq = den$y
 					lines(expr, freq, type = "l", col=labelColors[i])
 				}#end else
 		}#end for (i in 1:length(ncol(temp.mat)))
