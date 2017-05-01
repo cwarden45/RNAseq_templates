@@ -13,7 +13,7 @@ annotated.samples = gsub("\\\\","",annotated.samples)
 
 output.samples = c()
 exonic.count = c()
-kaviar.rare.count = c()
+kaviar.gnomAD.rare.count = c()
 sift.polyphen.damaging.count = c()
 exonic.rare.damaging.count = c()
 cosmic.count = c()
@@ -49,8 +49,11 @@ for (i in 1:length(annotated.samples)){
 		
 		rare.flag = rep(0, nrow(big.table))
 		#assume NA is low frequency
-		rare.flag[big.table$Kaviar_AF < 0.01] = 1
-		kaviar.rare.count = c(kaviar.rare.count, length(rare.flag[rare.flag == 1]))
+		big.table$gnomAD_genome_ALL = as.character(big.table$gnomAD_genome_ALL)
+		big.table$gnomAD_genome_ALL[is.na(big.table$gnomAD_genome_ALL)]=0
+		big.table$gnomAD_genome_ALL = as.numeric(big.table$gnomAD_genome_ALL)
+		rare.flag[(big.table$Kaviar_AF < 0.01)&(big.table$gnomAD_genome_ALL < 0.01)] = 1
+		kaviar.gnomAD.rare.count = c(kaviar.gnomAD.rare.count, length(rare.flag[rare.flag == 1]))
 		
 		damaging.flag = rep(0, nrow(big.table))
 		damaging.flag[(!is.na(big.table$SIFT_pred) & (big.table$SIFT_pred == "D")) | (!is.na(big.table$Polyphen2_HDIV_pred) & (big.table$Polyphen2_HDIV_pred == "D"))| (!is.na(big.table$Polyphen2_HVAR_pred) & (big.table$Polyphen2_HVAR_pred == "D"))] = 1
@@ -79,7 +82,7 @@ for (i in 1:length(annotated.samples)){
 	}#end if(file.exists(annovar.csv))
 }#end for (ann.sample in annotated.samples)
 
-summary.table = data.frame(Sample=annotated.samples, exonic.count=exonic.count, kaviar.rare.count=kaviar.rare.count,
+summary.table = data.frame(Sample=annotated.samples, exonic.count=exonic.count, kaviar.gnomAD.rare.count=kaviar.gnomAD.rare.count,
 							sift.polyphen.damaging.count=sift.polyphen.damaging.count, exonic.rare.damaging.count=exonic.rare.damaging.count,
 							cosmic.count=cosmic.count, gwas.catalog.count=gwas.catalog.count, oreganno.count=oreganno.count)
 write.table(summary.table, summary.file, sep="\t", row.names=F)
