@@ -1,4 +1,4 @@
-colLab <- function(n, labelColors, clusMember) { 
+colLab = function(n, labelColors, clusMember) { 
    if(is.leaf(n)) { 
        a <- attributes(n) 
 	   #print(a)
@@ -11,7 +11,7 @@ colLab <- function(n, labelColors, clusMember) {
    n 
 }
 
-count.defined.values <- function(arr)
+count.defined.values = function(arr)
 {
 	return(length(arr[!is.na(arr)]))
 }#end def count.values
