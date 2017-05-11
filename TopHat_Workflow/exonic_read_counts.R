@@ -43,13 +43,15 @@ for(i in 1:length(bam.files)){
     	total_reads = list()
     
 	for(chr in chromosomes){
-    	print(chr)
-        data = readGAlignments(file = inputfile, use.names = TRUE, 
+    		print(chr)
+        	data = readGAlignments(file = inputfile, use.names = TRUE, 
             					param = ScanBamParam(which = GRanges(chr, IRanges(1, chr_length[chr]))))
 		total_reads[[chr]] = unique(as.character(names(data)))
+		rm(data)
 	}#end  for(chr in chromosomes)
 	
-	aligned.reads[i] = length(unique(unlist(total_reads))) 
+	aligned.reads[i] = length(unique(unlist(total_reads)))
+	rm(total_reads)
 	print(aligned.reads)
 }#end for(i in 1:length(bam.files))
 
