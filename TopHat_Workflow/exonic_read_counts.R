@@ -40,14 +40,13 @@ sampleIDs = sub(".bam$","",bam.files)
 for(i in 1:length(bam.files)){
 	inputfile = paste(alignment.folder, bam.files[i], sep="/")
 	print(inputfile)
-	exon_reads <- list()
-    total_reads <- list()
+    	total_reads = list()
     
 	for(chr in chromosomes){
     	print(chr)
-        data <- readGAlignments(file = inputfile, use.names = TRUE, 
+        data = readGAlignments(file = inputfile, use.names = TRUE, 
             					param = ScanBamParam(which = GRanges(chr, IRanges(1, chr_length[chr]))))
-		total_reads[[chr]] <- names(data)
+		total_reads[[chr]] = unique(as.character(names(data)))
 	}#end  for(chr in chromosomes)
 	
 	aligned.reads[i] = length(unique(unlist(total_reads))) 
