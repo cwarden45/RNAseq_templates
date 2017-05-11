@@ -4,7 +4,7 @@
 
 2) extract_total_reads.py
 
-3) exonic_read_counts.R
+3) exonic_read_counts.R or collect_tophat_aligned_reads.py (the later may be preferable for large .bam files)
 
 4) cluster_HTseq_counts.py or HTseq_counts.py
 
