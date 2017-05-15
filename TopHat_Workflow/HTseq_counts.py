@@ -49,21 +49,31 @@ for file in fileResults:
 		sortResult = re.search(".name.sort.bam",file)
 		if (sample not in finishedSamples) and (not sortResult):
 			print sample
-		
-			nameSortedBam = sample + ".name.sort.bam"
-			nameSortedBam = os.path.join(alignmentFolder, nameSortedBam)
-			command = "/opt/samtools-1.3/samtools sort -n -o " + nameSortedBam + " " + fullPath
-			os.system(command)
-		
+
 			countsFile = sample + "_gene_counts.txt"
-			command = "htseq-count -f bam -s " + strandType + " " + nameSortedBam + " " + gtf_file + " > " + countsFile
+			command = "htseq-count -f bam -r pos -s " + strandType + " " + fullPath + " " + gtf_file + " > " + countsFile
 			os.system(command)
 			
 			countsFile = sample + "_lncRNA_counts.txt"
-			command = "htseq-count -f bam -s " + strandType + " -i gene_name " + nameSortedBam + " " + lncRNAgtf + " > " + countsFile
+			command = "htseq-count -f bam -r pos -s " + strandType + " -i gene_name " + fullPath + " " + lncRNAgtf + " > " + countsFile
+			#os.system(command)
+			
+			## switch to code below to use name-sorted BAM ##
+		
+			#nameSortedBam = sample + ".name.sort.bam"
+			#nameSortedBam = os.path.join(alignmentFolder, nameSortedBam)
+			#command = "/opt/samtools-1.3/samtools sort -n -o " + nameSortedBam + " " + fullPath
+			#os.system(command)
+		
+			#countsFile = sample + "_gene_counts.txt"
+			#command = "htseq-count -f bam -s " + strandType + " " + nameSortedBam + " " + gtf_file + " > " + countsFile
+			#os.system(command)
+			
+			#countsFile = sample + "_lncRNA_counts.txt"
+			#command = "htseq-count -f bam -s " + strandType + " -i gene_name " + nameSortedBam + " " + lncRNAgtf + " > " + countsFile
 			#os.system(command)
 	
-			command = "rm " + nameSortedBam
-			os.system(command)
+			#command = "rm " + nameSortedBam
+			#os.system(command)
 
 		
