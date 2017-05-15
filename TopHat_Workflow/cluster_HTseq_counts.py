@@ -79,22 +79,33 @@ for file in fileResults:
 			text = text + "#$ -cwd\n"
 			text = text + "#$ -V\n"
 			outHandle.write(text)
-	
-			nameSortedBam = sample + ".name.sort.bam"
-			sortPrefix = re.sub(".bam$","",nameSortedBam)
-			text = "samtools sort -n " + fullPath + " " + sortPrefix + "\n"
-			outHandle.write(text)
-		
+
 			countsFile = sample + "_gene_counts.txt"
-			text = "htseq-count -f bam -s " + strandType + " " + nameSortedBam + " " + gtf_file + " > " + countsFile + "\n"
+			text = "htseq-count -f bam -r pos -s " + strandType + " " + fullPath + " " + gtf_file + " > " + countsFile + "\n"
 			outHandle.write(text)
 			
 			countsFile = sample + "_lncRNA_counts.txt"
 			#switch to " -i gene_id " for MiTranscriptome
-			text = "htseq-count -f bam -s " + strandType + " -i gene_name " + nameSortedBam + " " + lncRNAgtf + " > " + countsFile + "\n"
+			text = "htseq-count -f bam -r pos -s " + strandType + " -i gene_name " + fullPath + " " + lncRNAgtf + " > " + countsFile + "\n"
+			#outHandle.write(text)			
+			
+			## switch to code below to use name-sorted BAM ##
+			
+			#nameSortedBam = sample + ".name.sort.bam"
+			#sortPrefix = re.sub(".bam$","",nameSortedBam)
+			#text = "samtools sort -n " + fullPath + " " + sortPrefix + "\n"
+			#outHandle.write(text)
+		
+			#countsFile = sample + "_gene_counts.txt"
+			#text = "htseq-count -f bam -s " + strandType + " " + nameSortedBam + " " + gtf_file + " > " + countsFile + "\n"
+			#outHandle.write(text)
+			
+			#countsFile = sample + "_lncRNA_counts.txt"
+			##switch to " -i gene_id " for MiTranscriptome
+			#text = "htseq-count -f bam -s " + strandType + " -i gene_name " + nameSortedBam + " " + lncRNAgtf + " > " + countsFile + "\n"
 			#outHandle.write(text)
 	
-			text = "rm " + nameSortedBam + "\n"
-			outHandle.write(text)
+			#text = "rm " + nameSortedBam + "\n"
+			#outHandle.write(text)
 
 		
