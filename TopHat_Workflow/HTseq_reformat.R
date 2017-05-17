@@ -181,32 +181,47 @@ exonicID = as.character(exonic.stat.table$Sample)
 exonic.stat.table = exonic.stat.table[match(sampleID, exonicID),]
 total.reads = as.numeric(total.reads.table$Total.Reads)
 
-if(aligned.type == "aligned"){
-	aligned.reads = as.numeric(exonic.stat.table$aligned.reads)
-} else if(aligned.type =="quantified"){
-	aligned.reads=apply(count.mat, 2, sum)
-}else {
-	stop("Print RPKM_norm must be either 'aligned' or 'quantified'")
-}#end else
-
-percent.aligned.reads = round(100 * aligned.reads / total.reads, digits=1)
-	
 intergenic.reads = extra.stats[irrelevant.counts == "__no_feature", ]
 exonic.reads = apply(count.mat, 2, sum)
 unique.reads = exonic.reads + intergenic.reads
 percent.exonic.reads = round(100 * exonic.reads / unique.reads, digits=1)
 
-total.million.aligned.reads = aligned.reads / 1000000
-print(total.million.aligned.reads)
+if((aligned.type == "aligned")|(aligned.type =="quantified")){
+	if(aligned.type == "aligned"){
+		aligned.reads = as.numeric(exonic.stat.table$aligned.reads)
+	} else if(aligned.type =="quantified"){
+		aligned.reads=apply(count.mat, 2, sum)
+	}
+	
+	percent.aligned.reads = round(100 * aligned.reads / total.reads, digits=1)
 
-rpk = matrix(ncol=ncol(count.mat), nrow=nrow(count.mat))
-for (i in 1:ncol(count.mat)){
-	counts = as.numeric(count.mat[,i])
-	temp.rpk = counts / as.numeric(gene.length.kb)
-	rpk[,i] = temp.rpk 
-}
-RPKM = round(log2(t(apply(rpk, 1, normalizeTotalExpression, totalReads = total.million.aligned.reads)) + min.expression), digits=2)
-colnames(RPKM) = sample.label
+	total.million.aligned.reads = aligned.reads / 1000000
+	print(total.million.aligned.reads)
+
+	rpk = matrix(ncol=ncol(count.mat), nrow=nrow(count.mat))
+	for (i in 1:ncol(count.mat)){
+		counts = as.numeric(count.mat[,i])
+		temp.rpk = counts / as.numeric(gene.length.kb)
+		rpk[,i] = temp.rpk 
+	}
+	RPKM = round(log2(t(apply(rpk, 1, normalizeTotalExpression, totalReads = total.million.aligned.reads)) + min.expression), digits=2)
+	colnames(RPKM) = sample.label
+}else if(aligned.type == "TMM"){
+	library(edgeR)
+	
+	y = DGEList(counts=count.mat, genes=gene.info$symbol)
+	y = calcNormFactors(y, method="TMM")
+	
+	aligned.reads=y$samples$lib.size
+	names(aligned.reads)=rownames(y$samples)
+	aligned.reads = aligned.reads[match(sample.label, names(aligned.reads))]
+	
+	percent.aligned.reads = round(100 * aligned.reads / total.reads, digits=1)
+	
+	RPKM = round(log2(rpkm(y, gene.length = 1000 * as.numeric(gene.length.kb))+min.expression), digits=2)
+}else{
+	stop("Print RPKM_norm must be either 'aligned', 'quantified', or 'TMM'")
+}#end else
 
 trimmed.percent = apply(count.mat, 2, trimmed.counts, min.percent=0.3, max.percent=0.95)
 
