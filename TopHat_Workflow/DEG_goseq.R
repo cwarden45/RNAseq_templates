@@ -149,26 +149,38 @@ print(dim(counts))
 genes = counts.table$symbol
 gene.length.kb = as.numeric(counts.table$length.kb)
 
-if(aligned.type =="aligned"){
-	exonic.stat.table = read.table(aligned.stats.file, header=T, sep="\t")
-	aligned.reads = as.numeric(exonic.stat.table$aligned.reads[match(longID, exonic.stat.table$Sample)])
-}else if(aligned.type =="quantified"){
-	aligned.reads=apply(counts, 2, sum)
+if((aligned.type == "aligned")|(aligned.type =="quantified")){
+	if(aligned.type =="aligned"){
+		exonic.stat.table = read.table(aligned.stats.file, header=T, sep="\t")
+		aligned.reads = as.numeric(exonic.stat.table$aligned.reads[match(longID, exonic.stat.table$Sample)])
+	}else if(aligned.type =="quantified"){
+		aligned.reads=apply(counts, 2, sum)
+	}else{
+		stop("Print RPKM_norm must be either 'aligned' or 'quantified'")
+	}#end else
+
+	total.million.aligned.reads = aligned.reads / 1000000
+	print(total.million.aligned.reads)
+
+	rpk = matrix(ncol=ncol(counts), nrow=nrow(counts))
+	for (i in 1:ncol(counts)){
+		temp.counts = as.numeric(counts[,i])
+		temp.rpk = temp.counts / gene.length.kb
+		rpk[,i] = temp.rpk 
+	}
+	RPKM = log2(round(t(apply(rpk, 1, normalizeTotalExpression, totalReads = total.million.aligned.reads)), digits=2) + min.expression)
+	colnames(RPKM) = as.character(sample.label)
+}else if(aligned.type == "TMM"){
+	library(edgeR)
+	
+	colnames(counts)=sample.label
+	y = DGEList(counts=counts, genes=genes)
+	y = calcNormFactors(y, method="TMM")
+	
+	RPKM = round(log2(rpkm(y, gene.length = 1000 * as.numeric(gene.length.kb))+min.expression), digits=2)
 }else{
-	stop("Print RPKM_norm must be either 'aligned' or 'quantified'")
+	stop("Print RPKM_norm must be either 'aligned', 'quantified', or 'TMM'")
 }#end else
-
-total.million.aligned.reads = aligned.reads / 1000000
-print(total.million.aligned.reads)
-
-rpk = matrix(ncol=ncol(counts), nrow=nrow(counts))
-for (i in 1:ncol(counts)){
-	temp.counts = as.numeric(counts[,i])
-	temp.rpk = temp.counts / gene.length.kb
-	rpk[,i] = temp.rpk 
-}
-RPKM = log2(round(t(apply(rpk, 1, normalizeTotalExpression, totalReads = total.million.aligned.reads)), digits=2) + min.expression)
-colnames(RPKM) = as.character(sample.label)
 
 RPKM = RPKM[,match(sample.label, colnames(RPKM))]
 
@@ -400,11 +412,14 @@ if(rep.check == 1){
 				prim.deg.grp = as.numeric(prim.deg.grp)
 			}
 			
-			y <- DGEList(counts=prim.counts, genes=genes)
+			y = DGEList(counts=prim.counts, genes=genes)
+			if(aligned.type == "TMM"){
+				y = calcNormFactors(y, method="TMM")
+			}#end if(aligned.type == "TMM")
 			y = estimateCommonDisp(y)
-			design <- model.matrix(~prim.deg.grp)
-			fit <- glmFit(y, design)
-			lrt <- glmLRT(fit, coef=2)
+			design = model.matrix(~prim.deg.grp)
+			fit = glmFit(y, design)
+			lrt = glmLRT(fit, coef=2)
 
 			prim.pvalue = lrt$table$PValue
 
@@ -412,25 +427,32 @@ if(rep.check == 1){
 				sec.deg.grp = as.numeric(prim.deg.grp)
 			}
 			
-			y <- DGEList(counts=sec.counts, genes=genes)
+			y = DGEList(counts=sec.counts, genes=genes)
+			if(aligned.type == "TMM"){
+				y = calcNormFactors(y, method="TMM")
+			}#end if(aligned.type == "TMM")
 			y = estimateCommonDisp(y)
-			design <- model.matrix(~sec.edgeR.grp)
-			fit <- glmFit(y, design)
-			lrt <- glmLRT(fit, coef=2)
+			design = model.matrix(~sec.edgeR.grp)
+			fit = glmFit(y, design)
+			lrt = glmLRT(fit, coef=2)
 
 			sec.pvalue = lrt$table$PValue
 			
 		} else {
-			y <- DGEList(counts=deg.counts, genes=genes)
+			y = DGEList(counts=deg.counts, genes=genes)
+			if(aligned.type == "TMM"){
+				y = calcNormFactors(y, method="TMM")
+			}#end if(aligned.type == "TMM")
 			y = estimateCommonDisp(y)
+			
 			if (length(deg.groups) == 1){
 				print("edgeR with 1 variable")
 				if (trt.group == "continuous"){
 					var1 = as.numeric(var1)
 				}
-				design <- model.matrix(~var1)
-				fit <- glmFit(y, design)
-				lrt <- glmLRT(fit, coef=2)
+				design = model.matrix(~var1)
+				fit = glmFit(y, design)
+				lrt = glmLRT(fit, coef=2)
 				test.pvalue = lrt$table$PValue
 			} else if ((length(deg.groups) == 2)&(interaction.flag == "no")){
 				print("edgeR with 2 variables")
@@ -446,9 +468,9 @@ if(rep.check == 1){
 				} else{
 					var2 = as.factor(var2)
 				}
-				design <- model.matrix(~var1 + var2)
-				fit <- glmFit(y, design)
-				lrt <- glmLRT(fit, coef=2)
+				design = model.matrix(~var1 + var2)
+				fit = glmFit(y, design)
+				lrt = glmLRT(fit, coef=2)
 				test.pvalue = lrt$table$PValue
 			} else if ((length(deg.groups) == 2)&(interaction.flag == "model")){
 				print("edgeR with 2 variables plus interaction")
@@ -460,9 +482,9 @@ if(rep.check == 1){
 				if (trt.group2 == "continuous"){
 					var2 = as.numeric(var2)
 				}
-				design <- model.matrix(~var1*var2 + var1 + var2)
-				fit <- glmFit(y, design)
-				lrt <- glmLRT(fit, coef=4)
+				design = model.matrix(~var1*var2 + var1 + var2)
+				fit = glmFit(y, design)
+				lrt = glmLRT(fit, coef=4)
 				test.pvalue = lrt$table$PValue
 			}
 		}#end else
