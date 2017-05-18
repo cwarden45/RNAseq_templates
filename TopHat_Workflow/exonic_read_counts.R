@@ -2,10 +2,9 @@ library(GenomicAlignments)
 
 param.table = read.table("parameters.txt", header=T, sep="\t")
 output.folder = as.character(param.table$Value[param.table$Parameter == "Raw_Code_PC"])
-alignment.folder = as.character(param.table$Value[param.table$Parameter == "Alignment_Folder_PC"])
+alignment.folder = as.character(param.table$Value[param.table$Parameter == "Alignment_Folder"])
 genome=as.character(param.table$Value[param.table$Parameter == "genome"])
 htseq.anno.folder = as.character(param.table$Value[param.table$Parameter == "HTseq_input_folder"])
-total.reads.file = as.character(param.table$Value[param.table$Parameter == "total_counts_file"])
 aligned.stats.file = as.character(param.table$Value[param.table$Parameter == "aligned_stats_file"])
 
 setwd(output.folder)
@@ -16,9 +15,6 @@ length.table = read.table(length.file, header=T, sep="\t")
 chr_length = as.numeric(length.table$Length)
 names(chr_length) = as.character(length.table$Chr)
 
-total.reads.table = read.table(total.reads.file, header=T, sep="\t")
-sampleIDs = as.character(total.reads.table$Sample)
-
 exon.info = read.table(full.annotation.file, header=T, sep="\t")
     
 #remove non-canonical chromosomes
@@ -28,8 +24,8 @@ nonCanonical <- grep("_", exon.info$chr)
 }
 chromosomes = as.character(levels(as.factor(as.character(exon.info$chr))))
 
-aligned.reads = rep(0, times=length(sampleIDs))
-exonic.reads = rep(0, times = length(sampleIDs))
+sampleIDs = c()
+aligned.reads = c()
 
 bam.files = list.files(alignment.folder, pattern=".bam$")
 if(length(grep("sort.bam",bam.files)) > 0){
@@ -38,9 +34,12 @@ if(length(grep("sort.bam",bam.files)) > 0){
 sampleIDs = sub(".bam$","",bam.files)
 
 for(i in 1:length(bam.files)){
+	sampleIDs[i]=gsub(".bam$","",bam.files[i])
 	inputfile = paste(alignment.folder, bam.files[i], sep="/")
+	print(sampleIDs[i])
 	print(inputfile)
-    	total_reads = list()
+    
+	total_reads = list()
     
 	for(chr in chromosomes){
     		print(chr)
