@@ -58,7 +58,7 @@ for (gene in genes){
 	pdf(output.file)
 	par(mar=c(15,5,5,5))
 	plot(as.numeric(groupID), gene.expr,
-			xaxt="n", xlim=c(0,levels(groupID)-1),
+			xaxt="n", xlim=c(0,length(levels(groupID))-1),
 			xlab="", ylab="log2(FPKM + 0.1) Expression", pch=16, col=groupColors,
 			cex=1.2, main=gene)
 	legend("bottom",groups,col=fixed.color.palatte[1:length(groups)],
