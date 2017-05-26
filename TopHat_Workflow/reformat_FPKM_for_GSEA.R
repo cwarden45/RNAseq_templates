@@ -3,7 +3,7 @@ gct.file = "../Result/GSEA/log2_fpkm.gct"
 cls.file = "../Result/GSEA/log2_fpkm.cls"
 meta.file = "sample_description.txt"
 group = "Group"
-convert.upper=TRUE
+convert.upper=FALSE
 
 meta.table = read.table(meta.file,head=T,sep="\t")
 sampleID = meta.table$userID
