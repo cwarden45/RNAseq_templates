@@ -10,10 +10,11 @@ outputFolder = "../Result/GSEA/"
 comparisons = ["Trt_versus_Cont"]
 
 signature_folder = "/path/to/MSigDB"
-signature_files = ["c5.bp.v5.1.symbols.gmt","c5.mf.v5.1.symbols.gmt","c6.all.v5.1.symbols.gmt","h.all.v5.1.symbols.gmt"]
+signature_files = ["c5.bp.v6.0.symbols.gmt","c5.mf.v6.0.symbols.gmt","c6.all.v6.0.symbols.gmt","h.all.v6.0.symbols.gmt"]
+#signature_files = ["c2.all.v6.0.symbols.gmt"]
 
 mac_GSEA_jar = "/path/to/gsea2-2.2.2.jar"
-javaMem = "4g"
+javaMem = "8g"
 
 for comparison in comparisons:
 	for signature in signature_files:
