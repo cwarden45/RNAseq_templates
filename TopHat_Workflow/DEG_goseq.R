@@ -85,6 +85,12 @@ calc.gene.cor = function(arr, indep.var)
 	return(gene.cor.coef)
 }#end def calc.gene.cor
 
+cor.dist = function(mat){
+	cor.mat = cor(as.matrix(t(mat)))
+	dis.mat = 1 - cor.mat
+	return(as.dist(dis.mat))	
+}#end def cor.dist
+	
 library(gplots)
 fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black","darkgreen","thistle1","tan","orchid1",colors())
 
@@ -117,6 +123,7 @@ user.folder = as.character(param.table$Value[param.table$Parameter == "Result_Fo
 sample.description.file = as.character(param.table$Value[param.table$Parameter == "sample_description_file"])
 counts.file = as.character(param.table$Value[param.table$Parameter == "counts_file"])
 aligned.stats.file = as.character(param.table$Value[param.table$Parameter == "aligned_stats_file"])
+cluster.distance = as.character(param.table$Value[param.table$Parameter == "cluster_distance"])
 
 setwd(output.folder)
 
@@ -985,6 +992,13 @@ temp.rpkm = temp.rpkm[status != "No Change", ]
 deg.genes = genes[status != "No Change"]
 
 if(length(deg.genes) > 1){
+	if (cluster.distance == "Pearson_Dissimilarity"){
+		print("Using Pearson Dissimilarity as Distance in Heatmap...")
+		dist.fun = cor.dist
+	}else{
+		dist.fun=dist
+	}
+	
 	if(length(plot.groups) > 1){
 		source("heatmap.3.R")
 		if((trt.group != "continuous")&(trt.group2 != "continuous")){
@@ -1080,8 +1094,9 @@ if(length(deg.genes) > 1){
 		heatmap.file <- paste(comp.name,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
 		heatmap.file = gsub(":",".",heatmap.file)
 		png(file = heatmap.file)
-		heatmap.3(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
-					RowSideColors=row_annotation, trace="none", margins = c(10,15),RowSideColorsSize=4, dendrogram="both")
+		heatmap.3(std.expr,   distfun = dist.fun, hclustfun = hclust,
+			  col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
+			RowSideColors=row_annotation, trace="none", margins = c(10,15),RowSideColorsSize=4, dendrogram="both")
 		if((trt.group != "continuous")&(trt.group2 != "continuous")){
 					legend("topright", legend=group.levels,
 							col=color.palette,
@@ -1118,8 +1133,9 @@ if(length(deg.genes) > 1){
 			heatmap.file <- paste("fold_change_",comp.name,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
 			heatmap.file = gsub(":",".",heatmap.file)
 			png(file = heatmap.file)
-			heatmap.2(temp.fc.table, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
-						trace="none", margins = c(20,5), cexCol=1.5)
+			heatmap.2(temp.fc.table,  distfun = dist.fun, hclustfun = hclust,
+				  col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
+				  trace="none", margins = c(20,5), cexCol=1.5)
 			dev.off()
 		}#end if(interaction.flag != "no")
 		
@@ -1157,12 +1173,13 @@ if(length(deg.genes) > 1){
 			colnames(std.expr) = rep("", length(deg.genes))
 		}
 		rownames(std.expr) = sample.label
-		
+			
 		heatmap.file <- paste(comp.name,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
 		heatmap.file = gsub(":",".",heatmap.file)
 		png(file = heatmap.file)
-		heatmap.2(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
-					 RowSideColors=labelColors, trace="none", margins = c(5,15))
+		heatmap.2(std.expr, distfun = dist.fun, hclustfun = hclust,
+			  col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
+			 RowSideColors=labelColors, trace="none", margins = c(5,15))
 
 		if(trt.group == "continuous"){
 			legend("right",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
