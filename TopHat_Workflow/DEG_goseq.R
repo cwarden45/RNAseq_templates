@@ -14,6 +14,12 @@ standardize.arr = function(arr)
 	return(norm.arr)
 }#end def standardize.arr
 
+center.arr = function(arr)
+{
+	center.arr = as.numeric(arr) - mean(as.numeric(arr), na.rm=T)
+	return(center.arr)
+}#end def center.arr
+
 count.defined.values = function(arr, expr.cutoff)
 {
 	sig.figures = 1
