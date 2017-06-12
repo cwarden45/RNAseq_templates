@@ -2,7 +2,7 @@ library(GenomicAlignments)
 
 param.table = read.table("parameters.txt", header=T, sep="\t")
 output.folder = as.character(param.table$Value[param.table$Parameter == "Raw_Code_PC"])
-alignment.folder = as.character(param.table$Value[param.table$Parameter == "Alignment_Folder"])
+alignment.folder = as.character(param.table$Value[param.table$Parameter == "Alignment_Folder_PC"])
 genome=as.character(param.table$Value[param.table$Parameter == "genome"])
 htseq.anno.folder = as.character(param.table$Value[param.table$Parameter == "HTseq_input_folder"])
 aligned.stats.file = as.character(param.table$Value[param.table$Parameter == "aligned_stats_file"])
