@@ -70,6 +70,7 @@ for file in fileResults:
 			fullVCF = outputSubfolder + "/" + sample + ".GATK.HC.full.AS.g.vcf"
 			combinedFiles = combinedFiles + " --variant " + fullVCF
 			command = "java -Xmx" + java_mem + " -jar /opt/GenomeAnalysisTK-3.6.jar -T HaplotypeCaller -R " + fa_ref + " -I " + filteredBam + " -o " + fullVCF + " -dontUseSoftClippedBases -stand_call_conf 20.0 -stand_emit_conf 20.0 --emitRefConfidence GVCF -G Standard -G AS_Standard"
+			#command = "java -Xmx" + java_mem + " -jar /opt/GATK-3.7/GenomeAnalysisTK.jar -T HaplotypeCaller -R " + fa_ref + " -I " + filteredBam + " -o " + fullVCF + " -dontUseSoftClippedBases -stand_call_conf 20.0 --emitRefConfidence GVCF -G Standard -G AS_Standard"
 			os.system(command)			
 
 combinedVCF = "joint_variant_calls.GATK.HC.best.practices.all.vcf"																			
