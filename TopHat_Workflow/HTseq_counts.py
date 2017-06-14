@@ -8,6 +8,7 @@ alignmentFolder = ""
 gtf_file = ""
 lncRNAgtf = ""
 strandType = ""
+libType = ""
 
 inHandle = open(parameterFile)
 lines = inHandle.readlines()
@@ -32,6 +33,9 @@ for line in lines:
 	if param == "strand":
 		strandType = value
 
+	if param == "Read_Pairing":
+		libType = value		
+		
 if (strandType != "yes") and (strandType != "no") and (strandType != "reverse"):
 	print "Need to provide HT-Seq mapping for strand: " + strandType
 	sys.exit()
@@ -50,30 +54,34 @@ for file in fileResults:
 		if (sample not in finishedSamples) and (not sortResult):
 			print sample
 
-			countsFile = sample + "_gene_counts.txt"
-			command = "htseq-count -f bam -r pos -s " + strandType + " " + fullPath + " " + gtf_file + " > " + countsFile
-			os.system(command)
-			
-			countsFile = sample + "_lncRNA_counts.txt"
-			command = "htseq-count -f bam -r pos -s " + strandType + " -i gene_name " + fullPath + " " + lncRNAgtf + " > " + countsFile
-			#os.system(command)
-			
-			## switch to code below to use name-sorted BAM ##
-		
-			#nameSortedBam = sample + ".name.sort.bam"
-			#nameSortedBam = os.path.join(alignmentFolder, nameSortedBam)
-			#command = "/opt/samtools-1.3/samtools sort -n -o " + nameSortedBam + " " + fullPath
-			#os.system(command)
-		
-			#countsFile = sample + "_gene_counts.txt"
-			#command = "htseq-count -f bam -s " + strandType + " " + nameSortedBam + " " + gtf_file + " > " + countsFile
-			#os.system(command)
-			
-			#countsFile = sample + "_lncRNA_counts.txt"
-			#command = "htseq-count -f bam -s " + strandType + " -i gene_name " + nameSortedBam + " " + lncRNAgtf + " > " + countsFile
-			#os.system(command)
-	
-			#command = "rm " + nameSortedBam
-			#os.system(command)
+			#when I've tested single-end RNA-Seq, I've gotten the same results for name and position sorted .bam (and manual says parameter is ignored for single-end data)
+			#However, for paired-end RNA-Seq, there can be differences, and the name-sorted .bam seems to be a little more accurate
+			if libType == "SE":
+				countsFile = sample + "_gene_counts.txt"
+				command = "htseq-count -f bam -r pos -s " + strandType + " " + fullPath + " " + gtf_file + " > " + countsFile
+				os.system(command)
 
-		
+				countsFile = sample + "_lncRNA_counts.txt"
+				#switch to " -i gene_id " for MiTranscriptome
+				command = "htseq-count -f bam -r pos -s " + strandType + " -i gene_name " + fullPath + " " + lncRNAgtf + " > " + countsFile
+				#os.system(command)
+			elif libType == "PE":
+				nameSortedBam = sample + ".name.sort.bam"
+				nameSortedBam = os.path.join(alignmentFolder, nameSortedBam)
+				command = "/opt/samtools-1.3/samtools sort -n -o " + nameSortedBam + " " + fullPath
+				os.system(command)
+
+				countsFile = sample + "_gene_counts.txt"
+				command = "htseq-count -f bam -s " + strandType + " " + nameSortedBam + " " + gtf_file + " > " + countsFile
+				os.system(command)
+
+				countsFile = sample + "_lncRNA_counts.txt"
+				#switch to " -i gene_id " for MiTranscriptome
+				command = "htseq-count -f bam -s " + strandType + " -i gene_name " + nameSortedBam + " " + lncRNAgtf + " > " + countsFile
+				#os.system(command)
+
+				command = "rm " + nameSortedBam
+				os.system(command)
+			else:
+				print "'Read_Pairing' must be single-end('SE') or paired-end ('PE')"
+				sys.exit()
