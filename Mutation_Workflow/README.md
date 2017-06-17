@@ -1,8 +1,8 @@
 ### Order to Run Scripts ###
 
-1) `cluster_pe_STAR_alignment.py` (or `cluster_se_STAR_alignment.py` + `STAR_post_processing.py`)
+1) `cluster_pe_STAR_alignment.py` (or `cluster_se_STAR_alignment.py` + `STAR_post_processing.py`, etc.)
 
-2) `GATK_variant_calls.py`
+2) `cluster_GATK_joint_variant_calls.py` (or `GATK_joint_variant_calls.py`, etc.)
 
 3) `filter_variants.py`
 
