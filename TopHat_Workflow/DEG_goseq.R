@@ -23,7 +23,7 @@ center.arr = function(arr)
 count.defined.values = function(arr, expr.cutoff)
 {
 	sig.figures = 1
-	if (expr.cutoff > 0)
+	if (expr.cutoff >= 0)
 		sig.figures = 0
 	expr.cutoff = round(expr.cutoff, digits=sig.figures)
 	arr = round(arr, digits=sig.figures)
