@@ -3,6 +3,7 @@ deg.file = paste(deg.prefix,".txt",sep="")
 heatmap.file  = paste("batch_corrected_",deg.prefix,".png",sep="")
 metadata.table = "sample_description.txt"
 expression.table = "log2_fpkm.txt"
+cluster.distance="Pearson_Dissimilarity"
 plot.groups = c("Group")
 batch.group = "Batch"
 
@@ -43,7 +44,20 @@ temp.rpkm = temp.rpkm[,match(sample.label, names(temp.rpkm))]
 print(dim(temp.rpkm))
 temp.rpkm = t(apply(temp.rpkm, 1, batch.center, batchID = batchID))
 print(dim(temp.rpkm))
-	
+
+	cor.dist = function(mat){
+		cor.mat = cor(as.matrix(t(mat)))
+		dis.mat = 1 - cor.mat
+		return(as.dist(dis.mat))	
+	}#end def cor.dist
+
+	if (cluster.distance == "Pearson_Dissimilarity"){
+		print("Using Pearson Dissimilarity as Distance in Heatmap...")
+		dist.fun = cor.dist
+	}else{
+		dist.fun=dist
+	}
+
 	if(length(plot.groups) > 1){
 		source("heatmap.3.R")
 		grp1 = as.character(sample.description.table[,plot.groups[1]])
@@ -76,7 +90,7 @@ print(dim(temp.rpkm))
 		rownames(row_annotation) <- c(plot.groups)
 
 		png(file = heatmap.file)
-		heatmap.3(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
+		heatmap.3(std.expr,   distfun = dist.fun, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
 					RowSideColors=row_annotation, trace="none", margins = c(8,13),RowSideColorsSize=4, dendrogram="both")
 		legend("topright", legend=group.levels,
 							col=color.palette,
@@ -101,7 +115,7 @@ print(dim(temp.rpkm))
 		rownames(std.expr) = sample.label
 		
 		png(file = heatmap.file)
-		heatmap.2(std.expr, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
+		heatmap.2(std.expr,   distfun = dist.fun, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
 					 RowSideColors=labelColors, trace="none", margins = c(5,15))
 		legend("topright", legend=group.levels,	col=color.palette, pch=15, cex=0.7)
 		dev.off()
