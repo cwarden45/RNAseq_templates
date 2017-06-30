@@ -25,6 +25,7 @@ foreach my $file (@files){
 		if(!exists($finished_samples{$sampleID})){
 			my $bam = "$alignment_folder/$file";
 			my $output = "$sampleID\_phASER";
+			#in rare situation where reference and sample had same name and '_' in their name, you might get an error message
 			$command = "python /opt/phaser/phaser/phaser.py --vcf $vcf.gz --sample $sampleID --bam $bam --o $output --baseq 20 --mapq 10 --paired_end 0 --pass_only 0";
 			system($command);
 			
