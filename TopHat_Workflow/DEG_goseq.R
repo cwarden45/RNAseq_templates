@@ -1180,7 +1180,7 @@ if(length(deg.genes) > 1){
 		}
 		rownames(std.expr) = sample.label
 			
-		heatmap.file <- paste(comp.name,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
+		heatmap.file <- paste(comp.name,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".png",sep="")
 		heatmap.file = gsub(":",".",heatmap.file)
 		png(file = heatmap.file)
 		heatmap.2(std.expr, distfun = dist.fun, hclustfun = hclust,
