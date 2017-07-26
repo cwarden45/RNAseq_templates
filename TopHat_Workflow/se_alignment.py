@@ -105,5 +105,3 @@ for file in fileResults:
 			print "\n\nCompressing .fastq File\n\n"
 			command = "gzip " + read1
 			os.system(command)
-			
-			sys.exit()
