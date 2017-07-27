@@ -60,7 +60,7 @@ if (alignmentFolder == "") or (alignmentFolder == "[required]"):
 fileResults = os.listdir(readsFolder)
 
 for file in fileResults:
-	result = re.search("(.*)_\w{6}_L\d{3}_R1_001.fastq$",file)
+	result = re.search("(.*)_S\d+_L\d{3}_R1_001.fastq$",file)
 	
 	if result:
 		sample = result.group(1)
@@ -92,14 +92,14 @@ for file in fileResults:
 			userBam = alignmentFolder + "/" + sample + ".bam";
 								
 			print "\n\nCreate Sorted BAM File\n\n"
-			command = "/opt/samtools-1.3/samtools sort " + topHatBam + " -o " + userBam
+			command = "/opt/samtools-1.4/samtools sort " + topHatBam + " -o " + userBam
 			os.system(command)
 
 			command = "rm " + topHatBam
 			os.system(command)
 
 			print "\n\nIndexing BAM File\n\n"
-			command = "/opt/samtools-1.3/samtools index " + userBam
+			command = "/opt/samtools-1.4/samtools index " + userBam
 			os.system(command)
 			
 			print "\n\nCompressing .fastq File\n\n"
