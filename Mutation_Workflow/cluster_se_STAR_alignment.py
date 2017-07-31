@@ -86,7 +86,7 @@ fileResults = os.listdir(readsFolder)
 
 jobCount = 0
 for file in fileResults:
-	resultGZ = re.search("(.*)_\w{6}_L\d{3}_R1_001.fastq.gz$",file)
+	resultGZ = re.search("(.*)_S\d+_L\d{3}_R1_001.fastq.gz$",file)
 	
 	if resultGZ:
 		sample = resultGZ.group(1)
