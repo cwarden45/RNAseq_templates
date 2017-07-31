@@ -3,6 +3,9 @@ import re
 import os
 import subprocess
 
+java = "/net/isi-dcnl/ifs/user_data/Seq/jre1.8.0_121/bin/java"
+jar_path = "/net/isi-dcnl/ifs/user_data/Seq/"
+
 parameterFile = "parameters.txt"
 finishedSamples = ()
 
