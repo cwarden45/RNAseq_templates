@@ -9,6 +9,14 @@ my $ref = "/path/to/ref.fa";
 my $vcf = "joint_variant_calls.vcf";
 #my $gene_bed = "TxDb_[genome]_gene.bed";
 
+##if filtering non-canonical chromosomes
+#my $canonical_bed = "hg19.bed";
+#my $temp_vcf = $vcf;
+#$temp_vcf =~ s/.vcf/.canonical.vcf/;
+#my $command = "/opt/bedtools2/bin/bedtools intersect -header -a $vcf -b $canonical_bed > $temp_vcf";
+#system($command);
+#$vcf=$temp_vcf;
+
 my $command = "bgzip $vcf";
 system($command);
 
