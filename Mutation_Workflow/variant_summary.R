@@ -1,7 +1,7 @@
+annotated.folder = "../Result/Mutation_Calls/Joint_GATK_Variant_Calls"
 summary.file = "GATK_best_practices_variant_summary.txt"
 
 param.table = read.table("parameters.txt", header=T, sep="\t")
-annotated.folder = as.character(param.table$Value[param.table$Parameter == "Result_Folder"])
 genome = as.character(param.table$Value[param.table$Parameter == "genome"])
 
 annotated.folders = list.dirs(annotated.folder)
@@ -14,7 +14,7 @@ annotated.samples = gsub("\\\\","",annotated.samples)
 output.samples = c()
 exonic.count = c()
 kaviar.gnomAD.rare.count = c()
-sift.polyphen.damaging.count = c()
+damaging.count = c()
 exonic.rare.damaging.count = c()
 cosmic.count = c()
 nci60.count = c()
@@ -56,8 +56,8 @@ for (i in 1:length(annotated.samples)){
 		kaviar.gnomAD.rare.count = c(kaviar.gnomAD.rare.count, length(rare.flag[rare.flag == 1]))
 		
 		damaging.flag = rep(0, nrow(big.table))
-		damaging.flag[(!is.na(big.table$SIFT_pred) & (big.table$SIFT_pred == "D")) | (!is.na(big.table$Polyphen2_HDIV_pred) & (big.table$Polyphen2_HDIV_pred == "D"))| (!is.na(big.table$Polyphen2_HVAR_pred) & (big.table$Polyphen2_HVAR_pred == "D"))] = 1
-		sift.polyphen.damaging.count=c(sift.polyphen.damaging.count,length(damaging.flag[damaging.flag==1]))
+		damaging.flag[(!is.na(big.table$SIFT_pred) & (big.table$SIFT_pred == "D")) | (!is.na(big.table$Polyphen2_HDIV_pred) & (big.table$Polyphen2_HDIV_pred == "D"))| (!is.na(big.table$Polyphen2_HVAR_pred) & (big.table$Polyphen2_HVAR_pred == "D")) | (!is.na(big.table$ExonicFunc.refGene)&((big.table$ExonicFunc.refGene == "frameshift insertion")|(big.table$ExonicFunc.refGene == "frameshift deletion")|(big.table$ExonicFunc.refGene == "stopgain")))] = 1
+		damaging.count=c(damaging.count,length(damaging.flag[damaging.flag==1]))
 		
 		rare.damaging.flag = rep(0, nrow(big.table))
 		rare.damaging.flag[(rare.flag == 1) & (damaging.flag == 1)] = 1
@@ -82,7 +82,9 @@ for (i in 1:length(annotated.samples)){
 	}#end if(file.exists(annovar.csv))
 }#end for (ann.sample in annotated.samples)
 
-summary.table = data.frame(Sample=annotated.samples, exonic.count=exonic.count, kaviar.gnomAD.rare.count=kaviar.gnomAD.rare.count,
-							sift.polyphen.damaging.count=sift.polyphen.damaging.count, exonic.rare.damaging.count=exonic.rare.damaging.count,
+summary.table = data.frame(Sample=annotated.samples, exonic.count=exonic.count,
+							clinvar.count,
+							kaviar.gnomAD.rare.count=kaviar.gnomAD.rare.count,
+							damaging.count=damaging.count, exonic.rare.damaging.count=exonic.rare.damaging.count,
 							cosmic.count=cosmic.count, gwas.catalog.count=gwas.catalog.count, oreganno.count=oreganno.count)
 write.table(summary.table, summary.file, sep="\t", row.names=F)
