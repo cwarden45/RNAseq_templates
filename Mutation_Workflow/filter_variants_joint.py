@@ -41,7 +41,7 @@ if (rnaEditBED == "") or (rnaEditBED == "[required]"):
 	sys.exit()
 
 statHandle = inHandle = open(summary_file,"w")
-text = "Sample\tSNP.count\tIns.count\tDel.count\tnoRepeat.SNP.count\tnoRepeat.Ins.count\tnoRepeat.Del.count\tnoRNAedit.SNP.count\tnoRNAedit.Ins.count\tnoRNAedit.Del.count\n"
+text = "Sample\tSNP.count\tIns.count\tDel.count\tnoRNAedit.SNP.count\tnoRNAedit.Ins.count\tnoRNAedit.Del.count\n"
 statHandle.write(text)
 
 sample = "Joint"
@@ -93,7 +93,8 @@ while line:
 							countInfo[0] = str(int(countInfo[0]) + 1)
 							sampleTextHash[sampleID] = "\t".join(countInfo)
 						else:
-							sampleTextHash[sampleID] = "1\t0\t0\t0\t0\t0\t0\t0\t0"
+							#sampleTextHash[sampleID] = "1\t0\t0\t0\t0\t0\t0\t0\t0"
+							sampleTextHash[sampleID] = "1\t0\t0\t0\t0\t0"
 			else:
 				multVarResult = re.search(",",varSeq)
 				
@@ -124,7 +125,8 @@ while line:
 								countInfo[1] = str(int(countInfo[1]) + 1)
 								sampleTextHash[sampleID] = "\t".join(countInfo)
 							else:
-								sampleTextHash[sampleID] = "0\t1\t0\t0\t0\t0\t0\t0\t0"
+								#sampleTextHash[sampleID] = "0\t1\t0\t0\t0\t0\t0\t0\t0"
+								sampleTextHash[sampleID] = "0\t1\t0\t0\t0\t0"
 				elif len(varSeq) < len(refSeq):
 					deletionCounts += 1
 					for sampleID in sampleIndexHash:
@@ -137,7 +139,8 @@ while line:
 								countInfo[2] = str(int(countInfo[2]) + 1)
 								sampleTextHash[sampleID] = "\t".join(countInfo)
 							else:
-								sampleTextHash[sampleID] = "0\t0\t1\t0\t0\t0\t0\t0\t0"
+								#sampleTextHash[sampleID] = "0\t0\t1\t0\t0\t0\t0\t0\t0"
+								sampleTextHash[sampleID] = "0\t0\t1\t0\t0\t0"
 				else:
 					#print line
 					print "Modify code to count ref: " + refSeq + ", var: " + varSeq
@@ -153,87 +156,89 @@ outHandle.close()
 			
 text = sample + "\t" + str(snpCounts) + "\t" + str(insertionCounts) + "\t" + str(deletionCounts)
 
-#RepeatMasker filer
-noRepeatSnps = 0
-noRepeatIns = 0
-noRepeatDel = 0
-			
-noRepeatVCF = re.sub(".vcf$",".sansRepeatMasker.vcf",vcfOut)
-			
-command = "/opt/bedtools2/bin/bedtools intersect -header -v -a " + vcfOut + " -b " + repeatBED + " > " + noRepeatVCF
-os.system(command)
-
-inHandle = open(noRepeatVCF)
-line = inHandle.readline()
-			
-while line:				
-	commentResult = re.search("^#",line)
+#provide RepeatMasker annotations but skip-hard filter
+if False:
+	noRepeatSnps = 0
+	noRepeatIns = 0
+	noRepeatDel = 0
 				
-	if not commentResult:
-		lineInfo = line.split("\t")
-		chr = lineInfo[0]
-		variantStatus = lineInfo[6]
-					
-		if (variantStatus == "PASS"):
-
-			refSeq = lineInfo[3]
-			varSeq = lineInfo[4]
-						
-			if (len(refSeq) == 1) and (len(varSeq) == 1):
-				noRepeatSnps += 1
-				for sampleID in sampleIndexHash:
-					lineInfo[sampleIndexHash[sampleID]] = re.sub("\r","",lineInfo[sampleIndexHash[sampleID]])
-					lineInfo[sampleIndexHash[sampleID]] = re.sub("\n","",lineInfo[sampleIndexHash[sampleID]])
-					genotype = lineInfo[sampleIndexHash[sampleID]][0:3]
-					if genotype != "0/0":
-						countInfo = sampleTextHash[sampleID].split("\t")
-						countInfo[3] = str(int(countInfo[3]) + 1)
-						sampleTextHash[sampleID] = "\t".join(countInfo)
-			else:
-				multVarResult = re.search(",",varSeq)
-							
-				if multVarResult:
-					refVars = varSeq.split(",")
-					for testVar in refVars:
-						if testVar != refSeq:
-							if (len(refSeq) == 1) and (len(testVar) == 1):
-								noRepeatSnps += 1
-							elif len(testVar) > len(refSeq):
-								noRepeatIns += 1
-							elif len(testVar) < len(refSeq):
-								noRepeatDel += 1
-							else:
-								print "Modify code to count ref: " + refSeq + ", var: " + varSeq										
-				elif len(varSeq) > len(refSeq):
-					noRepeatIns += 1
-					for sampleID in sampleIndexHash:
-							lineInfo[sampleIndexHash[sampleID]] = re.sub("\r","",lineInfo[sampleIndexHash[sampleID]])
-							lineInfo[sampleIndexHash[sampleID]] = re.sub("\n","",lineInfo[sampleIndexHash[sampleID]])
-							genotype = lineInfo[sampleIndexHash[sampleID]][0:3]
-							if genotype != "0/0":
-								countInfo = sampleTextHash[sampleID].split("\t")
-								countInfo[4] = str(int(countInfo[4]) + 1)
-								sampleTextHash[sampleID] = "\t".join(countInfo)
-				elif len(varSeq) < len(refSeq):
-					noRepeatDel += 1
-					for sampleID in sampleIndexHash:
-							lineInfo[sampleIndexHash[sampleID]] = re.sub("\r","",lineInfo[sampleIndexHash[sampleID]])
-							lineInfo[sampleIndexHash[sampleID]] = re.sub("\n","",lineInfo[sampleIndexHash[sampleID]])
-							genotype = lineInfo[sampleIndexHash[sampleID]][0:3]
-							if genotype != "0/0":
-								countInfo = sampleTextHash[sampleID].split("\t")
-								countInfo[5] = str(int(countInfo[5]) + 1)
-								sampleTextHash[sampleID] = "\t".join(countInfo)
-				else:
-					print "Modify code to count ref: " + refSeq + ", var: " + varSeq	
-		elif (variantStatus != "SnpCluster") and (variantStatus != "QC")and (variantStatus != "QC;SnpCluster"):
-			print "Modify code to Keep or Skip variant status: " + variantStatus
-			sys.exit()
+	noRepeatVCF = re.sub(".vcf$",".sansRepeatMasker.vcf",vcfOut)
 				
+	command = "/opt/bedtools2/bin/bedtools intersect -header -v -a " + vcfOut + " -b " + repeatBED + " > " + noRepeatVCF
+	os.system(command)
+
+	inHandle = open(noRepeatVCF)
 	line = inHandle.readline()
-inHandle.close()
-			
-text = text + "\t" + str(noRepeatSnps) + "\t" + str(noRepeatIns) + "\t" + str(noRepeatDel)
+				
+	while line:				
+		commentResult = re.search("^#",line)
+					
+		if not commentResult:
+			lineInfo = line.split("\t")
+			chr = lineInfo[0]
+			variantStatus = lineInfo[6]
+						
+			if (variantStatus == "PASS"):
+
+				refSeq = lineInfo[3]
+				varSeq = lineInfo[4]
+							
+				if (len(refSeq) == 1) and (len(varSeq) == 1):
+					noRepeatSnps += 1
+					for sampleID in sampleIndexHash:
+						lineInfo[sampleIndexHash[sampleID]] = re.sub("\r","",lineInfo[sampleIndexHash[sampleID]])
+						lineInfo[sampleIndexHash[sampleID]] = re.sub("\n","",lineInfo[sampleIndexHash[sampleID]])
+						genotype = lineInfo[sampleIndexHash[sampleID]][0:3]
+						if genotype != "0/0":
+							countInfo = sampleTextHash[sampleID].split("\t")
+							countInfo[3] = str(int(countInfo[3]) + 1)
+							sampleTextHash[sampleID] = "\t".join(countInfo)
+				else:
+					multVarResult = re.search(",",varSeq)
+								
+					if multVarResult:
+						refVars = varSeq.split(",")
+						for testVar in refVars:
+							if testVar != refSeq:
+								if (len(refSeq) == 1) and (len(testVar) == 1):
+									noRepeatSnps += 1
+								elif len(testVar) > len(refSeq):
+									noRepeatIns += 1
+								elif len(testVar) < len(refSeq):
+									noRepeatDel += 1
+								else:
+									print "Modify code to count ref: " + refSeq + ", var: " + varSeq										
+					elif len(varSeq) > len(refSeq):
+						noRepeatIns += 1
+						for sampleID in sampleIndexHash:
+								lineInfo[sampleIndexHash[sampleID]] = re.sub("\r","",lineInfo[sampleIndexHash[sampleID]])
+								lineInfo[sampleIndexHash[sampleID]] = re.sub("\n","",lineInfo[sampleIndexHash[sampleID]])
+								genotype = lineInfo[sampleIndexHash[sampleID]][0:3]
+								if genotype != "0/0":
+									countInfo = sampleTextHash[sampleID].split("\t")
+									countInfo[4] = str(int(countInfo[4]) + 1)
+									sampleTextHash[sampleID] = "\t".join(countInfo)
+					elif len(varSeq) < len(refSeq):
+						noRepeatDel += 1
+						for sampleID in sampleIndexHash:
+								lineInfo[sampleIndexHash[sampleID]] = re.sub("\r","",lineInfo[sampleIndexHash[sampleID]])
+								lineInfo[sampleIndexHash[sampleID]] = re.sub("\n","",lineInfo[sampleIndexHash[sampleID]])
+								genotype = lineInfo[sampleIndexHash[sampleID]][0:3]
+								if genotype != "0/0":
+									countInfo = sampleTextHash[sampleID].split("\t")
+									countInfo[5] = str(int(countInfo[5]) + 1)
+									sampleTextHash[sampleID] = "\t".join(countInfo)
+					else:
+						print "Modify code to count ref: " + refSeq + ", var: " + varSeq	
+			elif (variantStatus != "SnpCluster") and (variantStatus != "QC")and (variantStatus != "QC;SnpCluster"):
+				print "Modify code to Keep or Skip variant status: " + variantStatus
+				sys.exit()
+					
+		line = inHandle.readline()
+	inHandle.close()
+				
+	text = text + "\t" + str(noRepeatSnps) + "\t" + str(noRepeatIns) + "\t" + str(noRepeatDel)
+	#provide RepeatMasker annotations but skip-hard filter
 			
 #RNA-editing filter
 noRNAeditSnps = 0
@@ -242,7 +247,7 @@ noRNAeditDel = 0
 			
 noRNAeditVCF = re.sub(".vcf$",".sansRNAedit.vcf",vcfOut)
 
-command = "/opt/bedtools2/bin/bedtools intersect -header -v -a " + noRepeatVCF + " -b " + rnaEditBED + " > " + noRNAeditVCF
+command = "/opt/bedtools2/bin/bedtools intersect -header -v -a " + vcfOut + " -b " + rnaEditBED + " > " + noRNAeditVCF
 os.system(command)
 
 inHandle = open(noRNAeditVCF)
@@ -269,7 +274,8 @@ while line:
 					genotype = lineInfo[sampleIndexHash[sampleID]][0:3]
 					if genotype != "0/0":
 						countInfo = sampleTextHash[sampleID].split("\t")
-						countInfo[6] = str(int(countInfo[6]) + 1)
+						#countInfo[6] = str(int(countInfo[6]) + 1)
+						countInfo[3] = str(int(countInfo[3]) + 1)
 						sampleTextHash[sampleID] = "\t".join(countInfo)
 			else:
 				multVarResult = re.search(",",varSeq)
@@ -294,7 +300,8 @@ while line:
 						genotype = lineInfo[sampleIndexHash[sampleID]][0:3]
 						if genotype != "0/0":
 							countInfo = sampleTextHash[sampleID].split("\t")
-							countInfo[7] = str(int(countInfo[7]) + 1)
+							#countInfo[7] = str(int(countInfo[7]) + 1)
+							countInfo[4] = str(int(countInfo[4]) + 1)
 							sampleTextHash[sampleID] = "\t".join(countInfo)
 				elif len(varSeq) < len(refSeq):
 					noRNAeditDel += 1
@@ -304,7 +311,8 @@ while line:
 						genotype = lineInfo[sampleIndexHash[sampleID]][0:3]
 						if genotype != "0/0":
 							countInfo = sampleTextHash[sampleID].split("\t")
-							countInfo[8] = str(int(countInfo[8]) + 1)
+							#countInfo[8] = str(int(countInfo[8]) + 1)
+							countInfo[5] = str(int(countInfo[5]) + 1)
 							sampleTextHash[sampleID] = "\t".join(countInfo)
 				else:
 					print "Modify code to count ref: " + refSeq + ", var: " + varSeq	
