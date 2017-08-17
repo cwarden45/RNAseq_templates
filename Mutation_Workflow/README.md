@@ -2,11 +2,11 @@
 
 1) `cluster_pe_STAR_alignment.py`
 
-2) `cluster_GATK_joint_variant_calls.py` (or `GATK_joint_variant_calls.py`, etc.)
+2) `cluster_GATK_joint_variant_calls.py` or `GATK_joint_variant_calls.py`
 
-3) `filter_variants.py`
+3) `filter_variants.py` or `filter_variants_joint.py`
 
-4) `annotate_variants.py`
+4) `annotate_variants.py` or `annotate_variants_joint.py`
 
 5) `variant_summary.R`
 
