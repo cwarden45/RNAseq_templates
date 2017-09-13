@@ -1226,6 +1226,9 @@ if (goseq.flag == "yes"){
 	}#end for( i in 1:length(go.genes))
 
 	go.table = data.frame(GO.wall, genes=go.genes)
+	go.file = paste(comp.name,"_goseq_UP.txt",sep="")
+	write.table(go.table, file=go.file, row.names=F, quote=F, sep="\t")
+	
 	go.file = paste(user.folder,"/GO/",comp.name,"_goseq_UP.txt",sep="")
 	write.table(go.table, file=go.file, row.names=F, quote=F, sep="\t")
 
@@ -1254,6 +1257,9 @@ if (goseq.flag == "yes"){
 	}#end for( i in 1:length(go.genes))
 
 	go.table = data.frame(GO.wall, genes=go.genes)
+	go.file = paste(comp.name,"_goseq_DOWN.txt",sep="")
+	write.table(go.table, file=go.file, row.names=F, quote=F, sep="\t")
+	
 	go.file = paste(user.folder,"/GO/",comp.name,"_goseq_DOWN.txt",sep="")
 	write.table(go.table, file=go.file, row.names=F, quote=F, sep="\t")
 }#end if (goseq.flag == "yes")
