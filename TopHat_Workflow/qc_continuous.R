@@ -122,9 +122,8 @@ for (group in plot.groups){
 					freq <- den$y
 					plot(expr, freq, type="l", xlab = paste("Log2(FPKM + ",min.expression,") Expression",sep=""), ylab = "Density",
 							xlim=c(expr.min,expr.max), ylim=c(0,0.2), col=labelColors[i])
-					legend("right",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
-							col=rev(color.range),  pch=15, inset=-0.4, xpd=T, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
-
+					legend("topright",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
+							col=rev(color.range),  pch=15, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
 				}#end if(i == 1)
 			else
 				{
