@@ -124,11 +124,7 @@ for file in fileResults:
 			topHatBam = outputSubfolder + "/accepted_hits.bam"																			
 			userBam = alignmentFolder + "/" + sample + ".bam"
 			
-			sortPrefix = re.sub(".bam$","",userBam)
-			text = "samtools sort " + topHatBam + " " + sortPrefix + "\n"
-			outHandle.write(text)
-			
-			text = "rm " + topHatBam + "\n"
+			text = "mv " + topHatBam + " " + userBam +"\n"
 			outHandle.write(text)
 
 			text = "samtools index " + userBam + "\n"
