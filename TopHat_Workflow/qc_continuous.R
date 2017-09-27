@@ -74,7 +74,8 @@ for (group in plot.groups){
 	png(file=pca.file)
 	par(mar = par("mar") + c(0,0,0,5))
 	plot(pc.values$PC1, pc.values$PC2, col = labelColors, xlab = paste("PC1 (",round(100* variance.explained[1] , digits = 2),"%)", sep = ""),
-			ylab = paste("PC2 (",round(100* variance.explained[2] , digits = 2),"%)", sep = ""), pch=19)
+			ylab = paste("PC2 (",round(100* variance.explained[2] , digits = 2),"%)", sep = ""), pch=19,
+	    		main=group)
 	legend("right",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
 			col=rev(color.range),  pch=15, inset=-0.2, xpd=T, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
 	dev.off()
@@ -82,7 +83,7 @@ for (group in plot.groups){
 	box.file = paste("box_plot_by_",group,".png",sep="")
 	png(file=box.file)
 	par(mar = par("mar") + c(0,0,0,5))
-	boxplot(temp.mat, col=labelColors, xaxt='n')
+	boxplot(temp.mat, col=labelColors, xaxt='n', main=group)
 	legend("right",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
 			col=rev(color.range),  pch=15, inset=-0.2, xpd=T, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
 	dev.off()
@@ -105,7 +106,7 @@ for (group in plot.groups){
 	a <- attributes(dend1) 
 	attr(dend1, "nodePar") <- c(a$nodePar, lab.col = labelColors) 
 	op <- par(mar = par("mar") + c(0,0,0,10)) 
-	plot(dend1, horiz=T)
+	plot(dend1, horiz=T, main=group)
 	par(op) 
 	dev.off()
 
@@ -121,7 +122,7 @@ for (group in plot.groups){
 					expr <- den$x
 					freq <- den$y
 					plot(expr, freq, type="l", xlab = paste("Log2(FPKM + ",min.expression,") Expression",sep=""), ylab = "Density",
-							xlim=c(expr.min,expr.max), ylim=c(0,0.2), col=labelColors[i])
+							xlim=c(expr.min,expr.max), ylim=c(0,0.2), col=labelColors[i], main=group)
 					legend("topright",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
 							col=rev(color.range),  pch=15, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
 				}#end if(i == 1)
