@@ -87,6 +87,11 @@ if (alignmentFolder == "") or (alignmentFolder == "[required]"):
 	
 fileResults = os.listdir(readsFolder)
 
+submitAll = "master_STAR_queue.sh"
+masterHandle = open(submitAll,"w")
+text = "#!/bin/bash\n"
+masterHandle.write(text)
+
 jobCount = 0
 for file in fileResults:
 	resultGZ = re.search("(.*)_S\d+_L\d{3}_R1_001.fastq.gz$",file)
@@ -99,6 +104,9 @@ for file in fileResults:
 			print sample
 			
 			shellScript = sample + ".sh"
+			text = "qsub " + shellScript + "\n"
+			masterHandle.write(text)
+
 			outHandle = open(shellScript, "w")
 			text = "#!/bin/bash\n"
 			text = text + "#$ -M "+email+"\n"
@@ -106,7 +114,7 @@ for file in fileResults:
 			text = text + "#$ -N CW"+str(jobCount)+"\n"
 			text = text + "#$ -q all.q\n"
 			text = text + "#$ -pe shared "+threads+"\n"
-			text = text + "#$ -l vf=16G\n"
+			text = text + "#$ -l vf="+java_mem+"\n"
 			text = text + "#$ -j yes\n"
 			text = text + "#$ -o CW"+str(jobCount)+".log\n"
 			text = text + "#$ -cwd\n"
@@ -122,7 +130,40 @@ for file in fileResults:
 			outHandle.write(text)		
 			
 			starPrefix = outputSubfolder + "/" + sample + "_"
-			text = STAR + " --genomeDir " + ref+ " --readFilesIn " + read1 + " --runThreadN " +threads+ " --outFileNamePrefix " + starPrefix + " --twopassMode Basic --outSAMstrandField intronMotif\n"
+			text = STAR + " --chimSegmentMin 12 --chimJunctionOverhangMin 12 --genomeDir " + ref+ " --readFilesIn " + read1 + " --runThreadN " +threads+ " --outFileNamePrefix " + starPrefix + " --twopassMode Basic --outSAMstrandField intronMotif\n"
+			outHandle.write(text)
+
+			tempDir = outputSubfolder + "/tmp"
+			text = "mkdir " + tempDir + "\n"
+			outHandle.write(text)	
+			
+			starSam = outputSubfolder + "/" + sample + "_Aligned.out.sam"																			
+			rgBam = outputSubfolder + "/rg.bam"
+			text = java + " -Xmx" + java_mem + " -Djava.io.tmpdir="+ tempDir + " -jar "+jar_path+"picard-tools-2.5.0/picard.jar AddOrReplaceReadGroups I=" + starSam + " O=" + rgBam + " SO=coordinate RGID=1 RGLB=RNA-Seq RGPL=Illumina RGPU=COH RGSM=" + sample + "\n"
+			outHandle.write(text)
+
+			text = "rm " + starSam + "\n"
+			outHandle.write(text)		
+			
+			duplicateMetrics = outputSubfolder + "/MarkDuplicates_metrics.txt"
+			filteredBam = outputSubfolder + "/nodup.bam"
+			text = java + " -Xmx" + java_mem + " -Djava.io.tmpdir="+ tempDir + " -jar "+jar_path+"picard-tools-2.5.0/picard.jar MarkDuplicates I=" + rgBam + " O=" + filteredBam + " M=" + duplicateMetrics+" REMOVE_DUPLICATES=true CREATE_INDEX=true\n"
+			outHandle.write(text)
+
+			text = "rm " + rgBam + "\n"
+			outHandle.write(text)
+
+			trimmedBam = alignmentFolder + "/" + sample + ".bam"	
+			text = java + " -Xmx" + java_mem + " -jar "+jar_path+"GenomeAnalysisTK-3.6.jar -T SplitNCigarReads -R " + fa_ref + " -I " + filteredBam + " -o " + trimmedBam+" -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS\n"
+			outHandle.write(text)
+
+			text = "rm " + filteredBam + "\n"
+			outHandle.write(text)
+			
+			text = "rm " + re.sub(".bam$",".bai",filteredBam) + "\n"
+			outHandle.write(text)
+
+			text = "rm -R " + tempDir + "\n"
 			outHandle.write(text)
 			
 			#since code is for .gz files
