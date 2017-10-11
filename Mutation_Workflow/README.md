@@ -6,7 +6,7 @@
 
 3) `filter_variants.py` or `filter_variants_joint.py`
 
-4) `annotate_variants.py` or `annotate_variants_joint.py`
+4) `annotate_variants.py` or `annotate_variants_joint.py` or `cluster_annotate_variants_joint.py` (with `bed_to_ANNOVAR.py`)
 
 5) `variant_summary.R`
 
