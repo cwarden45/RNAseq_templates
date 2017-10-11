@@ -45,6 +45,7 @@ goseq: http://bioconductor.org/packages/release/bioc/html/goseq.html
 |---|---|
 |comp_name	| Name of differential expression comparison (used to name output file)
 |plot_groups | Names of columns in *sample_description_file* to be plotted in QC plots.  Use commas to plot multiple groups|
+|plot_type | Are lables for Junction QC plots "discrete" or "continous"?  Use commas to describe multiple variables.  If continous, orange=high, green=low|
 |deg_groups|Names of columns in *sample_description_file* to be used for differential splicing analysis.  Use commas to include multiple variables (for multivariate model).  However, primary variable will be called "condition" for JunctionSeq, which is only designed for categorical variables.|
 |Raw_Code_PC|Path to output folder for most results|
 |Result_Folder|Path to output folder for selected, final results|
