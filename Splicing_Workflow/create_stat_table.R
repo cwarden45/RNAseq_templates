@@ -3,6 +3,17 @@ avgGroupExpression = function (geneExpr, groups) {
 	return(avg.expr)
 }#end def avgGroupExpression
 
+calc.gene.cor = function(arr, indep.var)
+{	
+	na.count = length(arr[!is.na(arr)])
+	if((na.count >= 3) & (sd(arr) != 0)){
+		gene.cor.coef = cor(arr,indep.var)
+	} else {
+		gene.cor.coef = NA
+	}
+	return(gene.cor.coef)
+}#end def calc.gene.cor
+
 ratio2fc = function(value)
 {
 	if(value >= 0){
@@ -11,6 +22,11 @@ ratio2fc = function(value)
 		return (-2^(-value))
 	}
 }#end def ratio2fc
+
+count.na.values = function(arr)
+{
+	return(length(arr[is.na(arr)]))
+}#end def count.values
 
 count.transcript = function(char){
 	tmp.transcripts = unlist(strsplit(as.character(char),split=";"))
@@ -25,6 +41,7 @@ count.folder=as.character(param.table$Value[param.table$Parameter == "QoRTs_Merg
 goseq.flag = as.character(param.table$Value[param.table$Parameter == "run_goseq"])
 trt = as.character(param.table$Value[param.table$Parameter == "treatment_group"])
 fc.cutoff = as.numeric(as.character(param.table$Value[param.table$Parameter == "fold_change_cutoff"]))
+cor.cutoff = as.numeric(as.character(param.table$Value[param.table$Parameter == "cor_cutoff"]))
 pvalue.cutoff = as.numeric(as.character(param.table$Value[param.table$Parameter == "pvalue_cutoff"]))
 fdr.cutoff = as.numeric(as.character(param.table$Value[param.table$Parameter == "fdr_cutoff"]))
 user.folder = as.character(param.table$Value[param.table$Parameter == "Result_Folder"])
@@ -85,63 +102,111 @@ if(FALSE){
 }#end if(FALSE)
 
 sample.table = read.table(sample.file, sep="\t", header=T)
+
+design = sample.table[,deg.groups]
+if (length(deg.groups) == 1){
+	sample.table = sample.table[!is.na(design),]
+
+} else {
+	deg.grp.na.counts = apply(design, 1, count.na.values)
+	sample.table = sample.table[deg.grp.na.counts == 0,]
+}
 sampleID = as.character(sample.table$userID)
+
 countID = gsub("-",".",sampleID)
 countID = paste("normCount_",countID,sep="")
-if(length(deg.groups) == 1){
-	group = as.factor(sample.table[,deg.groups])
-}else{
-	group = as.factor(sample.table[,deg.groups][,1])
-}
-group.levels =levels(group)
+
 
 count.table = read.table(counts.file, sep="\t", header=T)
 count.feature = count.table$featureID
 count.mat = count.table[,match(countID, names(count.table))]
 
-group.counts = data.frame(t(apply(count.mat, 1, avgGroupExpression, groups = group)))
-group.counts = log2(group.counts + 1)
-colnames(group.counts) = paste("avg.log2.normCounts",levels(group),sep=".")
+if(trt == "continuous"){
+	if(length(deg.groups) == 1){
+		var1 = as.numeric(sample.table[,deg.groups])
+	}else{
+		var1 = as.numeric(sample.table[,deg.groups][,1])
+	}
 
+	cor.coefficient = apply(log2(count.mat+1), 1, calc.gene.cor, indep.var = var1)
+	
+	temp.exon.cor = cor.coefficient[match(temp.exonID,count.feature)]
+	
+	exonID = temp.exonID[!is.na(temp.exon.fdr) & !is.na(temp.exon.cor)]
+	exon.fdr = temp.exon.fdr[!is.na(temp.exon.fdr) & !is.na(temp.exon.cor)]
+	exon.pvalue = temp.exon.pvalue[!is.na(temp.exon.fdr) & !is.na(temp.exon.cor)]
+	exon.cor = temp.exon.cor[!is.na(temp.exon.fdr) & !is.na(temp.exon.cor)]
 
-dsg.group = group
-if (length(group.levels) > 2){
-	dsg.group = as.character(dsg.group)
-	dsg.group[dsg.group != trt] = "cntl"
-	dsg.group = as.factor(as.character(dsg.group))
+	up.exons = as.character(exonID[(exon.cor > cor.cutoff) & (exon.pvalue < pvalue.cutoff)& (exon.fdr < fdr.cutoff)])
+	print(paste("Up-Regulated Exons:",length(up.exons),sep=""))
+	down.exons = as.character(exonID[(exon.cor < - cor.cutoff) & (exon.pvalue < pvalue.cutoff)& (exon.fdr < fdr.cutoff)])
+	print(paste("Down-Regulated Exons:",length(down.exons),sep=""))
+
+	exon.status = rep(NA,nrow(result.table))
+	exon.status[grep(":E\\d{3}$",featureID,perl=T)]="No Change"
+	exon.status[match(up.exons,featureID)]="exon Up"
+	exon.status[match(down.exons,featureID)]="exon Down"
+}else{
+	if(length(deg.groups) == 1){
+		group = as.factor(sample.table[,deg.groups])
+	}else{
+		group = as.factor(sample.table[,deg.groups][,1])
+	}
+	group.levels =levels(group)
+
+	group.counts = data.frame(t(apply(count.mat, 1, avgGroupExpression, groups = group)))
+	group.counts = log2(group.counts + 1)
+	colnames(group.counts) = paste("avg.log2.normCounts",levels(group),sep=".")
+
+	dsg.group = group
+	if (length(group.levels) > 2){
+		dsg.group = as.character(dsg.group)
+		dsg.group[dsg.group != trt] = "cntl"
+		dsg.group = as.factor(as.character(dsg.group))
+	}
+	dsg.counts = data.frame(t(apply(count.mat, 1, avgGroupExpression, groups = dsg.group)))
+	colnames(dsg.counts) = levels(dsg.group)
+	dsg.counts = log2(dsg.counts + 1)
+	trt.expr = dsg.counts[,trt]
+	cntl.expr = dsg.counts[,levels(dsg.group)[levels(dsg.group) != trt]]
+	log2ratio = round(trt.expr - cntl.expr, digits = 2)
+	fc = round(sapply(log2ratio, ratio2fc), digits = 2)
+
+	temp.exon.fc = fc[match(temp.exonID,count.feature)]
+
+	exonID = temp.exonID[!is.na(temp.exon.fdr) & !is.na(temp.exon.fc)]
+	exon.fdr = temp.exon.fdr[!is.na(temp.exon.fdr) & !is.na(temp.exon.fc)]
+	exon.pvalue = temp.exon.pvalue[!is.na(temp.exon.fdr) & !is.na(temp.exon.fc)]
+	exon.fc = temp.exon.fc[!is.na(temp.exon.fdr) & !is.na(temp.exon.fc)]
+
+	up.exons = as.character(exonID[(exon.fc > fc.cutoff) & (exon.pvalue < pvalue.cutoff)& (exon.fdr < fdr.cutoff)])
+	print(paste("Up-Regulated Exons:",length(up.exons),sep=""))
+	down.exons = as.character(exonID[(exon.fc < - fc.cutoff) & (exon.pvalue < pvalue.cutoff)& (exon.fdr < fdr.cutoff)])
+	print(paste("Down-Regulated Exons:",length(down.exons),sep=""))
+
+	exon.status = rep(NA,nrow(result.table))
+	exon.status[grep(":E\\d{3}$",featureID,perl=T)]="No Change"
+	exon.status[match(up.exons,featureID)]="exon Up"
+	exon.status[match(down.exons,featureID)]="exon Down"
 }
-dsg.counts = data.frame(t(apply(count.mat, 1, avgGroupExpression, groups = dsg.group)))
-colnames(dsg.counts) = levels(dsg.group)
-dsg.counts = log2(dsg.counts + 1)
-trt.expr = dsg.counts[,trt]
-cntl.expr = dsg.counts[,levels(dsg.group)[levels(dsg.group) != trt]]
-log2ratio = round(trt.expr - cntl.expr, digits = 2)
-fc = round(sapply(log2ratio, ratio2fc), digits = 2)
 
-temp.exon.fc = fc[match(temp.exonID,count.feature)]
-
-exonID = temp.exonID[!is.na(temp.exon.fdr) & !is.na(temp.exon.fc)]
-exon.fdr = temp.exon.fdr[!is.na(temp.exon.fdr) & !is.na(temp.exon.fc)]
-exon.pvalue = temp.exon.pvalue[!is.na(temp.exon.fdr) & !is.na(temp.exon.fc)]
-exon.fc = temp.exon.fc[!is.na(temp.exon.fdr) & !is.na(temp.exon.fc)]
-
-up.exons = as.character(exonID[(exon.fc > fc.cutoff) & (exon.pvalue < pvalue.cutoff)& (exon.fdr < fdr.cutoff)])
-print(paste("Up-Regulated Exons:",length(up.exons),sep=""))
-down.exons = as.character(exonID[(exon.fc < - fc.cutoff) & (exon.pvalue < pvalue.cutoff)& (exon.fdr < fdr.cutoff)])
-print(paste("Down-Regulated Exons:",length(down.exons),sep=""))
-
-exon.status = rep(NA,nrow(result.table))
-exon.status[grep(":E\\d{3}$",featureID,perl=T)]="No Change"
-exon.status[match(up.exons,featureID)]="exon Up"
-exon.status[match(down.exons,featureID)]="exon Down"
-
-custom.table = data.frame(featureID = featureID, geneName = symbol,
+if(trt == "continuous"){
+	custom.table = data.frame(featureID = featureID, geneName = symbol,
+					transcripts = result.table$transcripts, transcripts.per.feature,
+					feature.chr = result.table$chr, feature.start = result.table$start, feature.end = result.table$end,
+					cor.coefficient,
+					feature.pvalue = result.table$pvalue, feature.fdr = result.table$padjust,
+					feature.fdr.BH, exon.status,
+					gene.fdr = result.table$geneWisePadj)
+}else{
+	custom.table = data.frame(featureID = featureID, geneName = symbol,
 				transcripts = result.table$transcripts, transcripts.per.feature,
 				feature.chr = result.table$chr, feature.start = result.table$start, feature.end = result.table$end,
 				group.counts, log2ratio = log2ratio, fold.change=fc,
 				feature.pvalue = result.table$pvalue, feature.fdr = result.table$padjust,
 				feature.fdr.BH, exon.status,
 				gene.fdr = result.table$geneWisePadj)
+}
 write.table(custom.table, custom.result, sep="\t", row.names=F)
 
 gene.table = read.table(gene.file, head=T, sep="\t")
