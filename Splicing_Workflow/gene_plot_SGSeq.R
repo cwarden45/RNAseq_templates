@@ -79,7 +79,7 @@ gr = GRanges(Rle(gene.chr),
               IRanges(start=gene.start, end=gene.stop),
               Rle(strand(gene.strand)))
 
-si = read.table(sample.file, sep="", header=T)
+si = read.table(sample.file, sep="\t", header=T)
 si$file_bam = as.character(si$file_bam)
 si$sample_name = as.character(si$userID)
 print(si)
