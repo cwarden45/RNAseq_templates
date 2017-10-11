@@ -71,6 +71,7 @@ for (i in 1:length(plot.groups)){
 					expr <- den$x
 					freq <- den$y
 					plot(expr, freq, type="l", xlab = "log2(Coverage+1)", ylab = "Density",
+							main = paste("Color by ",group,sep=""),
 							xlim=c(0,cov.max), ylim=c(0,0.25), col=labelColors[i])
 					if(group.type == "continuous"){
 						legend("topright",
