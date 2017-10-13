@@ -114,7 +114,7 @@ for file in fileResults:
 			os.system(command)
 
 			trimmedBam = alignmentFolder + "/" + sample + ".bam"	
-			command = "java -Xmx" + java_mem + " -jar /opt/GenomeAnalysisTK-3.6.jar -T SplitNCigarReads -R " + fa_ref + " -I " + filteredBam + " -o " + trimmedBam+" -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS"
+			command = "java -Xmx" + java_mem + " -jar /opt/GenomeAnalysisTK-3.7.jar -T SplitNCigarReads -R " + fa_ref + " -I " + filteredBam + " -o " + trimmedBam+" -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS"
 			os.system(command)
 
 			command = "rm " + filteredBam
