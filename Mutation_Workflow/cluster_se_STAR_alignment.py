@@ -154,7 +154,7 @@ for file in fileResults:
 			outHandle.write(text)
 
 			trimmedBam = alignmentFolder + "/" + sample + ".bam"	
-			text = java + " -Xmx" + java_mem + " -jar "+jar_path+"GenomeAnalysisTK-3.6.jar -T SplitNCigarReads -R " + fa_ref + " -I " + filteredBam + " -o " + trimmedBam+" -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS\n"
+			text = java + " -Xmx" + java_mem + " -jar "+jar_path+"GenomeAnalysisTK-3.7.jar -T SplitNCigarReads -R " + fa_ref + " -I " + filteredBam + " -o " + trimmedBam+" -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS\n"
 			outHandle.write(text)
 
 			text = "rm " + filteredBam + "\n"
