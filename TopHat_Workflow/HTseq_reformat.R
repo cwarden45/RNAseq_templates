@@ -228,10 +228,10 @@ trimmed.percent = apply(count.mat, 2, trimmed.counts, min.percent=0.3, max.perce
 expressed.gene.counts = apply(RPKM, 2, count.defined.values, expr.cutoff = log2(min.expression))
 percent.expressed.genes = round( 100 * expressed.gene.counts / nrow(RPKM), digits=1)
 coverage.table = data.frame(Sample = sample.label, total.reads = total.reads,
-							aligned.reads=aligned.reads, percent.aligned.reads =paste(percent.aligned.reads,"%",sep=""),
-							htseq.nofeature.reads =intergenic.reads, percent.unique.exonic.reads = paste(percent.exonic.reads,"%",sep=""),
-							Expressed.Genes = expressed.gene.counts, Percent.Expressed.Genes = paste(percent.expressed.genes,"%",sep=""),
-							trimmed.percent=paste(trimmed.percent,"%",sep=""))
+							aligned.reads=aligned.reads, percent.aligned.reads =paste(sprintf(percent.aligned.reads,fmt="%#.2f"),"%",sep=""),
+							htseq.nofeature.reads =intergenic.reads, percent.unique.exonic.reads = paste(sprintf(percent.exonic.reads,fmt="%#.2f"),"%",sep=""),
+							Expressed.Genes = expressed.gene.counts, Percent.Expressed.Genes = paste(sprintf(percent.expressed.genes,fmt="%#.2f"),"%",sep=""),
+							trimmed.percent=paste(sprintf(trimmed.percent,fmt="%#.2f"),"%",sep=""))
 write.table(coverage.table, file="gene_coverage_stats.txt", quote=F, row.names=F, sep="\t")
 
 	
