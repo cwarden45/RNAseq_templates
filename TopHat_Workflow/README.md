@@ -1,18 +1,18 @@
 ### Order to Run Scripts ###
 
-1) cluster_se_alignment.py or cluster_pe_alignment.py (or se_alignment.py)
+1) `cluster_se_alignment.py` or `cluster_pe_alignment.py`
 
-2) extract_total_reads.py
+2) `extract_total_reads.py` (from TopHat alignment) or `extract_total_reads_FastQC.py` (if using STAR)
 
-3) exonic_read_counts.R
+3) `exonic_read_counts.R`
 
-4) cluster_HTseq_counts.py or HTseq_counts.py
+4) `cluster_HTseq_counts.py`
 
-5) HTseq_reformat.R
+5) `HTseq_reformat.R`
 
-6) qc.R
+6) `qc.R`
 
-7) DEG_goseq.R
+7) `DEG_goseq.R`
 
 ### Dependencies (some optional) ###
 
