@@ -51,7 +51,7 @@ for file in fileResults:
 			readStat = subfolder + "/" + sample + "_read_distribution.txt"
 			command = "read_distribution.py -r " + bed_file + " -i " + fullPath + " > " + readStat
 			print command
-			os.system(command)
+			#os.system(command)
 
 plotBams = ""
 lineCount = 0
@@ -137,7 +137,7 @@ prevSum = np.add(prevSum,percentUTR3)
 pC = plt.bar(ind, percentCDS, color="blue", bottom=prevSum)
 
 plt.ylabel('Relative Percent')
-plt.xticks(np.add(ind,x_shift), sampleLabels)
+plt.xticks(np.add(ind,x_shift), sampleLabels, rotation=90)
 plt.yticks(np.arange(0, 1.01, 0.1))
 
 plt.legend((pC[0], p3[0], p5[0], pI[0]), ('CDS', '3`UTR','5`UTR','Intron'), bbox_to_anchor=(0., 1.02, 1., .102), ncol=4)
