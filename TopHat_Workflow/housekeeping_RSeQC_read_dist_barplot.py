@@ -50,8 +50,7 @@ for file in fileResults:
 			print "Calculate Read Distribution for Housekeeping Genes"
 			readStat = subfolder + "/" + sample + "_read_distribution.txt"
 			command = "read_distribution.py -r " + bed_file + " -i " + fullPath + " > " + readStat
-			print command
-			#os.system(command)
+			os.system(command)
 
 plotBams = ""
 lineCount = 0
