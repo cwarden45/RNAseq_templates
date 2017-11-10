@@ -141,4 +141,5 @@ plt.yticks(np.arange(0, 1.01, 0.1))
 
 plt.legend((pC[0], p3[0], p5[0], pI[0]), ('CDS', '3`UTR','5`UTR','Intron'), bbox_to_anchor=(0., 1.02, 1., .102), ncol=4)
 
+#plt.subplots_adjust(bottom=0.3)
 plt.savefig(figure_out_file)
