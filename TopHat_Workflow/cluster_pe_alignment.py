@@ -139,10 +139,10 @@ for file in fileResults:
 			text = "samtools index " + userBam + "\n"
 			outHandle.write(text)
 
-			text = "gzip " + read1
+			text = "gzip " + read1 + "\n"
 			outHandle.write(text)
 
-			text = "gzip " + read2
+			text = "gzip " + read2 + "\n"
 			outHandle.write(text)
 			
 			#run shell script to submit all samples.  Otherwise, you can run qsub manually.
