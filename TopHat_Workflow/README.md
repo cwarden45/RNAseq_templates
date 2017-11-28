@@ -84,7 +84,7 @@ RSeQC: http://rseqc.sourceforge.net/
 |Alignment_Folder_MAC|Path to TopHat Alignments|
 |Reads_Folder_MAC|Path to Reads for TopHat Alignment|
 |Cluster_Email|If running alignment on a cluster, e-mail for notifications|
-|pvalue_method|Method to Calculate P-value.  Can be *edgeR*, *limma-voom*, *DESeq2*, *lm* (linear regression), or *aov* (ANOVA)|
+|pvalue_method|Method to Calculate P-value.  Can be *edgeR*, *edgeR-robust*, *limma-voom*, *DESeq2*, *lm* (linear regression), or *aov* (ANOVA)|
 |fdr_method|Method to Calculate FDR.  Can be *BH* (Benjamini and Hochberg),*q-value*, or *q-lfdr*|
 |genome|Name of genome build|
 |Bowtie2_Ref| Path to Bowtie2 ref|
