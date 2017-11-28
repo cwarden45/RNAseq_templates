@@ -449,6 +449,102 @@ if(rep.check == 1){
 				test.pvalue = lrt$table$PValue
 			}
 		}#end else
+	}else if (pvalue.method == "edgeR-robust"){
+		library(edgeR)
+		
+		if ((length(deg.groups) == 2)&(interaction.flag == "filter-overlap")){
+			print("edgeR-robust, Two-Step Analysis")
+				
+			if (trt.group == "continuous"){
+				prim.deg.grp = as.numeric(prim.deg.grp)
+			}
+			
+			y = DGEList(counts=prim.counts, genes=genes)
+			if(aligned.type == "TMM"){
+				y = calcNormFactors(y, method="TMM")
+			}#end if(aligned.type == "TMM")
+			design = model.matrix(~prim.deg.grp)
+			y = estimateGLMRobustDisp(y, design)
+			#fit = glmQLFit(y, design, robust=TRUE)
+			fit = glmFit(y, design)
+			lrt = glmLRT(fit, coef=2)
+
+			prim.pvalue = lrt$table$PValue
+
+			if (trt.group2 == "continuous"){
+				sec.deg.grp = as.numeric(prim.deg.grp)
+			}
+			
+			y = DGEList(counts=sec.counts, genes=genes)
+			if(aligned.type == "TMM"){
+				y = calcNormFactors(y, method="TMM")
+			}#end if(aligned.type == "TMM")
+			y = estimateGLMRobustDisp(y)
+			design = model.matrix(~sec.edgeR.grp)
+			y = estimateGLMRobustDisp(y, design)
+			#fit = glmQLFit(y, design, robust=TRUE)
+			fit = glmFit(y, design)
+			lrt = glmLRT(fit, coef=2)
+
+			sec.pvalue = lrt$table$PValue
+			
+		} else {
+			y = DGEList(counts=deg.counts, genes=genes)
+			if(aligned.type == "TMM"){
+				y = calcNormFactors(y, method="TMM")
+			}#end if(aligned.type == "TMM")
+			
+			if (length(deg.groups) == 1){
+				print("edgeR-robust with 1 variable")
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+				design = model.matrix(~var1)
+				y = estimateGLMRobustDisp(y, design)
+				
+				#fit = glmQLFit(y, design, robust=TRUE)
+				fit = glmFit(y, design)
+				lrt = glmLRT(fit, coef=2)
+				test.pvalue = lrt$table$PValue
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "no")){
+				print("edgeR-robust with 2 variables")
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				} else{
+					var1 = as.factor(var1)
+				}
+
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				} else{
+					var2 = as.factor(var2)
+				}
+				design = model.matrix(~var1 + var2)
+				y = estimateGLMRobustDisp(y, design)
+				
+				#fit = glmQLFit(y, design, robust=TRUE)
+				fit = glmFit(y, design)
+				lrt = glmLRT(fit, coef=2)
+				test.pvalue = lrt$table$PValue
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "model")){
+				print("edgeR-robust with 2 variables plus interaction")
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				}
+				design = model.matrix(~var1*var2 + var1 + var2)
+				y = estimateGLMRobustDisp(y, design)
+				#fit = glmQLFit(y, design, robust=TRUE)
+				fit = glmFit(y, design)
+				lrt = glmLRT(fit, coef=4)
+				test.pvalue = lrt$table$PValue
+			}
+		}#end else
 	} else if (pvalue.method == "DESeq2"){
 		library(DESeq2)
 		
