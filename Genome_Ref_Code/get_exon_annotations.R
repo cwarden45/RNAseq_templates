@@ -64,6 +64,11 @@ combined.annotation = data.frame(chr = temp.annotation$EXONCHROM,
 								symbol = temp.annotation$SYMBOL,
 								strand = as.character(temp.annotation$EXONSTRAND),
 								description = temp.annotation$GENENAME)
-rownames(combined.annotation) = paste(combined.annotation$chr,combined.annotation$symbol,combined.annotation$strand,temp.annotation$EXONID, sep=".")
- 
+ID=paste(combined.annotation$chr,combined.annotation$symbol,combined.annotation$strand,temp.annotation$EXONID, sep=".")
+#print(dim(combined.annotation))
+#combined.annotation=combined.annotation[match(unique(ID),ID),]
+#ID=ID[match(unique(ID),ID)]
+#print(dim(combined.annotation))
+rownames(combined.annotation) = ID
+
 write.table(combined.annotation, annotation.table, sep="\t", row.names=F)
