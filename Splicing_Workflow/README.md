@@ -44,6 +44,9 @@ SGSeq: https://bioconductor.org/packages/release/bioc/html/SGSeq.html
 
 MATS: http://rnaseq-mats.sourceforge.net/
 
+*Gene Fusions*
+
+JAFFA: https://github.com/Oshlack/JAFFA/wiki
 
 *Functional Enrichment*
 
