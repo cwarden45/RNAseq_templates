@@ -5,8 +5,8 @@ import os
 #don't really use unaligned reads, but can check for common causes of low alignment rate
 
 readsFolder = "../../Reads"
-fastq_screen = "/path/to/fastq_screen_v0.11.3/fastq_screen"
-config_file = "/path/to/fastq_screen_v0.11.3/fastq_screen.conf"
+fastq_screen = "/isi-dcnl/user_data/Seq/useful_packages/RNAseqQC/fastq_screen_v0.11.3/fastq_screen"
+config_file = "/isi-dcnl/user_data/Seq/useful_packages/RNAseqQC/fastq_screen_v0.11.3/fastq_screen.conf"
 finishedSamples = ("")
 
 fileResults = os.listdir(readsFolder)

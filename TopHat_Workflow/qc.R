@@ -49,7 +49,7 @@ for (group in plot.groups){
 	#you can also try adding center=F, if you are concerned zero-centering is skewing results
 	pca.values = prcomp(na.omit(data.matrix(temp.mat)))
 	pc.values = data.frame(pca.values$rotation)
-	variance.explained = (pca.values $sdev)^2 / sum(pca.values $sdev^2)
+	variance.explained = (pca.values$sdev)^2 / sum(pca.values$sdev^2)
 	pca.table = data.frame(PC = 1:length(variance.explained), percent.variation = variance.explained, t(pc.values))
 
 	pca.text.file = paste(group,"_pca_values.txt",sep="")

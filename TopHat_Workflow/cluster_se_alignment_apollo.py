@@ -1,8 +1,9 @@
 import sys
 import re
 import os
-import subprocess
+import commands
 
+jobPrefix="CW"
 max_concurrent = 12
 
 parameterFile = "parameters.txt"
@@ -76,34 +77,39 @@ text = "#!/bin/bash\n"
 masterHandle.write(text)
 
 jobCount = 0
+jobHash={}
+
 for file in fileResults:
 	result = re.search("(.*)_S\d+_L\d{3}_R1_001.fastq$",file)
 	
 	if result:
 		sample = result.group(1)
 		jobCount += 1
-		
+		jobName = jobPrefix+str(jobCount)
+		print jobName
+			
 		if (sample not in finishedSamples):
 			print sample
 			shellScript = sample + ".sh"
-			text = "qsub " + shellScript + "\n"
+			text = "sbatch " + shellScript + "\n"
 			masterHandle.write(text)
 
 			outHandle = open(shellScript, "w")
 			text = "#!/bin/bash\n"
-			if(jobCount > max_concurrent):
-				text = text + "#$ -hold_jid CW"+str(jobCount-max_concurrent)+"\n"
-			text = text + "#$ -M "+email+"\n"
-			text = text + "#$ -m bea\n"
-			text = text + "#$ -N CW"+str(jobCount)+"\n"
-			text = text + "#$ -q all.q\n"
-			text = text + "#$ -pe shared "+threads+"\n"
-			text = text + "#$ -l vf=4G\n"
-			text = text + "#$ -j yes\n"
-			text = text + "#$ -o CW"+str(jobCount)+".log\n"
-			text = text + "#$ -cwd\n"
-			text = text + "#$ -V\n"
+			text = text + "#SBATCH -J "+jobName+"\n"
+			text = text + "#SBATCH --mail-type=ALL\n"
+			text = text + "#SBATCH --mail-user="+email+"\n"
+			text = text + "#SBATCH -n "+threads+"\n"#one thread
+			text = text + "#SBATCH -N 1\n"
+			text = text + "#SBATCH --mem=8g\n"
+			text = text + "#SBATCH --time=48:00:00\n"
+			text = text + "#SBATCH --output="+jobName+".log\n\n"
+
+			text = text + "module load samtools/1.6\n"
+			#text = text + "export LD_LIBRARY_PATH=/net/isi-dcnl/ifs/user_data/Seq/cwarden/bowtie2-2.3.2/tbb2017_20170604oss/lib/intel64/gcc4.7:$LD_LIBRARY_PATH\n"
+			text = text + "export PATH=/net/isi-dcnl/ifs/user_data/Seq/cwarden/bowtie2-2.3.2:$PATH\n\n"			
 			outHandle.write(text)
+
 				
 			outputSubfolder = alignmentFolder +"/" + sample
 			text = "mkdir " + outputSubfolder + "\n"
@@ -122,7 +128,7 @@ for file in fileResults:
 				print "Need to provide TopHat mapping for strand: " + strandType
 				sys.exit()
 			
-			text = "tophat -o " + outputSubfolder + " -p " + threads + " --no-coverage-search --library-type " + tophatStrand + " " + ref + " " + read1 + "\n" 
+			text = "/net/isi-dcnl/ifs/user_data/Seq/cwarden/tophat-2.1.1.Linux_x86_64/tophat2 -o " + outputSubfolder + " -p " + threads + " --no-coverage-search --library-type " + tophatStrand + " " + ref + " " + read1 + "\n" 
 			outHandle.write(text)
 									
 			topHatBam = outputSubfolder + "/accepted_hits.bam"																			
@@ -131,13 +137,47 @@ for file in fileResults:
 			text = "mv " + topHatBam + " " + userBam +"\n"
 			outHandle.write(text)
 
-			text = "samtools index " + userBam + "\n"
+			text = "/opt/SAMtools/1.6/bin/samtools index " + userBam + "\n"
 			outHandle.write(text)
 
 			text = "gzip " + read1
 			outHandle.write(text)
+			
+			outHandle.close()
+			
+			if jobCount > max_concurrent:
+				#test code from https://hpc.nih.gov/docs/job_dependencies.html
 				
-			#run shell script to submit all samples.  Otherwise, you can run qsub manually.
-			#command = "qsub " + shellScript
-			#os.system(command)
-			#subprocess.run(command, shell=True)
+				depJobName = jobPrefix+str(jobCount-max_concurrent)
+				depJobID = ""
+				if depJobName in jobHash:
+					depJobID=jobHash[depJobName]
+				else:
+					print "Error mapping ID for " + depJobName
+					sys.exit()
+			
+				cmd = "sbatch --depend=afterany:"+ depJobID + " " + shellScript
+				status, outtext = commands.getstatusoutput(str(cmd))
+				
+				numResult = re.search("(\d+)",outtext)
+				if numResult:
+					jobnum = numResult.group(1)
+				else:
+					print "Modify code to parse output: " + outtext
+					sys.exit()
+				
+				jobHash[jobName] = jobnum
+				print jobName + "-->"+jobnum
+			else:
+				cmd = "sbatch " + shellScript
+				status, outtext = commands.getstatusoutput(str(cmd))
+
+				numResult = re.search("(\d+)",outtext)
+				if numResult:
+					jobnum = numResult.group(1)
+				else:
+					print "Modify code to parse output: " + outtext
+					sys.exit()
+				
+				jobHash[jobName] = str(jobnum)
+				print jobName + "-->"+jobnum			

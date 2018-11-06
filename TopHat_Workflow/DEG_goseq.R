@@ -597,6 +597,89 @@ if(rep.check == 1){
 				test.pvalue = lrt$table$PValue
 			}
 		}#end else
+	}else if (pvalue.method == "DESeq"){
+		library(DESeq)
+		
+		if ((length(deg.groups) == 2)&(interaction.flag == "filter-overlap")){
+			print("DESeq, Two-Step Analysis")
+			
+			print("Add Code...")
+			stop()
+			
+		} else {
+			if (length(deg.groups) == 1){
+				print("DESeq with 1 variable (negative binomial)")
+				if (trt.group == "continuous"){
+					print("Won't work?")
+					stop()
+				}
+
+				colData = data.frame(var1=var1)
+				rownames(colData) = colnames(deg.counts)
+				dds = newCountDataSet(deg.counts, var1)
+				#dds = newCountDataSet(deg.counts, colData)
+				dds = estimateSizeFactors(dds)
+				dds = estimateDispersions(dds)
+				png(paste(comp.name,"DESeq_dispersion.png",sep="_"))
+				plotDispEsts(dds)
+				dev.off()
+				cats = levels(var1)
+				res = nbinomTest(dds, trt.group, cats[cats != trt.group])
+				test.pvalue = res$pval
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "no")){
+				print("DESeq with 2 variables (GLM)")
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				} else{
+					var1 = as.factor(var1)
+				}
+
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				} else{
+					var2 = as.factor(var2)
+				}
+
+				colData = data.frame(var1=var1, var2=var2)
+				rownames(colData) = colnames(deg.counts)
+
+				dds = newCountDataSet(deg.counts, colData)
+				dds = estimateSizeFactors(dds)
+				#may need to add pooled-CR, per-condition, or blind
+				dds = estimateDispersions(dds, method = "pooled")
+				png(paste(comp.name,"DESeq_dispersion.png",sep="_"))
+				plotDispEsts(dds)
+				dev.off()
+				fit1 = fitNbinomGLMs(dds, count ~ var2 + var1)
+				fit0 = fitNbinomGLMs(dds, count ~ var2 )
+				test.pvalue = nbinomGLMTest( fit1, fit0 )
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "model")){
+				print("DESeq with 2 variables plus interaction (GLM)")
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				}
+
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				}
+
+				colData = data.frame(var1=var1, var2=var2)
+				dds = newCountDataSet(deg.counts, colData)
+				dds = estimateSizeFactors(dds)
+				#may need to add pooled-CR, per-condition, or blind
+				dds = estimateDispersions(dds, method = "pooled")
+				png(paste(comp.name,"DESeq_dispersion.png",sep="_"))
+				plotDispEsts(dds)
+				dev.off()
+				fit1 = fitNbinomGLMs(dds, count ~ var2 + var1 + var1*var2)
+				fit0 = fitNbinomGLMs(dds, count ~ var2 + var1)
+				test.pvalue = nbinomGLMTest( fit1, fit0 )
+				print("test result...")
+				stop()
+			}
+		}#end else
 	} else if (pvalue.method == "DESeq2"){
 		library(DESeq2)
 		
@@ -801,6 +884,68 @@ if(rep.check == 1){
 				test.pvalue = pvalue.mat[,4]
 			}
 		}#end else
+	}else if (pvalue.method == "DSS"){
+		library(DSS)
+		
+		if ((length(deg.groups) == 2)&(interaction.flag == "filter-overlap")){
+			print("DSS, Two-Step Analysis")
+			
+			print("Add Code...")
+			stop()
+			
+		} else {
+			if (length(deg.groups) == 1){
+				print("DSS with 1 variable")
+				if (trt.group == "continuous"){
+					print("Won't work?")
+					stop()
+				}
+
+				cats = levels(var1)
+				var1=as.character(var1)
+				names(var1)=colnames(deg.counts)
+				seqData=newSeqCountSet(as.matrix(deg.counts), var1)
+				seqData=estNormFactors(seqData)
+				seqData=estDispersion(seqData)
+				res=waldTest(seqData, cats[cats != trt.group], trt.group)
+				
+				genes = rownames(deg.counts)
+				test.pvalue = res$pval[match(genes,rownames(res))]
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "no")){
+				print("DSS+edgeR with 2 variables")
+				library(edgeR)
+
+				if (trt.group == "continuous"){
+					var1 = as.numeric(var1)
+				} else{
+					var1 = as.factor(var1)
+				}
+
+				if (trt.group2 == "continuous"){
+					var2 = as.numeric(var2)
+				} else{
+					var2 = as.factor(var2)
+				}
+
+				colData = data.frame(var1=var1, var2=var2)
+				rownames(colData) = colnames(deg.counts)
+
+				X=model.matrix(~var1+var2, data=colData)
+				seqData=newSeqCountSet(deg.counts, as.data.frame(X))
+				seqData=estNormFactors(seqData)
+				seqData=estDispersion(seqData)
+				
+				fit.edgeR = glmFit(deg.counts, X, dispersion=dispersion(seqData))
+				lrt.edgeR = glmLRT(glmfit=fit.edgeR, coef=2)
+				test.pvalue = lrt.edgeR$table$PValue
+			} else if ((length(deg.groups) == 2)&(interaction.flag == "model")){
+				print("DSS+edgeR with 2 variables plus interaction=")
+				library(edgeR)
+				
+				print("Add Code...")
+				stop()
+			}
+		}#end else
 	} else if (pvalue.method == "lm"){
 		if ((length(deg.groups) == 2)&(interaction.flag == "filter-overlap")){
 			print("RPKM linear regression, Two-Step Analysis")
@@ -900,7 +1045,7 @@ if(rep.check == 1){
 			}
 		}#end else
 	} else{
-		stop("pvalue_method must be \"edgeR\", \"limma-voom\", \"DESeq2\", \"lm\", or \"ANOVA\"")
+		stop("pvalue_method must be \"edgeR\", \"limma-voom\", \"DESeq\", \"DESeq2\", \"DSS\", \"lm\", or \"ANOVA\"")
 	}
 } else{
 	test.pvalue = rep(1,times=length(genes))

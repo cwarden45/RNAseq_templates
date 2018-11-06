@@ -1,6 +1,6 @@
 in.file = "log2_fpkm.txt"
-gct.file = "../Result/GSEA/log2_fpkm.gct"
-cls.file = "../Result/GSEA/log2_fpkm.cls"
+gct.file = "../Results/GSEA/log2_fpkm.gct"
+cls.file = "../Results/GSEA/log2_fpkm.cls"
 meta.file = "sample_description.txt"
 group = "Group"
 convert.upper=FALSE

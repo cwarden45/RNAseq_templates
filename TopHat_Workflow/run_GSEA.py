@@ -2,18 +2,18 @@ import sys
 import os
 import re
 
-expression_table = "../Result/GSEA/log2_fpkm.gct"
-category_table = "../Result/GSEA/log2_fpkm.cls"
+expression_table = "../Results/GSEA/log2_fpkm.gct"
+category_table = "../Results/GSEA/log2_fpkm.cls"
 
-outputFolder = "../Result/GSEA/"
+outputFolder = "../Results/GSEA/"
 
 comparisons = ["Trt_versus_Cont"]
 
-signature_folder = "/path/to/MSigDB"
+signature_folder = "/Volumes/user_data/Seq/cwarden/MSigDB"
 signature_files = ["c5.bp.v6.1.symbols.gmt","c5.mf.v6.1.symbols.gmt","c6.all.v6.1.symbols.gmt","h.all.v6.1.symbols.gmt"]
 #signature_files = ["c2.all.v6.1.symbols.gmt"]
 
-mac_GSEA_jar = "/path/to/gsea2-2.2.2.jar"
+mac_GSEA_jar = "/Volumes/user_data/Seq/cwarden/MSigDB/gsea2-2.2.2.jar"
 javaMem = "8g"
 
 for comparison in comparisons:

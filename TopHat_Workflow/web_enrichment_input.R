@@ -1,6 +1,6 @@
 compID = ""
 degPrefix = ""
-outputFolder = "../Result/GO/web_input_files"
+outputFolder = "../Results/Round1/GO/web_input_files"
 up.status = " Up"
 down.status = " Down"
 genome = ""

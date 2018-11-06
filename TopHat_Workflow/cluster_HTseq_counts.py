@@ -2,6 +2,8 @@ import sys
 import re
 import os
 
+max_concurrent = 12
+
 parameterFile = "parameters.txt"
 finishedSamples = ()
 
@@ -74,6 +76,8 @@ for file in fileResults:
 			
 			outHandle = open(shellScript, "w")
 			text = "#!/bin/bash\n"
+			if(jobCount > max_concurrent):
+				text = text + "#$ -hold_jid cwHT"+str(jobCount-max_concurrent)+"\n"
 			text = text + "#$ -M "+email+"\n"
 			text = text + "#$ -m bea\n"
 			text = text + "#$ -N cwHT"+str(jobCount)+"\n"

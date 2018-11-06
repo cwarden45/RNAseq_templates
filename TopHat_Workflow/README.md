@@ -15,11 +15,18 @@ So, I will post an update when more specific guidance / suggestions can be provi
 
 4) `cluster_HTseq_counts.py`
 
+4b) Start `create_TDFs.py'
+
+4c) `run_RSeQC.py` + `collect_RSeQC_stats.py` / `housekeeping_RSeQC_read_dist_barplot.py`
+--> Need to have sample description (possibly created by `create_sample_description.R`)
+
 5) `HTseq_reformat.R`
 
 6) `qc.R`
 
 7) `DEG_goseq.R`
+
+7b) Can create additional files with `web_enrichment_input.R`
 
 ### Dependencies (some optional) ###
 
