@@ -3,7 +3,7 @@
 
 I also believe that the process of writing the scripts for analysis (such as the templates) is very important for the learning process, and it is very important that you understand all the steps for analysis before presenting them in a paper.
 
-So, I will post an update when more specific guidance / suggestions can be provided.
+So, I will post an update when more specific guidance / suggestions can be provided.  **In the meantime, I apologize, but I cannot provide user support for the templates.**
 
 # RNAseq_templates
 template scripts for RNA-Seq analysis
