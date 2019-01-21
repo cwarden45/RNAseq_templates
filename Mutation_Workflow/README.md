@@ -1,5 +1,5 @@
 ### Acknowledgements ###
-Code developed when providing analysis support from the City of Hope Integrative Genomics Core with requests / suggestions from *[Internal Collaborator B] (currently, did not want to be explicitly acknowledged here)*, *Yapeng Su* (Caltech; also, paired Xenograft samples with Exomes for collaboration with Wei Wei from UCLA/Crump Institute), *Joo Song + Alex Herrera / Vanessa Jonsson* (Access RNA-Seq, human), and *David Ann* (mouse samples).  I am very grateful for their discussions.
+Code developed when providing analysis support from the City of Hope Integrative Genomics Core with requests / suggestions from *[Internal Collaborator B] (currently, did not want to be explicitly acknowledged here)*, *Yapeng Su* (Caltech; also, paired Xenograft samples with Exomes for collaboration with *Wei Wei from UCLA/Crump Institute*), *Joo Song + Alex Herrera / Vanessa Jonsson* (Access RNA-Seq, human), and *David Ann* (mouse samples).  I am very grateful for their discussions.
 
 In general, some projects have been analyzed or re-analyzed with different staff members (sometimes in different labs/institutes, sometimes within the IGC).  So, the use of data with modified versions of these templates may not be what is eventually used in the associated publication.
 
