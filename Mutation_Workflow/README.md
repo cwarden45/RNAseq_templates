@@ -1,3 +1,9 @@
+### Acknowledgements ###
+Code developed when providing analysis support from the City of Hope Integrative Genomics Core with requests / suggestions from *[Internal Collaborator B]* (currently did not want to be explicitly acknowledged here), *Yapeng Su* (Caltech – Heath Lab; also, paired Xenograft samples with Exomes for collaboration with Wei Wei from UCLA), *Joo Song + Alex Herrera / Vanessa Jonsson* (Access RNA-Seq, human), and *David Ann* (mouse samples).  I am very grateful for their discussions.
+
+In general, some projects have been analyzed or re-analyzed with different staff members (sometimes in different labs/institutes, sometimes within the IGC).  So, the use of data with modified versions of these templates may not be what is eventually used in the associated publication; however, I will update links for projects using data from the modified templates as much as possible (over the next few years).
+
+
 ### \~Temporary Note\~ ###
 **I apologize for the confusion, but I would like to emphasize that these are called “templates” because I almost always have to modify the code for each project (beyond the parameter files), meaning they will be more difficult for other people to use in the same way.**  This was unfortunately not immediately clear to me when I created the templates.
 
