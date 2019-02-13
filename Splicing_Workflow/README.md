@@ -1,6 +1,6 @@
 ### Acknowledgements ###
 
-Code developed when providing analysis support from the City of Hope Integrative Genomics Core with requests / suggestions from *Ya-Huei Kuo* (1st successful testing with QoRTs / JunctionSeq), *[Internal Collaborator B]* (testing / revision with QoRTs/JunctionSeq/SGSeq; *currently, did not want to be explicitly acknowledged here*), *Joo Song + Alex Herrera / Vanessa Jonsson* (testing with QoRTs/JunctionSeq/SGSeq), and *Marcia Miller* (validation with QoRTs junctions; for project with Ronald Goto and Jibin Zhang).  I am very grateful for their discussions.
+Code developed when providing analysis support from the City of Hope Integrative Genomics Core with requests / suggestions from **Ya-Huei Kuo** (1st successful testing with QoRTs / JunctionSeq), **[Internal Collaborator B]** (testing / revision with QoRTs/JunctionSeq/SGSeq; *currently, did not want to be explicitly acknowledged here*), **Joo Song + Alex Herrera / Vanessa Jonsson** (testing with QoRTs/JunctionSeq/SGSeq), and **Marcia Miller** (validation with QoRTs junctions; for project with Ronald Goto and Jibin Zhang).  I am very grateful for their discussions.
 
 In general, some projects have been analyzed or re-analyzed with different staff members (sometimes in different labs/institutes, sometimes within the IGC).  So, the use of data with modified versions of these templates may not be what is eventually used in the associated publication.
 
