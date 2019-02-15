@@ -1,3 +1,5 @@
+Please see the [TopHat_Workflow](https://github.com/cwarden45/RNAseq_templates/tree/master/TopHat_Workflow), [Splicing_Workflow](https://github.com/cwarden45/RNAseq_templates/tree/master/Splicing_Workflow), and  [Mutation_Workflow](https://github.com/cwarden45/RNAseq_templates/tree/master/Mutation_Workflow) for specific acknowledgements.
+
 ### \~Temporary Note\~ ###
 **I apologize for the confusion, but I would like to emphasize that these are called “templates” because I almost always have to modify the code for each project (beyond the parameter files), meaning they will be more difficult for other people to use in the same way.**  This was unfortunately not immediately clear to me when I created the templates.
 
