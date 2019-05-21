@@ -1231,6 +1231,17 @@ deg.file = paste(comp.name,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cu
 deg.file = gsub(":",".",deg.file)
 write.table(deg.table, file=deg.file, row.names=F, quote=F, sep="\t")
 
+volcano.col=rep("gray",nrow(deg.table))
+volcano.col[status == upID]="red"
+volcano.col[status == downID]="green"
+
+volcano.file = paste(comp.name,"_",pvalue.method,"_DEG_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,"_volcano.png",sep="")
+png(volcano.file)
+plot(deg.table$log2ratio, -log10(deg.table$FDR),
+	xlab="log2ratio",ylab="-log10(FDR)",
+	pch=16, col=volcano.col, main=comp.name)
+dev.off()
+
 final.deg.file = paste(user.folder,"/DEG/",comp.name,"_DEG_stats.txt",sep="")
 write.table(deg.table, file=final.deg.file, row.names=F, quote=F, sep="\t")
 
