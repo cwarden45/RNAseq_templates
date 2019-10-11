@@ -24,6 +24,7 @@ I also believe that the process of writing the scripts for analysis (such as the
 
 So, I will post an update when more specific guidance / suggestions can be provided.  **In the meantime, I apologize, but I cannot provide user support for the templates.**
 
+**Update (10/11/2019):** It is a work in progress (and doesn't represent everything from my experiences that I want to show), but I have started to try and show the need to have testing for every project using public data [here](https://sourceforge.net/projects/rnaseq-deg-methodlimit/) (which also includes a public log / "lab notebook" for this project"
 
 ### Order to Run Scripts ###
 
